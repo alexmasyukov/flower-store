@@ -1,0 +1,12 @@
+.git
+node_modules
+server/node_modules
+client/node_modules
+data/certbot
+
+# server/uploads
+
+postgres
+pgadmin
+cert
+var

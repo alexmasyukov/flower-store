@@ -1,0 +1,66 @@
+{
+  "name": "klumba",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@bit/mui-org.material-ui.text-field": "^4.5.2",
+    "@loadable/component": "^5.10.3",
+    "all": "^0.0.0",
+    "axios": "^0.19.2",
+    "bootstrap": "^4.3.1",
+    "classnames": "^2.2.6",
+    "connected-react-router": "^6.5.2",
+    "date-fns": "^2.9.0",
+    "es6-object-assign": "^1.1.0",
+    "formik": "^2.1.4",
+    "history": "^4.10.1",
+    "lodash": "^4.17.15",
+    "mdn-polyfills": "^5.18.0",
+    "moment": "^2.24.0",
+    "node-sass": "^4.12.0",
+    "normalizr": "^3.4.1",
+    "p-min-delay": "^3.1.0",
+    "progress-bar-webpack-plugin": "^1.12.1",
+    "prop-types": "^15.7.2",
+    "ramda": "^0.26.1",
+    "react": "^16.10.2",
+    "react-datepicker": "^2.13.0",
+    "react-dom": "^16.10.2",
+    "react-image": "^2.2.1",
+    "react-input-range": "^1.3.0",
+    "react-redux": "^7.1.1",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.2.0",
+    "react-transition-group": "^4.3.0",
+    "redux": "^4.0.4",
+    "redux-thunk": "^2.3.0",
+    "reselect": "^4.0.0",
+    "yup": "^0.28.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "analyze": "sudo node analyze.js"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "redux-devtools-extension": "^2.13.8",
+    "webpack-bundle-analyzer": "^3.5.2"
+  }
+}

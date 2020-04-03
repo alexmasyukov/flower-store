@@ -1,0 +1,17 @@
+.photo
+  animation-duration: 0s
+  animation: anim .7s
+  width: 100%
+  transition: all 0.5s
+  &:hover
+    transform: scale(1.04)
+
+
+@keyframes anim
+  from
+    transform: scale(1.02)
+    opacity: .3
+  to
+    transform: scale(1)
+    opacity: 1
+
