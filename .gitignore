@@ -10,6 +10,8 @@ settings/certbot/*
 
 data/pgadmin
 data/postgres
+data/client_node_modules
+data/server_node_modules
 
 # server/uploads
 

@@ -71,7 +71,7 @@ app.use(serverDateTimeHeader)
 
 app.use('/static', express.static('uploads'))
 
-const apiV1 = '/api/v1'
+const apiV1 = '/v1'
 // routes (also middleware stack)
 app.use(`${apiV1}/team`, teamRoute)
 app.use(`${apiV1}/entities`, entitiesRoute)

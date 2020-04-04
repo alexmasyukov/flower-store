@@ -2,7 +2,12 @@
 node_modules
 server/node_modules
 client/node_modules
-data/certbot
+
+settings
+data
+client
+server
+.github
 
 # server/uploads
 

@@ -26,7 +26,7 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd ~
-            cd /var/app
-            git pull https://github.com/alexmasyukov/travis-ci-test.git
+            cd /var/www
+            git pull https://github.com/alexmasyukov/klumba.git
             docker-compose down
             docker-compose up -d
