@@ -8,6 +8,9 @@ client/node_modules
 
 settings/certbot/*
 
+data/pgadmin
+data/postgres
+
 # server/uploads
 
 postgres

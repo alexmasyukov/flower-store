@@ -1,45 +1,47 @@
 version: "3.7"
 
 services:
-    app:
-        image: node:12-alpine
-        container_name: app
-        networks:
-            - frontend
-        working_dir: /app
-        environment:
-            NODE_PORT: 3000
-        volumes:
-            - ./node_app:/app
-        command: sh -c "yarn install && yarn run dev"
-        restart: unless-stopped
-    api:
-        image: node:12-alpine
-        container_name: api
-        networks:
-            - frontend
-        working_dir: /app
-        environment:
-            NODE_PORT: 3500
-        volumes:
-            - ./node_api:/app
-        command: sh -c "yarn install && yarn run dev"
-        restart: unless-stopped
+#    app:
+#        image: node:12-alpine
+#        container_name: app
+#        networks:
+#            - frontend
+#        working_dir: /app
+#        environment:
+#            NODE_PORT: 3000
+#        volumes:
+#            - ./node_app:/app
+#        command: sh -c "yarn install && yarn run dev"
+#        restart: unless-stopped
+#    api:
+#        image: node:12-alpine
+#        container_name: api
+#        networks:
+#            - frontend
+#        working_dir: /app
+#        environment:
+#            NODE_PORT: 3500
+#        volumes:
+#            - ./node_api:/app
+#        command: sh -c "yarn install && yarn run dev"
+#        restart: unless-stopped
     nginx:
         image: nginx:1.17.9-alpine
         container_name: nginx
         networks:
             - frontend
+            - db
         volumes:
             - ./data/nginx/conf.d:/etc/nginx/conf.d
             # - ./cert/certbot/conf:/etc/letsencrypt
             # - ./cert/certbot/www:/var/www/certbot
         ports:
             - 80:80
+#            - 5432:5432
             # - 443:443
         # command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
             # - ./src/static:/usr/share/nginx/html
-        restart: unless-stopped
+        restart: always
     postgres:
         image: postgres:12.2
         container_name: postgres
@@ -50,13 +52,17 @@ services:
             PGDATA: /data/postgres
         volumes:
             - ./postgres:/data/postgres
+        ports:
+            - 5432:5432
         networks:
-            - frontend
-        restart: unless-stopped
+            - db
+        restart: always
         
     pgadmin:
         image: dpage/pgadmin4
         container_name: pgadmin
+        depends_on:
+            - postgres
         environment:
             PGADMIN_DEFAULT_EMAIL: user@domain.com
             PGADMIN_DEFAULT_PASSWORD: SuperSecret
@@ -65,7 +71,8 @@ services:
             - ./pgadmin:/root/.pgadmin
         networks:
             - frontend
-        restart: unless-stopped
+            - db
+        restart: always
         
         
         # ports:
@@ -85,6 +92,9 @@ services:
 networks:
     frontend:
         name: frontend
+    db:
+        name: db
+        driver: bridge
     # postgres:
     #     name: postgres
     #     driver: bridge
