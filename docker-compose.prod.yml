@@ -44,21 +44,21 @@ services:
       - db
     restart: always
 
-  pgadmin-prod:
-    image: dpage/pgadmin4
-    container_name: pgadmin-prod
-    depends_on:
-      - postgres-prod
-    environment:
-      PGADMIN_DEFAULT_EMAIL: user@domain.com
-      PGADMIN_DEFAULT_PASSWORD: SuperSecret
-      PGADMIN_LISTEN_PORT: 5050
-    volumes:
-      - ./data/pgadmin:/var/lib/pgadmin
-    networks:
-      - front
-      - db
-    restart: always
+#  pgadmin-prod:
+#    image: dpage/pgadmin4
+#    container_name: pgadmin-prod
+#    depends_on:
+#      - postgres-prod
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: user@domain.com
+#      PGADMIN_DEFAULT_PASSWORD: SuperSecret
+#      PGADMIN_LISTEN_PORT: 5050
+#    volumes:
+#      - ./data/pgadmin:/var/lib/pgadmin
+#    networks:
+#      - front
+#      - db
+#    restart: always
 
   nginx-prod:
     image: nginx:1.17.9-alpine
@@ -92,3 +92,6 @@ networks:
 
 
 #  docker-compose -f docker-compose.prod.yml up --build
+
+#  File "/usr/local/lib/python3.7/site-packages/gunicorn/app/wsgiapp.py", line 41, in load_wsgiapp
+#  pgadmin-prod     |     return util.import_app(self.app_uri)
