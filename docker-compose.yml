@@ -2,8 +2,8 @@ version: '3.7'
 
 services:
 
-  app-prod:
-    container_name: app-prod
+  app:
+    container_name: app
     networks:
       - front
     build:
@@ -13,8 +13,8 @@ services:
 #      - 3000:80
     restart: always
 
-  api-prod:
-    container_name: api-prod
+  api:
+    container_name: api
     networks:
       - front
       - db
@@ -25,9 +25,9 @@ services:
 #      - 5000:3500
     restart: always
 
-  postgres-prod:
+  postgres:
     image: postgres:12.2
-    container_name: postgres-prod
+    container_name: postgres
     environment:
       POSTGRES_USER: db
       POSTGRES_PASSWORD: 12345
@@ -55,16 +55,16 @@ services:
     entrypoint:  "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     # Проверяет каждые 12 часов, нужны ли новые сертификаты
 
-  nginx-prod:
+  nginx:
     image: nginx:1.17.9-alpine
-    container_name: nginx-prod
+    container_name: nginx
     networks:
       - front
       - db
     depends_on:
-      - postgres-prod
-      - api-prod
-      - app-prod
+      - postgres
+      - api
+      - app
     volumes:
       - ./settings/nginx:/etc/nginx/conf.d
       - ./data/certbot/conf:/etc/letsencrypt
@@ -88,4 +88,4 @@ networks:
 #  docker-compose -f docker-compose.prod.yml up --build
 
 #  File "/usr/local/lib/python3.7/site-packages/gunicorn/app/wsgiapp.py", line 41, in load_wsgiapp
-#  pgadmin-prod     |     return util.import_app(self.app_uri)
+#  pgadmin     |     return util.import_app(self.app_uri)
