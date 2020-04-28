@@ -1,0 +1,10 @@
+# build environment
+FROM node:12.16.2-alpine3.9 as build
+WORKDIR /app
+ENV PATH /app/node_modules/.bin:$PATH
+COPY package.json yarn.lock ./
+RUN yarn
+COPY . ./
+RUN yarn install
+EXPOSE 3500
+CMD [ "yarn", "run", "dev" ]

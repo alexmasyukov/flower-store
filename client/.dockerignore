@@ -1,0 +1,8 @@
+node_modules
+build
+.dockerignore
+dockerfile
+dockerfile.prod
+dockerfile.dev
+.firebase
+yarn-error.log

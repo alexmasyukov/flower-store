@@ -1,0 +1,33 @@
+# pull official base image
+FROM node:12-alpine
+#RUN useradd -l -g ${GROUP_ID} -u ${USER_ID} -k /root -m ${USER_NAME}
+
+# set working directory
+WORKDIR /app
+
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
+
+# install app dependencies
+COPY package.json ./
+#COPY package-lock.json ./
+RUN npm install
+RUN npm install react-scripts@3.2.0 -g --silent
+
+# add app
+COPY . ./
+
+# start app
+CMD ["npm", "start"]
+
+
+# docker run -it --rm -v ${PWD}:/app -v ${PWD}/node_modules:/app/node_modules -p 3001:3000 client:dev
+
+#docker run \
+#    -it \
+#    --rm \
+#    -v ${PWD}:/app \
+#    -v /app/node_modules \
+#    -p 3001:3000 \
+#    -e CHOKIDAR_USEPOLLING=true \
+#    client:dev

@@ -1,5 +1,5 @@
 import React from 'react'
-import 'mdn-polyfills/Object.assign'
+// import 'mdn-polyfills/Object.assign' // Это не нужно, у нас webpack
 import { ConnectedRouter } from 'connected-react-router'
 import { Route, Switch } from 'react-router-dom'
 // import loadable from "@loadable/component"

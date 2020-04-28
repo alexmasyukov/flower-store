@@ -1,0 +1,91 @@
+version: '3.7'
+
+services:
+
+  app-prod:
+#    image: app-image
+    container_name: app-prod
+    networks:
+      - front
+    build:
+      context: ./client
+      dockerfile: Dockerfile.prod
+#    ports:
+#      - 3000:80
+    restart: always
+
+  api-prod:
+    container_name: api-prod
+    networks:
+      - front
+      - db
+    build:
+      context: ./server
+      dockerfile: Dockerfile.prod
+#    ports:
+#      - 5000:3500
+    restart: always
+
+  postgres-prod:
+    image: postgres:12.2
+    container_name: postgres-prod
+    environment:
+      POSTGRES_USER: db
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: klumba
+    #            PGDATA: OLD /data/postgres
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+#    ports:
+#      - 5432:5432
+    networks:
+      - db
+    restart: always
+
+  pgadmin-prod:
+    image: dpage/pgadmin4
+    container_name: pgadmin-prod
+    depends_on:
+      - postgres-prod
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@domain.com
+      PGADMIN_DEFAULT_PASSWORD: SuperSecret
+      PGADMIN_LISTEN_PORT: 5050
+    volumes:
+      - ./data/pgadmin:/var/lib/pgadmin
+    networks:
+      - front
+      - db
+    restart: always
+
+  nginx-prod:
+    image: nginx:1.17.9-alpine
+    container_name: nginx-prod
+    networks:
+      - front
+      - db
+    depends_on:
+      - app-prod
+      - api-prod
+      - postgres-prod
+    volumes:
+      - ./settings/nginx:/etc/nginx/conf.d
+      # - OLD ./cert/certbot/conf:/etc/letsencrypt
+      # - OLD ./cert/certbot/www:/var/www/certbot
+    ports:
+      - 80:80
+      #            - 5432:5432
+      # - 443:443
+      # command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+      # - ./src/static:/usr/share/nginx/html
+    restart: always
+
+networks:
+  front:
+    name: front
+  db:
+    name: db
+    driver: bridge
+
+
+#  docker-compose -f docker-compose.prod.yml up --build

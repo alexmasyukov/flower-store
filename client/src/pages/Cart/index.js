@@ -5,6 +5,7 @@ import CartContainer from "containers/cartContainer"
 const CartPage = () => (
   <PageLayout>
     <div className="container">
+        ываыаы ыва ыа
       <CartContainer/>
     </div>
   </PageLayout>

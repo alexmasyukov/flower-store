@@ -1,17 +1,23 @@
 .git
+.gitignore
+.github
+.firebase
 node_modules
+
 server/node_modules
 client/node_modules
 
-settings
-data
 client
+data
+react-test
 server
-.github
+settings
 
-# server/uploads
 
-postgres
-pgadmin
-cert
-var
+README.md
+.dockerignore
+dockerfile
+docker-compose.prod.yml
+docker-compose.dev.yml
+yarn.lock
+yarn-error.log
