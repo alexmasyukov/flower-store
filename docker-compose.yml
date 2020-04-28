@@ -3,7 +3,6 @@ version: '3.7'
 services:
 
   app-prod:
-#    image: app-image
     container_name: app-prod
     networks:
       - front
@@ -44,21 +43,17 @@ services:
       - db
     restart: always
 
-#  pgadmin-prod:
-#    image: dpage/pgadmin4
-#    container_name: pgadmin-prod
-#    depends_on:
-#      - postgres-prod
-#    environment:
-#      PGADMIN_DEFAULT_EMAIL: user@domain.com
-#      PGADMIN_DEFAULT_PASSWORD: SuperSecret
-#      PGADMIN_LISTEN_PORT: 5050
-#    volumes:
-#      - ./data/pgadmin:/var/lib/pgadmin
-#    networks:
-#      - front
-#      - db
-#    restart: always
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    networks:
+      - front
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    restart: unless-stopped
+    entrypoint:  "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    # Проверяет каждые 12 часов, нужны ли новые сертификаты
 
   nginx-prod:
     image: nginx:1.17.9-alpine
@@ -67,21 +62,20 @@ services:
       - front
       - db
     depends_on:
-      - app-prod
-      - api-prod
       - postgres-prod
+      - api-prod
+      - app-prod
     volumes:
       - ./settings/nginx:/etc/nginx/conf.d
-      # - OLD ./cert/certbot/conf:/etc/letsencrypt
-      # - OLD ./cert/certbot/www:/var/www/certbot
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
     ports:
       - 80:80
-#      - 5432:5432
-      #            - 5432:5432
-      # - 443:443
-      # command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
-      # - ./src/static:/usr/share/nginx/html
-    restart: always
+      - 443:443
+    restart: unless-stopped
+    # Перезапустит контейнер в непредвиденных ситуациях
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    # Перезапустит nginx контейнер каждые 6 часов и подгрузит новые сертификаты, если есть
 
 networks:
   front:
