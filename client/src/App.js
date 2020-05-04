@@ -9,6 +9,7 @@ import ProductPage from "pages/Product"
 import Page404 from "pages/404"
 import CartPage from "pages/Cart"
 import CartPageOld from "pages/Cart/old"
+import CmsLitePage from "pages/CmsLite"
 
 
 // const Product = loadable(() => import('pages/Product'), () => <div>Loading...</div>)
@@ -23,6 +24,12 @@ const App = ({ history }) => (
       {/*<Route exact path="cabinet" component={Home}/>*/}
       <Route path="/cart/" exact component={CartPage}/>
       <Route path="/cart_old/" exact component={CartPageOld}/>
+
+      <Route path="/cmslite/" exact component={CmsLitePage}/>
+      <Route path="/cmslite/products/" exact component={CmsLitePage}/>
+      <Route path="/cmslite/products/:product/" exact component={CmsLitePage}/>
+      <Route path="/cmslite/orders" exact component={CmsLitePage}/>
+      <Route path="/cmslite/orders/:order" exact component={CmsLitePage}/>
 
       <Route path="*" component={Page404}/>
     </Switch>

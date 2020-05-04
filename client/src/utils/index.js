@@ -5,6 +5,9 @@ export function getDisplayName(WrappedComponent) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component'
 }
 
+export const compose = (...funcs) => component =>
+    funcs.reduceRight((prevResult, f) => f(prevResult), component)
+
 export const formatDateDMY = (date) => format(date , 'dd.MM.yyyy')
 
 export function getNameById(id, names) {

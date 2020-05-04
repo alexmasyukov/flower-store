@@ -128,21 +128,21 @@ module.exports = {
          const products = await knex
             .column(
                'products.*',
-               { florist_photo: 'florists.photo' },
-               { florist_name: 'florists.name' },
-               { florist_id: 'florists.id' }
+               { florist_photo: 'team.photo' },
+               { florist_name: 'team.name' },
+               { florist_id: 'team.id' }
             )
             .select()
             .from('products')
-            .leftJoin('florists', 'florists.id', 'products.florist_id')
+            .leftJoin('team', 'team.id', 'products.florist_id')
             .where(whereOfProducts)
             .orderBy('products.order')
+             // .toString()
 
          if (!products.length)
             return next(utils.error(404, 'NOT FOUND', 'products not found'))
 
          const entities = utils.normalize(await knex.select().from('entities'), 'id')
-
 
          const productsIds = products.map(product => product.id)
          const productsSizes = await knex
@@ -198,13 +198,13 @@ module.exports = {
          const product = await knex
             .column(
                'products.*',
-               { florist_photo: 'florists.photo' },
-               { florist_name: 'florists.name' },
-               { florist_id: 'florists.id' }
+               { florist_photo: 'team.photo' },
+               { florist_name: 'team.name' },
+               { florist_id: 'team.id' }
             )
             .select()
             .from('products')
-            .leftJoin('florists', 'florists.id', 'products.florist_id')
+            .leftJoin('team', 'team.id', 'products.florist_id')
             .where(whereOfProducts)
             .first()
 

@@ -1,7 +1,6 @@
 version: '3.7'
 
 services:
-
   app-dev:
     container_name: app-dev
     networks:
@@ -10,16 +9,89 @@ services:
       context: ./client
       dockerfile: Dockerfile.dev
     volumes:
-      - '.:/app'
+      - './client:/app'
       - '/app/node_modules'
-    ports:
-      - 3001:80
+#    ports:
+#      - 3000:3000
     environment:
-      - CHOKIDAR_USEPOLLING=true
+      - NODE_ENV=development
+#      - PUBLIC_URL=/edit
+#      - CHOKIDAR_USEPOLLING=true
+
+#  cms-lite-dev:
+#    container_name: cms-lite-dev
+#    build:
+#      context: ./cmslite
+#      dockerfile: Dockerfile.dev
+#    volumes:
+#      - './cmslite:/cmslite'
+##      - '/cmslite/node_modules'
+#    ports:
+#      - 3000:3000
+##    environment:
+##      - NODE_ENV=development
+##      - PORT=3000
+
+
+  api-dev:
+    container_name: api-dev
+    networks:
+      - front
+      - db
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    volumes:
+      - './server:/app'
+      - '/app/node_modules'
+    environment:
+      - NODE_ENV=development
+#      - CHOKIDAR_USEPOLLING=true
+#    restart: always
+
+
+  postgres-dev:
+    image: postgres:12.2-alpine
+    container_name: postgres-dev
+    environment:
+      POSTGRES_USER: db
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: klumba
+    #            PGDATA: OLD /data/postgres_dev
+    volumes:
+      - ./data/postgres_dev:/var/lib/postgresql/data
+    expose:
+      - 5432
+    ports:
+      - 7878:5432
+    networks:
+      - db
+    restart: always
+
+
+  nginx-dev:
+    image: nginx:1.17.9-alpine
+    container_name: nginx-dev
+    networks:
+      - front
+      - db
+    depends_on:
+      - postgres-dev
+      - api-dev
+      - app-dev
+#      - cms-lite-dev
+    volumes:
+      - ./settings/nginx_dev:/etc/nginx/conf.d
+    ports:
+      - 80:80
+    restart: unless-stopped
 
 
 networks:
   front:
     name: front
+  db:
+    name: db
+    driver: bridge
 
 # https://mherman.org/blog/dockerizing-a-react-app/

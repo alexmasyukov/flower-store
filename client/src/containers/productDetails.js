@@ -315,7 +315,6 @@ class ProductDetailsContainer extends Component {
                >
                   В корзину
                </div>
-
                <p>Купить в один клик</p>
 
                <Details>

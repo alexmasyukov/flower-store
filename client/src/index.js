@@ -6,11 +6,17 @@ import App from './App'
 
 import "bootstrap/scss/bootstrap-grid.scss"
 import './index.css'
+import ApiService from "services/api-service"
+import { ApiServiceProvider } from "components/api-service-context"
 
 const store = configureStore()
+const apiServiceInstance = new ApiService()
 
 render(
-  <Provider store={store}>
-    <App history={history}/>
-  </Provider>,
-  document.getElementById('root'))
+    <ApiServiceProvider value={apiServiceInstance}>
+        <Provider store={store}>
+            <App history={history}/>
+        </Provider>
+    </ApiServiceProvider>,
+    document.getElementById('root')
+)
