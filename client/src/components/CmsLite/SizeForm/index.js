@@ -113,7 +113,7 @@ class Cmslite_SizeForm extends Component {
                   {/*todo api DELETE  /product-sizes/:id/image/:id*/}
                   {/*http://localhost/api/static/aa322644-4e45-418f-a8e4-43f8da841de2_lg.png*/}
 
-                  <button type="submit">Submit</button>
+                  {/*<button type="submit">Submit</button>*/}
               </Form>
             )}
           />
