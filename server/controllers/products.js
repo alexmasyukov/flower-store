@@ -80,7 +80,54 @@ module.exports = {
                   .returning('id')
             })
 
-            res.status(201).json(newProductId)
+            res.json({
+                status: 'done',
+                result: newProductId[0]
+            })
+        } catch (e) {
+            next(utils.error(500, 'ERROR', e.message))
+        }
+    },
+
+    async updateProduct(req, res, next) {
+        try {
+            const { sizes, id: _id, ...base } = req.body
+            const { id = false } = req.params
+
+            if (!Number.isInteger(Number(id))) {
+                return next(utils.error(500, 'ERROR', 'id should be Integer'))
+            }
+
+            const updateProductId = await knex('products')
+              .where('id', '=', id)
+              .update(base)
+              .returning('id')
+
+            sizes.forEach(async size => {
+                try {
+                    const updateSize = await knex('product_sizes')
+                      .where('id', '=', size.id)
+                      .update(size)
+                } catch (e) {
+                    return next(utils.error(500, 'ERROR', e.errors))
+                }
+            })
+
+            // sizes.forEach(async size => {
+            //     size.product_id = newProductId.toString()
+            //     const sizeId = await knex('product_sizes')
+            //       .insert(size)
+            //       .returning('id')
+            // })
+
+            if (!updateProductId.length) {
+                return  next(utils.error(500, 'ERROR', 'product id not found'))
+            }
+
+            res.json({
+                status: 'done',
+                result: updateProductId[0]
+            })
         } catch (e) {
             next(utils.error(500, 'ERROR', e.message))
         }
@@ -104,7 +151,7 @@ module.exports = {
             }
 
             res.json({
-                code: 'COMPLETE',
+                status: 'done',
                 result
             })
         } catch (e) {
@@ -242,7 +289,7 @@ module.exports = {
         }
     },
 
-    async putProductPublic(req, res, next) {
+    async updateProductPublic(req, res, next) {
         try {
             const { id = false } = req.params
 
@@ -262,33 +309,10 @@ module.exports = {
               .select(['public'])
               .first()
 
-            res.json(porductPublic)
-        } catch (e) {
-            next(utils.error(500, 'ERROR', e.message))
-        }
-    },
-
-    async putProductSizePublic(req, res, next) {
-        try {
-            const { id = false } = req.params
-
-            if (req.query.public !== "true" && req.query.public !== "false")
-                return next(utils.error(500, 'ERROR', 'public value not Boolean (true/false)'))
-
-            const update = await knex
-              .from('product_sizes')
-              .where('id', id)
-              .update({
-                  public: req.query.public
-              })
-
-            const sizePublic = await knex
-              .from('product_sizes')
-              .where('id', id)
-              .select(['public'])
-              .first()
-
-            res.json(sizePublic)
+            res.json({
+                status: 'done',
+                result: porductPublic
+            })
         } catch (e) {
             next(utils.error(500, 'ERROR', e.message))
         }

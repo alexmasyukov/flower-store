@@ -52,7 +52,10 @@ module.exports = {
 
          // console.log(id)
 
-         res.status(201).json({ id: id[0] })
+         res.json({
+            status: 'done',
+            result: id[0]
+         })
       } catch (e) {
          next(utils.error(500, 'ERROR', e.message))
       }

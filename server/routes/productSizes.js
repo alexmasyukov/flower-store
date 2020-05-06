@@ -6,7 +6,7 @@ const productSizesController = require('../controllers/productSizes')
 router.route('/:id/public')
   .put(
     cacheControl({ maxAge: 5 }),
-    productSizesController.putProductSizePublic
+    productSizesController.updateProductSizePublic
   )
 
 module.exports = router

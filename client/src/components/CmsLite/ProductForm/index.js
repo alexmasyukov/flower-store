@@ -54,12 +54,13 @@ class ProductForm extends Component {
 
     render() {
         const { data } = this.props
-        const { entities, florists  } = this.state
+        const { entities, florists } = this.state
         const { sizes } = data
 
         return (
           <Formik
             initialValues={{
+                id: data.id,
                 title: data.title,
                 public: data.public,
                 florist_id: data.florist_id,
@@ -91,6 +92,18 @@ class ProductForm extends Component {
                       {/*<Input formik={formik} field="florist_text" label="Флорист говорит"/>*/}
                       {/*<Input formik={formik} field="slug" label="cpu"/>*/}
                       {/*<Input formik={formik} field="stability" label="Стойкость"/>*/}
+
+                      <Field name="id">
+                          {({ field }) => (
+                            <p>ID: {field.value}</p>
+                          )}
+                      </Field>
+
+                      <Field name="slug">
+                          {({ field }) => (
+                            <p>cpu: {field.value}</p>
+                          )}
+                      </Field>
 
                       <Field name="title" placeholder="Название"/>
 

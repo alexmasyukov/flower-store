@@ -7,20 +7,25 @@ const { Product } = require('../models/product')
 const { ProductSize } = require('../models/productSize')
 
 router.route('/')
-   .get(
-      cacheControl({ maxAge: 5 }),
-      productController.getAllProducts)
-   .post(
-      validateSchema(Product.jsonSchema),
-      validateProductSizes(ProductSize.jsonSchema),
-      productController.createProduct
-   )
+  .get(
+    cacheControl({ maxAge: 5 }),
+    productController.getAllProducts)
+  .post(
+    validateSchema(Product.jsonSchema),
+    validateProductSizes(ProductSize.jsonSchema),
+    productController.createProduct
+  )
 
 router.route('/:id')
-   .get(productController.getProduct)
-   .delete(productController.deleteProduct)
+  .get(productController.getProduct)
+  .put(
+    validateSchema(Product.jsonSchema),
+    validateProductSizes(ProductSize.jsonSchema),
+    productController.updateProduct
+  )
+  .delete(productController.deleteProduct)
 
 router.route('/:id/public')
-  .put(productController.putProductPublic)
+  .put(productController.updateProductPublic)
 
 module.exports = router

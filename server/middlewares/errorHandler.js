@@ -1,5 +1,4 @@
 const errorHandler = (error, req, res, next) => {
-    console.log('ERROR HANDLER')
     const {
         code = 'ERROR',
         status = 500,
@@ -9,7 +8,7 @@ const errorHandler = (error, req, res, next) => {
     } = error
 
     res.status(status).json({
-        code,
+        status: code,
         message,
         description,
         errors

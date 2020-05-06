@@ -8,7 +8,8 @@ module.exports = {
       try {
          const code = Math.random().toString().substr(2, 4)
          res.json({
-            code
+            status: 'done',
+            redsult: code
          })
       } catch (e) {
          next(utils.error(500, 'ERROR', e.message))

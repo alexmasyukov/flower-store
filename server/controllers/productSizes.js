@@ -2,7 +2,7 @@ const knex = require('../db/knex')
 const utils = require('../utils')
 
 module.exports = {
-    async putProductSizePublic(req, res, next) {
+    async updateProductSizePublic(req, res, next) {
         try {
             const { id = false } = req.params
 
@@ -22,7 +22,10 @@ module.exports = {
               .select(['public'])
               .first()
 
-            res.json(sizePublic)
+            res.json({
+                status: 'done',
+                result: sizePublic
+            })
         } catch (e) {
             next(utils.error(500, 'ERROR', e.message))
         }

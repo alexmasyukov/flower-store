@@ -10,19 +10,20 @@ class ProductSize {
             'order',
             'public',
             'title',
-            'circle',
+            'diameter',
             'price',
-            'flowers',
+            'flowers_count',
             'images'
          ],
          properties: {
             id: { type: 'integer' },
+            product_id: { type: 'integer' },
             order: { type: ['integer', 'null'] },
             public: { type: 'boolean' },
             title: { type: 'integer' },
-            circle: { type: 'integer' },
+            diameter: { type: 'integer' },
             price: { type: 'integer' },
-            flowers: {
+            flowers_count: {
                type: "array",
                items: { type: 'integer' },
                minItems: 1,

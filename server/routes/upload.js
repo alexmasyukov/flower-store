@@ -136,9 +136,6 @@ const compressImages = async (processedFiles, next) => {
                 // console.error(e);
             }
 
-            // console.log('buffer')
-            // console.log(buffer)
-
             files.push({
                 ...file,
                 buffer
@@ -156,12 +153,11 @@ const saveFiles = async (path, prefix, processedFiles, next) => {
 
     for (const file of processedFiles) {
         try {
-            const filepath = `${path}${file.filename}${prefix}.${file.ext}`
-            const filepathToRes = `${file.filename}${prefix}.${file.ext}`
+            const filepath = `${prefix}${file.filename}.${file.ext}`
             const save = await sharp(file.buffer)
-              .toFile(filepath)
+              .toFile(`${path}${filepath}`)
 
-            files.push(filepathToRes)
+            files.push(filepath)
         } catch (err) {
             next(utils.error(500, 'SAVE_UPLOAD_FILE_ERROR', 'sharp save'))
         }
@@ -178,15 +174,15 @@ const saveImages = async (req, res, next) => {
 
     const thumb = await resizeImages(thumb_width, req.processedFiles, next)
       .then(files => compressImages(files, next))
-      .then(files => saveFiles('uploads/', '_thumb', files, next))
+      .then(files => saveFiles('uploads/', 'thumb_', files, next))
 
     const sm = await resizeImages(sm_width, req.processedFiles, next)
       .then(files => compressImages(files, next))
-      .then(files => saveFiles('uploads/', '_sm', files, next))
+      .then(files => saveFiles('uploads/', 'sm_', files, next))
 
     const lg = await resizeImages(lg_width, req.processedFiles, next)
       .then(files => compressImages(files, next))
-      .then(files => saveFiles('uploads/', '_lg', files, next))
+      .then(files => saveFiles('uploads/', '', files, next))
 
     res.json({
         result: {
