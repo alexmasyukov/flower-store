@@ -10,6 +10,7 @@ import Page404 from "pages/404"
 import CartPage from "pages/Cart"
 import CartPageOld from "pages/Cart/old"
 import CmsLitePage from "pages/CmsLite"
+import CMS_ProductFormPage from "pages/CmsLite_EditProductPage"
 
 
 // const Product = loadable(() => import('pages/Product'), () => <div>Loading...</div>)
@@ -17,22 +18,22 @@ import CmsLitePage from "pages/CmsLite"
 
 const App = ({ history }) => (
   <ConnectedRouter history={history}>
-    <Switch>
-      <Route path="/" exact component={CatalogPage}/>
-      <Route path="/catalog/" exact component={CatalogPage}/>
-      <Route path="/catalog/:product/" component={ProductPage}/>
-      {/*<Route exact path="cabinet" component={Home}/>*/}
-      <Route path="/cart/" exact component={CartPage}/>
-      <Route path="/cart_old/" exact component={CartPageOld}/>
+      <Switch>
+          <Route path="/" exact component={CatalogPage}/>
+          <Route path="/catalog/" exact component={CatalogPage}/>
+          <Route path="/catalog/:product/" component={ProductPage}/>
+          {/*<Route exact path="cabinet" component={Home}/>*/}
+          <Route path="/cart/" exact component={CartPage}/>
+          <Route path="/cart_old/" exact component={CartPageOld}/>
 
-      <Route path="/cmslite/" exact component={CmsLitePage}/>
-      <Route path="/cmslite/products/" exact component={CmsLitePage}/>
-      <Route path="/cmslite/products/:product/" exact component={CmsLitePage}/>
-      <Route path="/cmslite/orders" exact component={CmsLitePage}/>
-      <Route path="/cmslite/orders/:order" exact component={CmsLitePage}/>
+          <Route path="/cmslite/" exact component={CmsLitePage}/>
+          <Route path="/cmslite/products/" exact component={CmsLitePage}/>
+          <Route path="/cmslite/products/:id" component={CMS_ProductFormPage}/>
+          <Route path="/cmslite/orders" exact component={CmsLitePage}/>
+          <Route path="/cmslite/orders/:id" component={CmsLitePage}/>
 
-      <Route path="*" component={Page404}/>
-    </Switch>
+          <Route path="*" component={Page404}/>
+      </Switch>
   </ConnectedRouter>
 )
 

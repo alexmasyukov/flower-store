@@ -1,3 +1,6 @@
+1. Решить проблему с ошибкой EPIPE cmd: '/app/node_modules/mozjpeg/vendor/cjpeg -quality 80',
+при загрузке и сжатии изображения
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

@@ -10,8 +10,9 @@ const withApiService = mapMethodsToProps => WrappedComponent => {
         <ApiServiceConsumer>
           {
             (apiService) => {
-              const serviceProps = mapMethodsToProps(apiService)
-              return <WrappedComponent {...this.props} {...serviceProps}/>
+              const props = this.props
+              const serviceProps = mapMethodsToProps(apiService, props)
+              return <WrappedComponent {...props} {...serviceProps}/>
             }
           }
         </ApiServiceConsumer>

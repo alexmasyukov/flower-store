@@ -12,7 +12,6 @@ const utils = require('../utils')
 // https://appdividend.com/2019/02/14/node-express-image-upload-and-resize-tutorial-example/#Step_6_Create_fileupload_middleware
 
 
-
 const storageConfig = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, path.join(__dirname, '../uploads'))
@@ -28,8 +27,8 @@ const memoryStorageConfig = multer.memoryStorage()
 
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === "image/png" ||
-        file.mimetype === "image/jpg" ||
-        file.mimetype === "image/jpeg") {
+      file.mimetype === "image/jpg" ||
+      file.mimetype === "image/jpeg") {
         cb(null, true)
     } else {
         cb({
@@ -84,10 +83,10 @@ const resizeImages = async (width, processedFiles, next) => {
     for (const file of processedFiles) {
         try {
             const buffer = await sharp(file.buffer)
-                .resize({
-                    width
-                })
-                .toBuffer()
+              .resize({
+                  width
+              })
+              .toBuffer()
 
             files.push({
                 ...file,
@@ -108,25 +107,44 @@ const compressImages = async (processedFiles, next) => {
 
     for (const file of processedFiles) {
         try {
-            const buffer = await imagemin.buffer(file.buffer, {
-                plugins: [
-                    imageminMozjpeg({
+            console.log(file)
+            let plugins = []
+
+            switch (file.ext) {
+                case 'jpg':
+                case 'jpeg':
+                    plugins.push(imageminMozjpeg({
                         quality: 80,
                         progressive: true
-                    }),
-                    imageminPngquant({
-                        quality: [0.8, 0.8]
-                    })
-                ]
-            })
+                    }))
+                    break
+                case 'png':
+                    plugins.push(
+                      imageminPngquant({
+                          quality: [0.8, 0.8]
+                      })
+                    )
+                    break
+            }
+
+            let buffer = file.buffer
+            try {
+                buffer = await imagemin.buffer(file.buffer, {
+                    plugins
+                })
+            } catch (e) {
+                // console.error(e);
+            }
+
+            // console.log('buffer')
+            // console.log(buffer)
 
             files.push({
                 ...file,
                 buffer
             })
         } catch (err) {
-            next(utils.error(422, 'UPLOADING_FILE_ERROR', err.message))
-            return
+            return next(utils.error(422, 'UPLOADING_FILE_ERROR', err.message))
         }
     }
 
@@ -139,10 +157,11 @@ const saveFiles = async (path, prefix, processedFiles, next) => {
     for (const file of processedFiles) {
         try {
             const filepath = `${path}${file.filename}${prefix}.${file.ext}`
+            const filepathToRes = `${file.filename}${prefix}.${file.ext}`
             const save = await sharp(file.buffer)
-                .toFile(filepath)
+              .toFile(filepath)
 
-            files.push(filepath)
+            files.push(filepathToRes)
         } catch (err) {
             next(utils.error(500, 'SAVE_UPLOAD_FILE_ERROR', 'sharp save'))
         }
@@ -158,16 +177,16 @@ const saveImages = async (req, res, next) => {
     const lg_width = 960
 
     const thumb = await resizeImages(thumb_width, req.processedFiles, next)
-        .then(files => compressImages(files, next))
-        .then(files => saveFiles('uploads/', '_thumb', files, next))
+      .then(files => compressImages(files, next))
+      .then(files => saveFiles('uploads/', '_thumb', files, next))
 
     const sm = await resizeImages(sm_width, req.processedFiles, next)
-        .then(files => compressImages(files, next))
-        .then(files => saveFiles('uploads/', '_sm', files, next))
+      .then(files => compressImages(files, next))
+      .then(files => saveFiles('uploads/', '_sm', files, next))
 
     const lg = await resizeImages(lg_width, req.processedFiles, next)
-        .then(files => compressImages(files, next))
-        .then(files => saveFiles('uploads/', '_lg', files, next))
+      .then(files => compressImages(files, next))
+      .then(files => saveFiles('uploads/', '_lg', files, next))
 
     res.json({
         result: {
@@ -180,9 +199,9 @@ const saveImages = async (req, res, next) => {
 
 
 router.post('/',
-    uploadImages,
-    extractBufferFilesFromMulter,
-    saveImages
+  uploadImages,
+  extractBufferFilesFromMulter,
+  saveImages
 )
 
 

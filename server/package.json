@@ -18,7 +18,7 @@
     "express": "^4.17.1",
     "express-cache-controller": "^1.1.0",
     "imagemin": "^7.0.1",
-    "imagemin-mozjpeg": "^8.0.0",
+    "imagemin-mozjpeg": "^6.0.0",
     "imagemin-pngquant": "^8.0.0",
     "knex": "^0.20.7",
     "morgan": "^1.9.1",

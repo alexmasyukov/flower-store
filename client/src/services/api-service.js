@@ -1,28 +1,61 @@
 export default class ApiService {
     // https://create-react-app.dev/docs/adding-custom-environment-variables/
     _apiBase = process.env.NODE_ENV === 'production' ?
-        '/api/v1' :
-        'http://localhost/api/v1'
+      '/api/v1' :
+      'http://localhost/api/v1'
 
     _imageBase = '/static/'
 
     getResource = async (url) => {
-        console.log(this._apiBase)
-        const res = await fetch(`${this._apiBase}${url}`)
+        console.log(`${this._apiBase}${url}`)
+        const res = await fetch(`${this._apiBase}${url}`, {
+            'Accept-Encoding': 'compress, gzip'
+        })
         if (!res.ok) {
             throw new Error(`Could not fetch ${url}` +
-                `, received ${res.status}`)
+              `, received ${res.status}`)
+        }
+        return await res.json()
+    }
+
+    postResource = async (url) => {
+        const res = await fetch(`${this._apiBase}${url}`, {
+            method: 'PUT'
+        })
+        if (!res.ok) {
+            throw new Error(`Could not fetch ${url}` +
+              `, received ${res.status}`)
         }
         return await res.json()
     }
 
 
-    getAllProducts = async (date = '') => {
-        const res = await this.getResource(`/products/
-            withUnpublic=true
-            &withUnpublicSizes=true
-            &convertEntities=false`)
-        return res.results.map(this._transformProduct)
+    getAllProducts = (convertEntities = false) => async () => {
+        const res = await this.getResource(`/products?withUnpublic=true&withUnpublicSizes=true&convertEntities=${convertEntities}`)
+        return res //.map(this._transformProduct)
+    }
+
+    updatePublicProduct = async (id, boolValue = true) => {
+        const res = await this.postResource(`/products/${id}/public?public=${boolValue}`)
+        return res
+    }
+
+    updatePublicProductSize = async (id, boolValue = true) => {
+        const res = await this.postResource(`/product-sizes/${id}/public?public=${boolValue}`)
+        return res
+    }
+
+    getProduct = (id) => async () => {
+        const res = await this.getResource(`/products/${id}?withUnpublic=true&withUnpublicSizes=true&convertEntities=false`)
+        return res //.map(this._transformProduct)
+    }
+
+    getAllEntities = async () => {
+        return await this.getResource(`/entities`)
+    }
+
+    getAllFlorists = async () => {
+        return await this.getResource(`/team?isFlorist=true`)
     }
 
     _transformProduct = product => ({
@@ -38,8 +71,8 @@ export default class ApiService {
 
 
     getPerson = async id =>
-        await this.getResource(`/people/${id}/`)
-            .then(this._transformPerson)
+      await this.getResource(`/people/${id}/`)
+        .then(this._transformPerson)
 
 
     getAllPlanets = async () => {
@@ -49,8 +82,8 @@ export default class ApiService {
 
 
     getPlanet = async id =>
-        await this.getResource(`/planets/${id}`)
-            .then(this._transformPlanet)
+      await this.getResource(`/planets/${id}`)
+        .then(this._transformPlanet)
 
 
     getAllStarships = async () => {
@@ -60,18 +93,18 @@ export default class ApiService {
 
 
     getStarship = async id =>
-        await this.getResource(`/starships/${id}/`)
-            .then(this._transformStarship)
+      await this.getResource(`/starships/${id}/`)
+        .then(this._transformStarship)
 
 
     getPersonImage = ({ id }) =>
-        `${this._imageBase}/characters/${id}.jpg`
+      `${this._imageBase}/characters/${id}.jpg`
 
     getStarshipImage = ({ id }) =>
-        `${this._imageBase}/starships/${id}.jpg`
+      `${this._imageBase}/starships/${id}.jpg`
 
     getPlanetImage = ({ id }) =>
-        `${this._imageBase}/planets/${id}.jpg`
+      `${this._imageBase}/planets/${id}.jpg`
 
 
     _extractIdFromUrl = url => {

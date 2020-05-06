@@ -7,15 +7,15 @@ import CmsLayout from "layouts/Cms"
 const fallback = () => (
   <div>Загрузка...</div>
 )
-const CMS_ProductsList = loadable(() => import('components/CmsLite/ProductsList'), {
+const CMS_ProductForm = loadable(() => import('components/CmsLite/ProductForm'), {
     fallback: fallback()
 })
 
 
-const CmsLitePage = () => (
+const CMS_ProductFormPage = () => (
   <CmsLayout>
-      <CMS_ProductsList/>
+      <CMS_ProductForm/>
   </CmsLayout>
 )
 
-export default CmsLitePage
+export default CMS_ProductFormPage

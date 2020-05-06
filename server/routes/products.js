@@ -20,4 +20,7 @@ router.route('/:id')
    .get(productController.getProduct)
    .delete(productController.deleteProduct)
 
+router.route('/:id/public')
+  .put(productController.putProductPublic)
+
 module.exports = router
