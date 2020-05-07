@@ -7,7 +7,6 @@ import { compose } from "utils"
 import withApiService from "components/hoc/withApiService"
 import withData from "components/hoc/withData"
 import withRouterParams from "components/hoc/withRouterParams"
-import Cmslite_SizeForm from "components/CmsLite/SizeForm"
 
 
 const ValidIndicator = ({ formik, field }) => (
@@ -45,6 +44,14 @@ const FieldInput = ({ name, placeholder, as = "input" }) => {
     )
 }
 
+const Checkbox = ({ field, type, title }) => (
+  <label>
+      {/* remove {...field} to see changes not propagated */}
+      <input {...field} type={type}/>
+      {title}
+  </label>
+)
+
 const productSchema = Yup.object({
     title: Yup.string()
       .min(2, 'Must be 2 characters or more')
@@ -61,7 +68,8 @@ const productSchema = Yup.object({
           title: Yup.string().required('Заполните'),
           public: Yup.boolean().required(),
           price: Yup.number().required('Заполните').positive('Больше чем 0').integer(),
-          flowers: Yup.array()
+          flowers: Yup.array().of(Yup.number().min(1, 'Укажите больше нуля')).min(1, 'Добавьте минимум 1 элемент').required('Минимум 1 элемент'),
+          flowers_counts: Yup.array().of(Yup.number().min(1, 'Укажите больше нуля')).min(1, 'Укажите количество элементов букета').required('Минимум 1 элемент')
       })
     )
 })
@@ -74,7 +82,8 @@ const emptyProductSize = {
     title: "",
     price: "",
     diameter: "",
-    flowers_count: [],
+    flowers: [],
+    flowers_counts: [],
     images: []
 }
 
@@ -137,8 +146,17 @@ class ProductForm extends Component {
 
     render() {
         const { data } = this.props
-        const { entities, florists } = this.state
+        const { florists } = this.state
         const { sizes } = data
+
+        const fixSizes = sizes.map(size => {
+            size.flowers = [16, 18, 17]//data.flowers,
+            size.flowers_counts = [2, 8, 5]//data.flowers,
+            size.fast = Math.random() >= 0.5
+            return size
+        })
+
+        data.bouquetType =  Math.random() >= 0.5 ? 28 : 29
 
         return (
           <Formik
@@ -153,12 +171,13 @@ class ProductForm extends Component {
                 stability: data.stability,
                 shade: data.shade,
                 packing: data.packing,
-                flowers: data.flowers,
-                sizes: data.sizes
+                bouquetType: data.bouquetType,
+                sizes: fixSizes
             }}
             validationSchema={productSchema}
             onSubmit={(values, { setSubmitting }) => {
-                alert(JSON.stringify(values, null, 2))
+                // alert()
+                console.log(JSON.stringify(values, null, 2))
                 setSubmitting(false)
             }}
             render={({ values }) => (
@@ -207,6 +226,16 @@ class ProductForm extends Component {
                   </Field>
                   <ErrorMessage name="color"/>
 
+                  <label>Тип букета</label>
+                  <Field name="bouquetType" as="select">
+                      <option value={0}>&nbsp;</option>
+                      {this.getEntitiesByType('bouquet_type').map(({ id, value }) => (
+                        <option key={id} value={id}>{value}</option>
+                      ))}
+                  </Field>
+                  <ErrorMessage name="bouquetType"/>
+
+
                   <label>Стойкость</label>
                   <Field name="stability" as="select">
                       <option value={0}>&nbsp;</option>
@@ -240,35 +269,11 @@ class ProductForm extends Component {
                       <option value={false}>Нет</option>
                   </Field>
 
-                  {values.flowers && values.flowers.length > 0 && (
-                    <FieldArray
-                      name="flowers"
-                      render={arrayHelpers => (
-                        <div>
-                            {values.flowers.map((flower, index) => (
-                              <>
-                                  <Field name={`flowers.${index}`} as="select">
-                                      <option value={0}>&nbsp;</option>
-                                      {this.getEntitiesByType('flower').map(({ id, value }) => (
-                                        <option key={id} value={id}>{value}</option>
-                                      ))}
-                                  </Field>
-                                  <ErrorMessage name={`flowers.${index}`}/>
-                                  <br/>
-                              </>
-                            ))}
 
-                            <button type="button" onClick={() => arrayHelpers.push(0)}>
-                                + Добавить
-                            </button>
-                        </div>
-                      )}
-                    />
-                  )}
-                  available
-                  collection
-                  flowers
+                  byFlowers внутри размеров (обновить фильтры на фронте)
+
                   additionalProducts
+                  collection
 
                   <h2>Размеры</h2>
 
@@ -303,13 +308,57 @@ class ProductForm extends Component {
                                   <Field name={`sizes.${index}.price`} type="number"/>
                                   <ErrorMessage name={`sizes.${index}.price`}/>
 
+                                  <Field name={`sizes.${index}.fast`} title="Готовый букет" type="checkbox" component={Checkbox} />
+
+                                  <FieldArray
+                                    name={`sizes.${index}.flowers`}
+                                    render={ahf => (
+                                      <div>
+                                          {size.flowers && size.flowers.length > 0 &&
+                                          size.flowers.map((flower, f_index) => (
+                                            <>
+                                                <Field name={`sizes.${index}.flowers.${f_index}`} as="select"
+                                                       parse={(n) => parseInt(n, 10)}>
+                                                    <option value={0}>&nbsp;</option>
+                                                    {this.getEntitiesByType('flower').map(({ id, value }) => (
+                                                      <option key={id} value={Number(id)}>{value}</option>
+                                                    ))}
+                                                </Field>
+                                                <Field name={`sizes.${index}.flowers_counts.${f_index}`}
+                                                       type="number"/>
+                                                <button type="button" onClick={() => {
+                                                    // arrayHelpers.remove()
+                                                    values.sizes[index].flowers_counts.splice(f_index, 1)
+                                                    ahf.remove(f_index)
+                                                    console.log(values.sizes[index])
+                                                }}>
+                                                    Удалить
+                                                </button>
+                                                <ErrorMessage name={`sizes.${index}.flowers.${f_index}`}/>
+                                                <ErrorMessage name={`sizes.${index}.flowers_counts.${f_index}`}/>
+                                                <br/>
+                                            </>
+                                          ))}
+
+
+                                          <button type="button" onClick={() => {
+                                              ahf.push(0)
+                                              values.sizes[index].flowers_counts.push(0)
+                                              console.log(values.sizes[index])
+                                          }}>
+                                              + Добавить элемент букета
+                                          </button>
+                                      </div>
+                                    )}
+                                  />
+                                  <ErrorMessage name={`sizes.${index}.flowers`}/>
+                                  <ErrorMessage name={`sizes.${index}.flowers_counts`}/>
+
                                   <label>Опубликовано</label>
                                   <Field name={`sizes.${index}.public`} as="select">
                                       <option value={true}>Да</option>
                                       <option value={false}>Нет</option>
                                   </Field>
-
-                                  flowers_count
                               </div>
                             ))}
 
