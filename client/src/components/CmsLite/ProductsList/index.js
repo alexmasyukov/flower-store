@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
+import { Link } from "react-router-dom"
 import withApiService from "components/hoc/withApiService"
 import withData from "components/hoc/withData"
 import { compose } from "utils"
-import { Link } from "react-router-dom"
 
 const Switcher = ({
                       title = '[title]',
@@ -26,7 +26,7 @@ const Switcher = ({
 )
 
 
-class ItemsList extends Component {
+class ProductsList extends Component {
     state = {
         data: this.props.data
     }
@@ -82,12 +82,12 @@ class ItemsList extends Component {
           })
     }
 
+
     render() {
         const { data } = this.state
 
         const products = data.map(product => (
-          <div key={product.id}
-               className="col-md-12">
+          <div key={product.id} className="col-md-12">
               <div className="row">
                   <div className="col-md-2">
                       <img style={{ width: '100%' }}
@@ -121,7 +121,9 @@ class ItemsList extends Component {
 
         return (
           <div className="row">
-              {products}
+              <Link to="/cmslite/products/add">Добавить букет</Link>
+              <br/><br/>
+              {products}f
           </div>
         )
     }
@@ -137,5 +139,9 @@ const mapMethodsToProps = (apiService) => ({
 
 export default compose(
   withApiService(mapMethodsToProps),
-  withData
-)(ItemsList)
+  withData({
+      getDataMethod: 'getData',
+      dataPropName: 'data',
+      loadingText: 'products'
+  })
+)(ProductsList)

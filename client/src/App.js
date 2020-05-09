@@ -9,8 +9,9 @@ import ProductPage from "pages/Product"
 import Page404 from "pages/404"
 import CartPage from "pages/Cart"
 import CartPageOld from "pages/Cart/old"
-import CmsLitePage from "pages/CmsLite"
-import CMS_ProductFormPage from "pages/CmsLite_EditProductPage"
+import cmsProductsListPage from "pages/cmsProductsListPage"
+import cmsEditProductFormPage from "pages/cmsEditProductFormPage"
+import cmsNewProductFormPage from "pages/cmsNewProductFormPage"
 
 
 // const Product = loadable(() => import('pages/Product'), () => <div>Loading...</div>)
@@ -26,11 +27,12 @@ const App = ({ history }) => (
           <Route path="/cart/" exact component={CartPage}/>
           <Route path="/cart_old/" exact component={CartPageOld}/>
 
-          <Route path="/cmslite/" exact component={CmsLitePage}/>
-          <Route path="/cmslite/products/" exact component={CmsLitePage}/>
-          <Route path="/cmslite/products/:id" component={CMS_ProductFormPage}/>
-          <Route path="/cmslite/orders" exact component={CmsLitePage}/>
-          <Route path="/cmslite/orders/:id" component={CmsLitePage}/>
+          <Route path="/cmslite/" exact component={cmsProductsListPage}/>
+          <Route path="/cmslite/products/" exact component={cmsProductsListPage}/>
+          <Route path="/cmslite/products/:id" component={cmsEditProductFormPage}/>
+          <Route path="/cmslite/add-product" exact component={cmsNewProductFormPage}/>
+          {/*<Route path="/cmslite/orders" exact component={CmsLitePage}/>*/}
+          {/*<Route path="/cmslite/orders/:id" component={CmsLitePage}/>*/}
 
           <Route path="*" component={Page404}/>
       </Switch>

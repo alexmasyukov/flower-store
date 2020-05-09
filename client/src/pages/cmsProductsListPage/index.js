@@ -5,17 +5,17 @@ import CmsLayout from "layouts/Cms"
 // import pMinDelay from 'p-min-delay' pMinDelay(,2000)
 
 const fallback = () => (
-  <div>Загрузка...</div>
+  <div>Загрузка модуля...</div>
 )
-const CMS_ProductForm = loadable(() => import('components/CmsLite/ProductForm'), {
+const ProductsList = loadable(() => import('components/CmsLite/ProductsList'), {
     fallback: fallback()
 })
 
 
-const CMS_ProductFormPage = () => (
+const cmsProductsListPage = () => (
   <CmsLayout>
-      <CMS_ProductForm/>
+      <ProductsList/>
   </CmsLayout>
 )
 
-export default CMS_ProductFormPage
+export default cmsProductsListPage

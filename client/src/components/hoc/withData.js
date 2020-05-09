@@ -4,7 +4,11 @@ import { getDisplayName } from "utils"
 import ErrorIndicator from "components/UI/ErrorIndicator"
 
 
-const withData = WrappedComponent => {
+const withData = ({
+                      getDataMethod = 'getData',
+                      dataPropName = 'data',
+                      loadingText = 'Loading...'
+                  }) => WrappedComponent => {
     class withData extends Component {
         state = {
             data: null,
@@ -17,7 +21,7 @@ const withData = WrappedComponent => {
         }
 
         componentDidUpdate(prevProps, prevState, snapshot) {
-            if (this.props.getData !== prevProps.getData) this.update()
+            if (this.props[getDataMethod] !== prevProps[getDataMethod]) this.update()
         }
 
         handleDataUpdate = () => {
@@ -29,8 +33,8 @@ const withData = WrappedComponent => {
                 loading: true,
                 error: false
             })
-
-            this.props.getData()
+            // console.log(this.props)
+            this.props[getDataMethod]()
               .then(data => {
                   this.setState({
                       loading: false,
@@ -48,11 +52,14 @@ const withData = WrappedComponent => {
         render() {
             const { data, loading, error } = this.state
             const { handleDataUpdate } = this
+            const dynamicProps = {
+                [dataPropName]: data
+            }
 
-            if (loading) return <Spinner/>
+            if (loading) return <Spinner text={loadingText}/>
             if (error) return <ErrorIndicator/>
 
-            return <WrappedComponent {...this.props} updateData={handleDataUpdate} data={data}/>
+            return <WrappedComponent {...this.props} handleUpdateData={handleDataUpdate} {...dynamicProps}/>
         }
     }
 
