@@ -20,8 +20,8 @@ const mapMethodsToProps = (apiService, props) => {
     return {
         getProduct: apiService.getProduct(props.id),
         getAllEntities: apiService.getAllEntities,
-        getAllFlorists: apiService.getAllFlorists
-        // updatePublicProductSize: apiService.updatePublicProductSize
+        getAllFlorists: apiService.getAllFlorists,
+        getAllCities: apiService.getAllCities
     }
 }
 
@@ -43,7 +43,12 @@ const ProductFormContainer = compose(
       getDataMethod: 'getAllFlorists',
       dataPropName: 'florists',
       loadingText: 'florists'
-  })
+  }),
+  withData({
+      getDataMethod: 'getAllCities',
+      dataPropName: 'cities',
+      loadingText: 'cities'
+  }),
 )(ProductForm)
 
 

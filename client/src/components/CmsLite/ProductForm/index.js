@@ -1,51 +1,11 @@
 import React, { Component } from 'react'
-
-
 import { ErrorMessage, Field, FieldArray, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import axios from 'axios'
-import { compose } from "utils"
-import withApiService from "components/hoc/withApiService"
-import withData from "components/hoc/withData"
-import withRouterParams from "components/hoc/withRouterParams"
 import { Row } from "components/Bootstrap"
 import styles from 'components/CmsLite/cmslite.module.sass'
+import productSizeModel from "models/productSize"
 
-
-const ValidIndicator = ({ formik, field }) => (
-  <>
-      {formik.touched[field] && formik.errors[field] ? (
-        <div>{formik.errors[field]}</div>
-      ) : null}
-  </>
-)
-
-const Input = ({ formik, field, label = false }) => (
-  <>
-      {label && <label htmlFor={field}>{label}</label>}
-      <input name={field} {...formik.getFieldProps(field)} />
-      <ValidIndicator formik={formik} field={field}/>
-  </>
-)
-
-const FieldInput = ({ name, placeholder, as = "input" }) => {
-    return (
-      <Field name={name} placeholder={placeholder}>
-          {({ field, form, meta }) => (
-            <>
-                <label htmlFor={field.name}>{placeholder}</label>
-                {as === "textarea" ? (
-                  <textarea rows={3} {...field} placeholder=""/>
-                ) : (
-                  <input type="input" {...field} placeholder=""/>
-                )}
-                {meta.touched &&
-                meta.error && <div className="error">{meta.error}</div>}
-            </>
-          )}
-      </Field>
-    )
-}
 
 const Checkbox = ({ field, type, title }) => (
   <label>
@@ -77,18 +37,6 @@ const productSchema = Yup.object({
     )
 })
 
-const emptyProductSize = {
-    city_id: 1,
-    product_id: 0,
-    public: true,
-    order: 0,
-    title: "",
-    price: "",
-    diameter: "",
-    flowers: [],
-    flowers_counts: [],
-    images: []
-}
 
 const SizeButtons = ({ index, length, arrayHelpers }) => (
   <>
@@ -139,9 +87,8 @@ class ProductForm extends Component {
         return this.props.entities.filter(item => item.eType === eType)
     }
 
-
     render() {
-        const { product, florists  } = this.props
+        const { product, florists, cities  } = this.props
         const { imgIsLoading } = this.state
         const { sizes } = product
 
@@ -158,6 +105,7 @@ class ProductForm extends Component {
           <Formik
             initialValues={{
                 id: product.id,
+                city_id: product.city_id,
                 title: product.title,
                 public: product.public,
                 florist_id: product.florist_id,
@@ -194,13 +142,22 @@ class ProductForm extends Component {
                       </div>
                   </Row>
 
-                  <Row className="align-items-center">
+                  <Row className="align-items-end">
                       <div className="col-md-4">
                           <span className={styles.btitle}>Название</span>
                           <Field name="title" placeholder="Название" style={{ width: '100%' }}/>
                           <ErrorMessage name="title" component={ErrorTitle}/>
                       </div>
-
+                      <div className="col-md-2">
+                          <span className={styles.btitle}>Город</span>
+                          <Field name="city_id" as="select">
+                              <option value={0}>&nbsp;</option>
+                              {cities.map(({ id, rus }) => (
+                                <option key={id} value={id}>{rus} (id: {id})</option>
+                              ))}
+                          </Field>
+                          <ErrorMessage name="city_id"/>
+                      </div>
                       <div className="col-md-2">
                           <Field name={`public`} title="Опубликовано" type="checkbox"
                                  component={Checkbox}/>
@@ -293,12 +250,13 @@ class ProductForm extends Component {
                   {/*<Cmslite_SizeForm key={size.id} product={size} entities={entities}/>*/}
                   {/*))}*/}
 
-                  {values.sizes && values.sizes.length > 0 && (
+
                     <FieldArray
                       name="sizes"
                       render={arrayHelpers => (
                         <div>
-                            {values.sizes.map((size, index) => (
+                            {values.sizes && values.sizes.length > 0 &&
+                                values.sizes.map((size, index) => (
                               <div key={index}>
 
                                   <Row className="mb-4 align-items-end">
@@ -468,13 +426,13 @@ class ProductForm extends Component {
                             ))}
 
 
-                            <button type="button" onClick={() => arrayHelpers.push(emptyProductSize)}>
+                            <button type="button" onClick={() => arrayHelpers.push(productSizeModel)}>
                                 Добавить размер
                             </button>
                         </div>
                       )}
                     />
-                  )}
+
 
                   {/*{this.state.entities.map(item => (*/}
                   {/*<div>{item.value}</div>*/}

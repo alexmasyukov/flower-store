@@ -58,6 +58,10 @@ export default class ApiService {
         return await this.getResource(`/team?isFlorist=true`)
     }
 
+    getAllCities = async() => {
+        return await this.getResource(`/cities`)
+    }
+
     _transformProduct = product => ({
         ...product
     })

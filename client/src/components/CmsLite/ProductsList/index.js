@@ -121,27 +121,12 @@ class ProductsList extends Component {
 
         return (
           <div className="row">
-              <Link to="/cmslite/products/add">Добавить букет</Link>
+              <Link to="/cmslite/add-product">Добавить букет</Link>
               <br/><br/>
-              {products}f
+              {products}
           </div>
         )
     }
 }
 
-
-const mapMethodsToProps = (apiService) => ({
-    getData: apiService.getAllProducts(true),
-    updatePublicProduct: apiService.updatePublicProduct,
-    updatePublicProductSize: apiService.updatePublicProductSize
-})
-
-
-export default compose(
-  withApiService(mapMethodsToProps),
-  withData({
-      getDataMethod: 'getData',
-      dataPropName: 'data',
-      loadingText: 'products'
-  })
-)(ProductsList)
+export default ProductsList
