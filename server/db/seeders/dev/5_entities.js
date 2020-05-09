@@ -19,7 +19,10 @@ exports.seed = function (knex) {
       PACKING_TITLE: 'Упаковка',
 
       COLLECTION: 'collection',
-      COLLECTION_TITLE: 'Коллекция'
+      COLLECTION_TITLE: 'Коллекция',
+
+      BOUQUET_TYPE: 'bouquet_type',
+      BOUQUET_TYPE_TITLE: 'Тип букета'
    }
 
    // Deletes ALL existing entries
@@ -61,6 +64,9 @@ exports.seed = function (knex) {
             { id: 25, eType: TYPE.COLLECTION, eTypeTitle: TYPE.COLLECTION_TITLE, value: '23 февраля' },
             { id: 26, eType: TYPE.COLLECTION, eTypeTitle: TYPE.COLLECTION_TITLE, value: 'Новый год' },
             { id: 27, eType: TYPE.COLLECTION, eTypeTitle: TYPE.COLLECTION_TITLE, value: '9 мая' },
+
+            { id: 28, eType: TYPE.BOUQUET_TYPE, eTypeTitle: TYPE.BOUQUET_TYPE_TITLE, value: 'Монобукет' },
+            { id: 29, eType: TYPE.BOUQUET_TYPE, eTypeTitle: TYPE.BOUQUET_TYPE_TITLE, value: 'Сборный' },
          ])
       })
 }
