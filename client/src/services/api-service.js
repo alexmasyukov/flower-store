@@ -1,13 +1,19 @@
+import axios from 'axios'
+
 export default class ApiService {
     // https://create-react-app.dev/docs/adding-custom-environment-variables/
     _apiBase = process.env.NODE_ENV === 'production' ?
       '/api/v1' :
       'http://localhost/api/v1'
 
-    _imageBase = '/static/'
+    _uploadImagesBase = 'http://localhost/api/upload/'
+
+    _imageBase = '/api/static/'
+
+    getImage = (name) =>
+      `${this._imageBase}${name}`
 
     getResource = async (url) => {
-        console.log(`${this._apiBase}${url}`)
         const res = await fetch(`${this._apiBase}${url}`, {
             'Accept-Encoding': 'compress, gzip'
         })
@@ -29,6 +35,30 @@ export default class ApiService {
         return await res.json()
     }
 
+    // todo: fix it on async await like as above
+    uploadImages = (files) => {
+        const data = new FormData()
+        data.append('attachments', files)
+        return axios.post(this._uploadImagesBase, data, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        })
+          .then(res => res.data.result)
+          .catch(errors => {
+              alert('Ошибка при загрузке изображения. Попробуйте другое изображение.')
+              console.log(errors)
+              console.log(errors.response.data)
+          })
+    }
+
+    // todo fix it on async await like as above
+    saveProduct = (product) => {
+        alert('saveProduct' + product)
+    }
+
+    // todo fix it on async await like as above
+    updateProduct = (product) => {
+        alert('updateProduct' + product)
+    }
 
     getAllProducts = (convertEntities = false) => async () => {
         const res = await this.getResource(`/products?withUnpublic=true&withUnpublicSizes=true&convertEntities=${convertEntities}`)
@@ -58,7 +88,7 @@ export default class ApiService {
         return await this.getResource(`/team?isFlorist=true`)
     }
 
-    getAllCities = async() => {
+    getAllCities = async () => {
         return await this.getResource(`/cities`)
     }
 

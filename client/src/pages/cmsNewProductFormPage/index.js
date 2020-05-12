@@ -1,10 +1,11 @@
-import React from "react"
+import React from 'react'
 import loadable from "@loadable/component"
 import { compose } from "utils"
 import CmsLayout from "layouts/Cms"
 import withApiService from "components/hoc/withApiService"
 import withData from "components/hoc/withData"
 import productModel from "models/product"
+import productSizeModel from "models/productSize"
 
 
 const fallback = () => (
@@ -19,7 +20,10 @@ const mapMethodsToProps = (apiService) => {
     return {
         getAllEntities: apiService.getAllEntities,
         getAllFlorists: apiService.getAllFlorists,
-        getAllCities: apiService.getAllCities
+        getAllCities: apiService.getAllCities,
+        saveProduct: apiService.saveProduct,
+        uploadImages: apiService.uploadImages,
+        getImage: apiService.getImage
     }
 }
 
@@ -43,10 +47,20 @@ const ProductFormContainer = compose(
   })
 )(ProductForm)
 
+const emptyProductWithEmptySize = {
+    ...productModel,
+    sizes: [
+        {
+            ...productSizeModel,
+            flowers: [0, 0],
+            flowers_counts: [0, 0],
+        }
+    ]
+}
 
 const cmsNewProductFormPage = () => (
   <CmsLayout>
-      <ProductFormContainer product={productModel}/>
+      <ProductFormContainer product={emptyProductWithEmptySize}/>
   </CmsLayout>
 )
 
