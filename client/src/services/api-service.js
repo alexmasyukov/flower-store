@@ -25,14 +25,28 @@ export default class ApiService {
     }
 
     postResource = async (url) => {
-        const res = await fetch(`${this._apiBase}${url}`, {
-            method: 'PUT'
+        return await axios.post(`${this._apiBase}${url}`, {}, {
+            responseType: 'json'
         })
-        if (!res.ok) {
-            throw new Error(`Could not fetch ${url}` +
-              `, received ${res.status}`)
-        }
-        return await res.json()
+          .then(res => res.data)
+          .catch(function(error) {
+              alert('Ошибка в запросе / ' + error)
+              throw new Error(`Could not fetch ${url}` +
+                `, received ${error}`)
+          })
+    }
+
+    putResource = async (url) => {
+        return await axios.put(`${this._apiBase}${url}`)
+          .then(res => {
+              console.log(res)
+              return res.data
+          })
+          .catch(function(error) {
+              alert('Ошибка в запросе / ' + error)
+              throw new Error(`Could not fetch ${url}` +
+                `, received ${error}`)
+          })
     }
 
     // todo: fix it on async await like as above
@@ -65,14 +79,16 @@ export default class ApiService {
         return res //.map(this._transformProduct)
     }
 
-    updatePublicProduct = async (id, boolValue = true) => {
-        const res = await this.postResource(`/products/${id}/public?public=${boolValue}`)
-        return res
+    updateProductPublic = async (id, boolValue = true) => {
+        return await this.putResource(`/products/${id}/public?public=${boolValue}`)
     }
 
-    updatePublicProductSize = async (id, boolValue = true) => {
-        const res = await this.postResource(`/product-sizes/${id}/public?public=${boolValue}`)
-        return res
+    updateProductSizePublic = async (id, boolValue = true) => {
+        return await this.putResource(`/product-sizes/${id}/public?value=${boolValue}`)
+    }
+
+    updateProductSizeFast = async (id, boolValue = true) => {
+        return await this.putResource(`/product-sizes/${id}/fast?value=${boolValue}`)
     }
 
     getProduct = (id) => async () => {
