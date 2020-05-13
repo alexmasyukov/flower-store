@@ -6,7 +6,7 @@ exports.up = function (knex) {
          table.foreign('city_id').references('cities.id')
          table.boolean('public')
          table.integer('order')
-         table.string('title', 300).notNullable()
+         table.string('title', 300)
          table.specificType('images', 'text[]')
       })
 }

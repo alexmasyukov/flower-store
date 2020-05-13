@@ -1,5 +1,5 @@
 const addParamOfQuery = (modificator, addToQuery) => (query) => {
-    if (!modificator) return false
+    if (!modificator) return query
 
     return {
         ...query,

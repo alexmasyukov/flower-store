@@ -4,7 +4,7 @@ import CmsLayout from "layouts/Cms"
 import { compose } from "utils"
 import withRouterParams from "components/hoc/withRouterParams"
 import withApiService from "components/hoc/withApiService"
-import withData from "components/hoc/withData"
+import teamPersonModel from "models/teamPerson"
 
 const fallback = () => (
   <div>Загрузка модуля...</div>
@@ -16,7 +16,6 @@ const TeamPersonForm = loadable(() => import('components/CmsLite/TeamPersonForm'
 
 const mapMethodsToProps = (apiService, props) => {
     return {
-        getTeamPerson: apiService.getTeamPerson(props.id),
         saveTeamPerson: apiService.saveTeamPerson,
         uploadImages: apiService.uploadImages,
         getImage: apiService.getImage
@@ -26,18 +25,13 @@ const mapMethodsToProps = (apiService, props) => {
 
 const TeamPersonFormContainer = compose(
   withRouterParams,
-  withApiService(mapMethodsToProps),
-  withData({
-      getDataMethod: 'getTeamPerson',
-      dataPropName: 'person',
-      loadingText: 'person'
-  })
+  withApiService(mapMethodsToProps)
 )(TeamPersonForm)
 
-const cmsTeamPersonFormPage = () => (
+const cmsTeamNewPersonFormPage = () => (
   <CmsLayout>
-      <TeamPersonFormContainer/>
+      <TeamPersonFormContainer person={teamPersonModel}/>
   </CmsLayout>
 )
 
-export default cmsTeamPersonFormPage
+export default cmsTeamNewPersonFormPage

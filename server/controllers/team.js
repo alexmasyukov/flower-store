@@ -32,20 +32,24 @@ module.exports = {
 
    async getOne(req, res, next) {
       try {
-         // todo: fix it
-         const { id = false } = req.params
+         const { withUnpublic } = req.query
+         const { id } = req.params
 
          if (!Number.isInteger(Number(id))) {
             return next(utils.error(500, 'ERROR', 'id should be Integer'))
          }
 
+         const where = R.compose(
+           modificators.removeParamOfQuery(withUnpublic, 'public'),
+         )({
+            id,
+            public: true
+         })
+
          const team = await knex
             .select()
             .from('team')
-            .where({
-               id,
-               public: true
-            })
+            .where(where)
             .first()
 
          if (!team)

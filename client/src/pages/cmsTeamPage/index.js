@@ -8,7 +8,7 @@ import withData from "components/hoc/withData"
 const fallback = () => (
   <div>Загрузка модуля...</div>
 )
-const PersonList = loadable(() => import('components/CmsLite/Team'), {
+const Team = loadable(() => import('components/CmsLite/Team'), {
     fallback: fallback()
 })
 
@@ -19,18 +19,18 @@ const mapMethodsToProps = (apiService) => ({
 })
 
 
-const PersonListContainer = compose(
+const TeamContainer = compose(
   withApiService(mapMethodsToProps),
   withData({
       getDataMethod: 'getTeam',
       dataPropName: 'team',
       loadingText: 'team'
   })
-)(PersonList)
+)(Team)
 
 const cmsTeamPage = () => (
   <CmsLayout>
-      <PersonListContainer/>
+      <TeamContainer/>
   </CmsLayout>
 )
 

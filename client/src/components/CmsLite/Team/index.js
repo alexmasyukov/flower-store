@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import { Row } from "components/Bootstrap"
 import styles from 'components/CmsLite/cmslite.module.sass'
 
-class PersonList extends Component {
+class Team extends Component {
     state = {
         team: []
     }
@@ -42,7 +42,7 @@ class PersonList extends Component {
 
         return (
           <div className="row">
-              <Link to="/cmslite/add-team-person">Добавить сотрудника</Link>
+              <Link to="/cmslite/team-add">Добавить сотрудника</Link>
               <br/><br/>
               {teamRender}
           </div>
@@ -50,4 +50,4 @@ class PersonList extends Component {
     }
 }
 
-export default PersonList
+export default Team

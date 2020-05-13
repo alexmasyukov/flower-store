@@ -108,8 +108,8 @@ export default class ApiService {
         return await this.getResource(`/team?withUnpublic=true`)
     }
 
-    getTeamPerson = async (id) => {
-        return await this.getResource(`/team/${id}`)
+    getTeamPerson = (id) => async () => {
+        return await this.getResource(`/team/${id}?withUnpublic=true`)
     }
 
     getAllCities = async () => {
