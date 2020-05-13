@@ -101,13 +101,14 @@ class ProductsList extends Component {
 
     render() {
         const { products } = this.state
+        const { getImage } = this.props
 
         const productsRender = products.map(product => (
           <div key={product.id} className="col-md-12 mb-4">
               <div className="row">
                   <div className="col-md-2">
                       <img style={{ width: '100%' }}
-                           src={product.sizes[0].images[0]}
+                           src={getImage(product.sizes[0].images[0])}
                            alt=""/>
                   </div>
                   <div className="col-md-10 pl-1">

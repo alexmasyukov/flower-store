@@ -9,7 +9,7 @@ import withData from "components/hoc/withData"
 // import pMinDelay from 'p-min-delay' pMinDelay(,2000)
 
 const fallback = () => (
-  <div>Загрузка...</div>
+  <div>Загрузка модуля...</div>
 )
 const ProductForm = loadable(() => import('components/CmsLite/ProductForm'), {
     fallback: fallback()

@@ -15,6 +15,7 @@ const ProductsList = loadable(() => import('components/CmsLite/ProductsList'), {
 
 const mapMethodsToProps = (apiService) => ({
     getAllProducts: apiService.getAllProducts(true),
+    getImage: apiService.getImage,
     updateProductPublic: apiService.updateProductPublic,
     updateProductSizePublic: apiService.updateProductSizePublic,
     updateProductSizeFast: apiService.updateProductSizeFast
@@ -27,7 +28,7 @@ const ProductListContainer = compose(
       getDataMethod: 'getAllProducts',
       dataPropName: 'products',
       loadingText: 'products'
-  }),
+  })
 )(ProductsList)
 
 const cmsProductsListPage = () => (

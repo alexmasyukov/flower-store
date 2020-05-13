@@ -187,7 +187,7 @@ module.exports = {
             // .toString()
 
             if (!products.length)
-                return next(utils.error(404, 'NOT FOUND', 'products not found'))
+                res.json([])
 
             const entities = utils.normalize(await knex.select().from('entities'), 'id')
 
