@@ -4,15 +4,9 @@ import * as Yup from 'yup'
 import { Row } from "components/Bootstrap"
 import styles from 'components/CmsLite/cmslite.module.sass'
 import productSizeModel from "models/productSize"
+import ErrorTitle from "components/CmsLite/common/ErrorTitle"
+import Checkbox from "components/CmsLite/common/Checkbox"
 
-
-const Checkbox = ({ field, type, title }) => (
-  <label>
-      {/* remove {...field} to see changes not propagated */}
-      <input {...field} type={type}/>
-      {title}
-  </label>
-)
 
 const yup_number_more0_required = Yup.number()
   .moreThan(0, 'Выберете')
@@ -83,14 +77,6 @@ const SizeButtons = ({ index, length, arrayHelpers }) => (
   </>
 )
 
-const ErrorTitle = ({ children }) => {
-    console.log(children)
-    return (
-      <div className={styles.err}>
-          {children}
-      </div>
-    )
-}
 
 class ProductForm extends Component {
     state = {

@@ -1,28 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
 import { Row } from "components/Bootstrap"
-
-
-const Switcher = ({
-                      title = '[title]',
-                      id = '[id]',
-                      isOn = false,
-                      isLoading = false,
-                      onSwitch
-                  }) => (
-  <label style={{
-      opacity: isLoading ? 0.3 : 1,
-      display: 'block',
-      marginBottom: 10
-  }}>
-      <input
-        className="mr-1"
-        type="checkbox"
-        checked={isOn}
-        onChange={onSwitch}/>
-      {isLoading ? 'Загрузка...' : title}
-  </label>
-)
+import Switcher from "components/CmsLite/common/Switcher"
+import styles from "components/CmsLite/cmslite.module.sass"
 
 
 class ProductsList extends Component {
@@ -114,7 +94,11 @@ class ProductsList extends Component {
                   <div className="col-md-10 pl-1">
                       <Link to={`/cmslite/products/${product.id}`}>
                           {product.title}</Link>
-                      <p><b>ID: {product.id}</b></p>
+
+                      <span className={styles.listLabel}>
+                          <b>ID:</b> {product.id}
+                      </span>
+                      <br/>
 
                       <Switcher
                         title="Опубликовано"

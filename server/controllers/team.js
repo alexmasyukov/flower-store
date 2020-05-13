@@ -10,7 +10,7 @@ module.exports = {
 
          const where = R.compose(
             modificators.removeParamOfQuery(withUnpublic, 'public'),
-            modificators.addModificator(isFlorist, { isFlorist: isFlorist === 'true' || isFlorist === '' })
+            modificators.addParamOfQuery(isFlorist, { isFlorist: isFlorist === 'true' || isFlorist === '' })
          )({
             public: true
          })

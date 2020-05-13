@@ -12,6 +12,8 @@ import CartPageOld from "pages/Cart/old"
 import cmsProductsListPage from "pages/cmsProductsListPage"
 import cmsEditProductFormPage from "pages/cmsEditProductFormPage"
 import cmsNewProductFormPage from "pages/cmsNewProductFormPage"
+import cmsTeamPage from "pages/cmsTeamPage"
+import cmsTeamPersonFormPage from "pages/cmsTeamPersonFormPage"
 
 
 // const Product = loadable(() => import('pages/Product'), () => <div>Loading...</div>)
@@ -31,6 +33,8 @@ const App = ({ history }) => (
           <Route path="/cmslite/products/" exact component={cmsProductsListPage}/>
           <Route path="/cmslite/products/:id" component={cmsEditProductFormPage}/>
           <Route path="/cmslite/add-product" exact component={cmsNewProductFormPage}/>
+          <Route path="/cmslite/team" exact component={cmsTeamPage}/>
+          <Route path="/cmslite/team/:id" component={cmsTeamPersonFormPage}/>
           {/*<Route path="/cmslite/orders" exact component={CmsLitePage}/>*/}
           {/*<Route path="/cmslite/orders/:id" component={CmsLitePage}/>*/}
 
