@@ -5,7 +5,7 @@ import { Row } from "components/Bootstrap"
 import styles from 'components/CmsLite/cmslite.module.sass'
 import ErrorTitle from "components/CmsLite/common/ErrorTitle"
 import Checkbox from "components/CmsLite/common/Checkbox"
-import PhotoAndUploader from "components/CmsLite/common/PhotoAndUploader"
+import PhotosAndUploader from "components/CmsLite/common/PhotosAndUploader"
 
 const yup_string_2_255_required = Yup.string()
   .min(2, 'От 2-х символов')
@@ -84,7 +84,7 @@ class TeamPersonForm extends Component {
 
                             <Field
                               name="photo"
-                              component={PhotoAndUploader}
+                              component={PhotosAndUploader}
                               getImage={getImage}
                               uploadImages={uploadImages}
                             />

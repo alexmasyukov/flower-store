@@ -5,7 +5,7 @@ import { Row } from "components/Bootstrap"
 import styles from 'components/CmsLite/cmslite.module.sass'
 import ErrorTitle from "components/CmsLite/common/ErrorTitle"
 import Checkbox from "components/CmsLite/common/Checkbox"
-import PhotoAndUploader from "components/CmsLite/common/PhotoAndUploader"
+import PhotosAndUploader from "components/CmsLite/common/PhotosAndUploader"
 
 const yup_string_2_255_required = Yup.string()
   .min(2, 'От 2-х символов')
@@ -59,16 +59,16 @@ class BannerForm extends Component {
                         </div>
                     </Row>
 
-                    <Row className="mb-4">
+                    <Row className="mb-4 mt-4">
                         <div className="col-md-12">
-                            <span className={styles.btitle}>Фото</span>
+                            <span className={styles.btitle}>Изображение</span>
 
-                            {/*<Field*/}
-                              {/*name="images"*/}
-                              {/*component={PhotoAndUploader}*/}
-                              {/*getImage={getImage}*/}
-                              {/*uploadImages={uploadImages}*/}
-                            {/*/>*/}
+                            <Field
+                              name="images"
+                              component={PhotosAndUploader}
+                              getImage={getImage}
+                              uploadImages={uploadImages}
+                            />
 
                             <ErrorMessage name="images" component={ErrorTitle}/>
                         </div>
