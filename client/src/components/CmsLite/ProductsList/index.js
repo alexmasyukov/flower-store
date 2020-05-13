@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import { Row } from "components/Bootstrap"
 import Switcher from "components/CmsLite/common/Switcher"
 import styles from "components/CmsLite/cmslite.module.sass"
+import cn from "classnames"
 
 
 class ProductsList extends Component {
@@ -85,7 +86,7 @@ class ProductsList extends Component {
 
         const productsRender = products.map(product => (
           <div key={product.id} className="col-md-12 mb-4">
-              <div className="row">
+              <div className={cn('row', !product.public && styles.unpublic)}>
                   <div className="col-md-2">
                       <img style={{ width: '100%' }}
                            src={getImage(product.sizes[0].images[0])}

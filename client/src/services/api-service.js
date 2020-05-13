@@ -112,6 +112,14 @@ export default class ApiService {
         return await this.getResource(`/team/${id}?withUnpublic=true`)
     }
 
+    getAllBanners = async () => {
+        return await this.getResource(`/banners?withUnpublic=true`)
+    }
+
+    getBanner = (id) => async () => {
+        return await this.getResource(`/banners/${id}?withUnpublic=true`)
+    }
+
     getAllCities = async () => {
         return await this.getResource(`/cities`)
     }

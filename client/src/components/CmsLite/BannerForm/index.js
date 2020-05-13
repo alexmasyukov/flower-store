@@ -13,28 +13,27 @@ const yup_string_2_255_required = Yup.string()
   .required('Заполните')
 
 
-const teamPersonSchema = Yup.object({
-    name: yup_string_2_255_required,
-    rule: yup_string_2_255_required,
-    photo: Yup.string()
+const bannerSchema = Yup.object({
+    title: yup_string_2_255_required,
+    images: Yup.array().of(Yup.string())
       .required('Добавьте фото')
 })
 
 
-class TeamPersonForm extends Component {
+class BannerForm extends Component {
     render() {
-        const { person, uploadImages, getImage } = this.props
+        const { banner, uploadImages, getImage } = this.props
 
         return (
           <Formik
             initialValues={{
-                ...person
+                ...banner
             }}
-            validationSchema={teamPersonSchema}
+            validationSchema={bannerSchema}
             onSubmit={(values, { setSubmitting }) => {
                 setSubmitting(false)
                 alert(JSON.stringify(values, null, 2))
-                // saveTeamPerson(JSON.stringify(values, null, 2))
+                // saveTeambanner(JSON.stringify(values, null, 2))
             }}
           >
               {({ values }) => (
@@ -50,30 +49,13 @@ class TeamPersonForm extends Component {
 
                     <Row className="align-items-center">
                         <div className="col-md-4">
-                            <span className={styles.btitle}>Имя</span>
-                            <Field name="name" style={{ width: '100%' }}/>
-                            <ErrorMessage name="name" component={ErrorTitle}/>
+                            <span className={styles.btitle}>Название (не отражается на сайте):</span>
+                            <Field name="title" style={{ width: '100%' }}/>
+                            <ErrorMessage name="title" component={ErrorTitle}/>
                         </div>
                         <div className="col-md-2">
                             <Field name={`public`} title="Опубликовано" type="checkbox"
                                    component={Checkbox}/>
-                        </div>
-                        <div className="col-md-2">
-                            <Field name={`is_florist`} title="Флорист" type="checkbox"
-                                   component={Checkbox}/>
-                        </div>
-                    </Row>
-
-                    <Row className="mt-4 mb-4">
-                        <div className="col-md-4">
-                            <span className={styles.btitle}>Должность:</span>
-                            <Field name="rule" style={{ width: '100%' }}/>
-                            <ErrorMessage name="rule" component={ErrorTitle}/>
-                        </div>
-                        <div className="col-md-4">
-                            <span className={styles.btitle}>Instagram:</span>
-                            <Field name="instagram" style={{ width: '100%' }}/>
-                            <ErrorMessage name="instagram" component={ErrorTitle}/>
                         </div>
                     </Row>
 
@@ -81,15 +63,14 @@ class TeamPersonForm extends Component {
                         <div className="col-md-12">
                             <span className={styles.btitle}>Фото</span>
 
+                            {/*<Field*/}
+                              {/*name="images"*/}
+                              {/*component={PhotoAndUploader}*/}
+                              {/*getImage={getImage}*/}
+                              {/*uploadImages={uploadImages}*/}
+                            {/*/>*/}
 
-                            <Field
-                              name="photo"
-                              component={PhotoAndUploader}
-                              getImage={getImage}
-                              uploadImages={uploadImages}
-                            />
-
-                            <ErrorMessage name={`photo`} component={ErrorTitle}/>
+                            <ErrorMessage name="images" component={ErrorTitle}/>
                         </div>
                     </Row>
 
@@ -101,4 +82,4 @@ class TeamPersonForm extends Component {
     }
 }
 
-export default TeamPersonForm
+export default BannerForm
