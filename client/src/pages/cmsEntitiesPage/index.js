@@ -8,30 +8,29 @@ import withData from "components/hoc/withData"
 const fallback = () => (
   <div>Загрузка модуля...</div>
 )
-const BannersList = loadable(() => import('components/CmsLite/BannersList'), {
+const EntitiesList = loadable(() => import('components/CmsLite/EntitiesList'), {
     fallback: fallback()
 })
 
 
 const mapMethodsToProps = (apiService) => ({
-    getAllBanners: apiService.getAllBanners,
-    getImage: apiService.getImage
+    getAllEntities: apiService.getAllEntities
 })
 
 
-const BannersListContainer = compose(
+const EntitiesListContainer = compose(
   withApiService(mapMethodsToProps),
   withData({
-      getDataMethod: 'getAllBanners',
-      dataPropName: 'banners',
-      loadingText: 'banners'
+      getDataMethod: 'getAllEntities',
+      dataPropName: 'entities',
+      loadingText: 'entities'
   })
-)(BannersList)
+)(EntitiesList)
 
-const CmsBannersPage = () => (
+const CmsEntitiesPage = () => (
   <CmsLayout>
-      <BannersListContainer/>
+      <EntitiesListContainer/>
   </CmsLayout>
 )
 
-export default CmsBannersPage
+export default CmsEntitiesPage

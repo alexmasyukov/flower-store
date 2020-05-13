@@ -134,7 +134,7 @@ class ProductsList extends Component {
 
         return (
           <div className="row">
-              <Link to="/cmslite/add-product">Добавить букет</Link>
+              <Link to="/cmslite/product-add">Добавить букет</Link>
               <br/><br/>
               {productsRender}
           </div>

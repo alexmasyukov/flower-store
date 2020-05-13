@@ -9,15 +9,14 @@ import ProductPage from "pages/Product"
 import Page404 from "pages/404"
 import CartPage from "pages/Cart"
 import CartPageOld from "pages/Cart/old"
-import cmsProductsListPage from "pages/cmsProductsListPage"
-import cmsEditProductFormPage from "pages/cmsEditProductFormPage"
-import cmsNewProductFormPage from "pages/cmsNewProductFormPage"
-import cmsTeamPage from "pages/cmsTeamPage"
-import cmsTeamPersonFormPage from "pages/cmsTeamPersonFormPage"
-import cmsTeamNewPersonFormPage from "pages/cmsTeamNewPersonFormPage"
-import cmsBannersPage from "pages/cmsBannersPage"
-import cmsBannerFormPage from "pages/cmsBannerFormPage"
-import cmsBannerNewFormPage from "pages/cmsBannerNewFormPage"
+import CmsProductsListPage from "pages/CmsProductsListPage"
+import CmsProductFormPage from "pages/CmsProductFormPage"
+import CmsTeamPage from "pages/CmsTeamPage"
+import CmsTeamPersonFormPage from "pages/CmsTeamPersonFormPage"
+import CmsBannersPage from "pages/CmsBannersPage"
+import CmsBannerFormPage from "pages/CmsBannerFormPage"
+import CmsEntitiesPage from "pages/CmsEntitiesPage"
+import CmsEntitieFormPage from "pages/CmsEntitieFormPage"
 
 
 // const Product = loadable(() => import('pages/Product'), () => <div>Loading...</div>)
@@ -33,22 +32,34 @@ const App = ({ history }) => (
           <Route path="/cart/" exact component={CartPage}/>
           <Route path="/cart_old/" exact component={CartPageOld}/>
 
-          <Route path="/cmslite/" exact component={cmsProductsListPage}/>
-          <Route path="/cmslite/products/" exact component={cmsProductsListPage}/>
-          <Route path="/cmslite/products/:id" component={cmsEditProductFormPage}/>
-          <Route path="/cmslite/add-product" exact component={cmsNewProductFormPage}/>
+          <Route path="/Cmslite/" exact component={CmsProductsListPage}/>
+          <Route path="/Cmslite/products/" exact component={CmsProductsListPage}/>
+          <Route path="/Cmslite/products/:id" component={CmsProductFormPage}/>
+          <Route path="/Cmslite/product-add" exact>
+              <CmsProductFormPage isNew={true}/>
+          </Route>
 
-          <Route path="/cmslite/team" exact component={cmsTeamPage}/>
-          <Route path="/cmslite/team/:id" component={cmsTeamPersonFormPage}/>
-          <Route path="/cmslite/team-add" exact component={cmsTeamNewPersonFormPage}/>
+          <Route path="/Cmslite/team" exact component={CmsTeamPage}/>
+          <Route path="/Cmslite/team/:id" component={CmsTeamPersonFormPage}/>
+          <Route path="/Cmslite/team-add" exact>
+              <CmsTeamPersonFormPage isNew={true}/>
+          </Route>
 
-          <Route path="/cmslite/banners" exact component={cmsBannersPage}/>
-          <Route path="/cmslite/banners/:id" component={cmsBannerFormPage}/>
-          <Route path="/cmslite/banners-add" exact component={cmsBannerNewFormPage}/>
+          <Route path="/Cmslite/banners" exact component={CmsBannersPage}/>
+          <Route path="/Cmslite/banners/:id" component={CmsBannerFormPage}/>
+          <Route path="/Cmslite/banners-add" exact>
+              <CmsBannerFormPage isNew={true}/>
+          </Route>
+
+          <Route path="/Cmslite/entities" exact component={CmsEntitiesPage}/>
+          <Route path="/Cmslite/entities/:id" component={CmsEntitieFormPage}/>
+          <Route path="/Cmslite/entities-add" exact>
+              <CmsEntitieFormPage isNew={true}/>
+          </Route>
 
 
-          {/*<Route path="/cmslite/orders" exact component={CmsLitePage}/>*/}
-          {/*<Route path="/cmslite/orders/:id" component={CmsLitePage}/>*/}
+          {/*<Route path="/Cmslite/orders" exact component={CmsLitePage}/>*/}
+          {/*<Route path="/Cmslite/orders/:id" component={CmsLitePage}/>*/}
 
           <Route path="*" component={Page404}/>
       </Switch>

@@ -92,12 +92,16 @@ export default class ApiService {
     }
 
     getProduct = (id) => async () => {
-        const res = await this.getResource(`/products/${id}?withUnpublic=true&withUnpublicSizes=true&convertEntities=false`)
-        return res //.map(this._transformProduct)
+        return await this.getResource(`/products/${id}?withUnpublic=true&withUnpublicSizes=true&convertEntities=false`)
+        //.map(this._transformProduct)
     }
 
     getAllEntities = async () => {
         return await this.getResource(`/entities`)
+    }
+
+    getEntitie = (id) => async () => {
+        return await this.getResource(`/entities/${id}`)
     }
 
     getAllFlorists = async () => {

@@ -28,10 +28,10 @@ const TeamContainer = compose(
   })
 )(Team)
 
-const cmsTeamPage = () => (
+const CmsTeamPage = () => (
   <CmsLayout>
       <TeamContainer/>
   </CmsLayout>
 )
 
-export default cmsTeamPage
+export default CmsTeamPage

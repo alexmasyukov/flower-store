@@ -5,6 +5,7 @@ import { compose } from "utils"
 import withRouterParams from "components/hoc/withRouterParams"
 import withApiService from "components/hoc/withApiService"
 import withData from "components/hoc/withData"
+import bannerModel from "models/banner"
 
 const fallback = () => (
   <div>Загрузка модуля...</div>
@@ -23,7 +24,6 @@ const mapMethodsToProps = (apiService, props) => {
     }
 }
 
-
 const BannerFormContainer = compose(
   withRouterParams,
   withApiService(mapMethodsToProps),
@@ -34,10 +34,29 @@ const BannerFormContainer = compose(
   })
 )(BannerForm)
 
-const cmsBannerFormPage = () => (
+
+
+const mapMethodsToProps_NewItem = (apiService) => {
+    return {
+        saveBanner: apiService.saveBanner,
+        uploadImages: apiService.uploadImages,
+        getImage: apiService.getImage
+    }
+}
+
+const BannerFormContainer_NewItem = compose(
+  withApiService(mapMethodsToProps_NewItem)
+)(BannerForm)
+
+
+const CmsBannerFormPage = ({isNew}) => (
   <CmsLayout>
-      <BannerFormContainer/>
+      {isNew ? (
+        <BannerFormContainer_NewItem banner={bannerModel}/>
+      ): (
+        <BannerFormContainer/>
+      )}
   </CmsLayout>
 )
 
-export default cmsBannerFormPage
+export default CmsBannerFormPage

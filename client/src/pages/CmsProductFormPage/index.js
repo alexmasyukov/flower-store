@@ -5,6 +5,8 @@ import { compose } from "utils"
 import withRouterParams from "components/hoc/withRouterParams"
 import withApiService from "components/hoc/withApiService"
 import withData from "components/hoc/withData"
+import productModel from "models/product"
+import productSizeModel from "models/productSize"
 
 // import pMinDelay from 'p-min-delay' pMinDelay(,2000)
 
@@ -21,7 +23,6 @@ const mapMethodsToProps = (apiService, props) => {
         getProduct: apiService.getProduct(props.id),
         getAllEntities: apiService.getAllEntities,
         getAllFlorists: apiService.getAllFlorists,
-        getAllCities: apiService.getAllCities,
         saveProduct: apiService.updateProduct,
         uploadImages: apiService.uploadImages,
         getImage: apiService.getImage
@@ -46,22 +47,58 @@ const ProductFormContainer = compose(
       getDataMethod: 'getAllFlorists',
       dataPropName: 'florists',
       loadingText: 'florists'
-  }),
-  withData({
-      getDataMethod: 'getAllCities',
-      dataPropName: 'cities',
-      loadingText: 'cities'
   })
 )(ProductForm)
 
-const cmsEditProductFormPage = () => (
+
+
+const mapMethodsToProps_NewItem = (apiService) => {
+    return {
+        getAllEntities: apiService.getAllEntities,
+        getAllFlorists: apiService.getAllFlorists,
+        saveProduct: apiService.saveProduct,
+        uploadImages: apiService.uploadImages,
+        getImage: apiService.getImage
+    }
+}
+
+const ProductFormContainer_NewItem = compose(
+  withApiService(mapMethodsToProps_NewItem),
+  withData({
+      getDataMethod: 'getAllEntities',
+      dataPropName: 'entities',
+      loadingText: 'entities'
+  }),
+  withData({
+      getDataMethod: 'getAllFlorists',
+      dataPropName: 'florists',
+      loadingText: 'florists'
+  })
+)(ProductForm)
+
+const emptyProductWithEmptySize = {
+    ...productModel,
+    sizes: [
+        {
+            ...productSizeModel,
+            flowers: [0, 0],
+            flowers_counts: [0, 0],
+        }
+    ]
+}
+
+const CmsProductFormPage = ({isNew}) => (
   <CmsLayout>
-      <ProductFormContainer/>
+      {isNew ? (
+        <ProductFormContainer_NewItem product={emptyProductWithEmptySize}/>
+      ) : (
+        <ProductFormContainer/>
+      )}
   </CmsLayout>
 )
 
 
-export default cmsEditProductFormPage
+export default CmsProductFormPage
 
 
 /**

@@ -31,10 +31,10 @@ const ProductListContainer = compose(
   })
 )(ProductsList)
 
-const cmsProductsListPage = () => (
+const CmsProductsListPage = () => (
   <CmsLayout>
       <ProductListContainer/>
   </CmsLayout>
 )
 
-export default cmsProductsListPage
+export default CmsProductsListPage
