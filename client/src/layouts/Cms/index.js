@@ -11,6 +11,7 @@ class CmsLayout extends Component {
                   <Link to="/cmslite/entities">Справочник</Link>
                   <Link to="/cmslite/banners">Баннеры</Link>
                   <Link to="/cmslite/team">Команда</Link>
+                  <Link to="/cmslite/content">Контент</Link>
                   <Link to="/cmslite/orders">Заказы</Link>
               </div>
               <br/>

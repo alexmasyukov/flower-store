@@ -17,6 +17,9 @@ import CmsBannersPage from "pages/CmsBannersPage"
 import CmsBannerFormPage from "pages/CmsBannerFormPage"
 import CmsEntitiesPage from "pages/CmsEntitiesPage"
 import CmsEntitieFormPage from "pages/CmsEntitieFormPage"
+import CmsOrdersPage from "pages/CmsOrdersPage"
+import CmsContentPage from "pages/CmsContentsPage"
+import CmsContentFormPage from "pages/CmsContentFormPage"
 
 
 // const Product = loadable(() => import('pages/Product'), () => <div>Loading...</div>)
@@ -57,8 +60,13 @@ const App = ({ history }) => (
               <CmsEntitieFormPage isNew={true}/>
           </Route>
 
+          <Route path="/Cmslite/content" exact component={CmsContentPage}/>
+          <Route path="/Cmslite/content/:id" component={CmsContentFormPage}/>
+          <Route path="/Cmslite/content-add" exact>
+              <CmsContentFormPage isNew={true}/>
+          </Route>
 
-          {/*<Route path="/Cmslite/orders" exact component={CmsLitePage}/>*/}
+          <Route path="/Cmslite/orders" exact component={CmsOrdersPage}/>
           {/*<Route path="/Cmslite/orders/:id" component={CmsLitePage}/>*/}
 
           <Route path="*" component={Page404}/>
