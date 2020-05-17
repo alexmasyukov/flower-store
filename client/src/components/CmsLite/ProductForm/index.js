@@ -122,7 +122,7 @@ class ProductForm extends Component {
             validationSchema={productSchema}
             onSubmit={(values, { setSubmitting }) => {
                 setSubmitting(false)
-                saveProduct(JSON.stringify(values, null, 2))
+                saveProduct(values)
             }}
             render={({ values }) => (
               <Form>

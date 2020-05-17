@@ -42,7 +42,7 @@ const ContentFormContainer_NewItem = compose(
 const CmsContentFormPage = ({ isNew }) => (
   <CmsLayout>
       {isNew ? (
-        <ContentFormContainer_NewItem entitie={contentModel}/>
+        <ContentFormContainer_NewItem content={contentModel}/>
       ) : (
         <ContentFormContainer/>
       )}
