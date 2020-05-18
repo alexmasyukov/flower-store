@@ -21,6 +21,8 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile.prod
+    environment:
+      - NODE_ENV=development
     #    ports:
     #      - 5000:3500
     restart: always

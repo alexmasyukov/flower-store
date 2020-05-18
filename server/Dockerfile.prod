@@ -1,8 +1,10 @@
 # build environment
 FROM node:12-alpine as build
 WORKDIR /app
+COPY .env /app/.env
+COPY package.json /app/package.json
+COPY yarn.lock /app/yarn.lock
 ENV PATH /app/node_modules/.bin:$PATH
-COPY package.json yarn.lock ./
 RUN yarn
 COPY . ./
 RUN yarn install
