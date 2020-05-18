@@ -67,26 +67,37 @@ const convertIntitiesToValues = (entities) => (product) => {
 
 module.exports = {
     async createProduct(req, res, next) {
-        try {
-            const { sizes, ...base } = req.body
-            const newProductId = await knex('products')
+        const { sizes, ...base } = req.body
+
+        knex.transaction(function(trx) {
+            knex
               .insert(base)
+              .into('products')
+              .transacting(trx)
               .returning('id')
-
-            sizes.forEach(async size => {
-                size.product_id = newProductId.toString()
-                const sizeId = await knex('product_sizes')
-                  .insert(size)
-                  .returning('id')
-            })
-
-            res.json({
-                status: 'done',
-                result: newProductId[0]
-            })
-        } catch (e) {
-            next(utils.error(500, 'ERROR', e.message))
-        }
+              .then((ids) => {
+                  const prepareSizes = sizes.map(size => ({
+                      ...size,
+                      product_id: ids[0]
+                  }))
+                  return knex('product_sizes')
+                    .insert(prepareSizes)
+                    .transacting(trx)
+                    .returning('id')
+              })
+              .then(trx.commit)
+              .catch(trx.rollback)
+        })
+          .then(function(inserts) {
+              console.log(inserts.length + ' new books saved.')
+              res.json({
+                  status: 'done',
+                  result: inserts.length
+              })
+          })
+          .catch(function(e) {
+              next(utils.error(500, 'ERROR', e.message))
+          })
     },
 
     async updateProduct(req, res, next) {
@@ -121,7 +132,7 @@ module.exports = {
             // })
 
             if (!updateProductId.length) {
-                return  next(utils.error(500, 'ERROR', 'product id not found'))
+                return next(utils.error(500, 'ERROR', 'product id not found'))
             }
 
             res.json({
@@ -316,5 +327,5 @@ module.exports = {
         } catch (e) {
             next(utils.error(500, 'ERROR', e.message))
         }
-    },
+    }
 }

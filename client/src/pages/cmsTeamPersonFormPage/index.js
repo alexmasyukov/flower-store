@@ -19,9 +19,9 @@ const TeamPersonForm = loadable(() => import('components/CmsLite/TeamPersonForm'
 const mapMethodsToProps = (apiService, props) => {
     return {
         getTeamPerson: apiService.getTeamPerson(props.id),
-        saveTeamPerson: apiService.saveTeamPerson,
         uploadImages: apiService.uploadImages,
-        getImage: apiService.getImage
+        getImage: apiService.getImage,
+        save: apiService.updateTeamPerson
     }
 }
 
@@ -38,13 +38,14 @@ const TeamPersonFormContainer = compose(
 
 const mapMethodsToProps_NewItem = (apiService) => {
     return {
-        saveTeamPerson: apiService.saveTeamPerson,
         uploadImages: apiService.uploadImages,
-        getImage: apiService.getImage
+        getImage: apiService.getImage,
+        save: apiService.saveTeamPerson
     }
 }
 
 const TeamPersonFormContainer_NewItem = compose(
+  withRouterParams,
   withApiService(mapMethodsToProps_NewItem)
 )(TeamPersonForm)
 

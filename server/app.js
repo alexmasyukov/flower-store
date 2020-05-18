@@ -67,7 +67,7 @@ const bookRoute = require('./routes/book')
 // middleware stack
 app.use(cors())
 app.use(logger)
-app.use(compress({ threshold: 0 })) // { threshold: 0 } what is it?
+app.use(compress())  // { threshold: 0 } what is it?
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json({ limit: '100kb' }))
 app.use(serverDateTimeHeader)

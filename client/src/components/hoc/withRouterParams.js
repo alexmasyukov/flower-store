@@ -1,13 +1,14 @@
 import React  from 'react'
 import { getDisplayName } from "utils"
-import { useParams } from "react-router-dom"
+import { useParams, useHistory } from "react-router-dom"
 
 
 const withRouterParams = WrappedComponent => {
     const Hoc = (props) => {
         let { id } = useParams()
+        let history = useHistory()
 
-        return <WrappedComponent {...props} id={id}/>
+        return <WrappedComponent {...props} id={id} history={history}/>
     }
 
     Hoc.displayName = `withRouterParams(${getDisplayName(WrappedComponent)})`

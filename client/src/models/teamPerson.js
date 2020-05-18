@@ -1,5 +1,4 @@
 const teamPersonModel = {
-    id: '',
     city_id: 1,
     public: true,
     order: 0,

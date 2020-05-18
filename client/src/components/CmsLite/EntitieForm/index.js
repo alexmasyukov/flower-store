@@ -4,7 +4,7 @@ import * as Yup from 'yup'
 import { Row } from "components/Bootstrap"
 import ErrorTitle from "components/CmsLite/common/ErrorTitle"
 import styles from 'components/CmsLite/cmslite.module.sass'
-import { excludeSameEntities, getAllTypes, sortEntities } from "utils/entities"
+import { excludeSameEntities, sortEntities } from "utils/entities"
 
 const yup_string_2_255_required = Yup.string()
   .min(2, 'От 2-х символов')
@@ -20,6 +20,17 @@ const entitieSchema = Yup.object({
 
 
 class entitieForm extends Component {
+    handleSave(data) {
+        this.props.save(data)
+          .then(res => {
+              if (res && 'status' in res && res.status === 'done') {
+                  this.props.history.push('/cmslite/entities')
+              } else {
+                  alert('Ошибка при сохранении. Подробности в консоли')
+              }
+          })
+    }
+
     render() {
         const { entitie, entities } = this.props
         const sortedEntities = sortEntities(entities)
@@ -33,8 +44,7 @@ class entitieForm extends Component {
             validationSchema={entitieSchema}
             onSubmit={(values, { setSubmitting }) => {
                 setSubmitting(false)
-                alert(JSON.stringify(values, null, 2))
-                // saveTeamentitie(JSON.stringify(values, null, 2))
+                this.handleSave(values)
             }}
           >
               {({ values }) => (
@@ -60,17 +70,17 @@ class entitieForm extends Component {
                         <div className="col-md-4">
                             <span className={styles.btitle}>Категория</span>
                             {/*<Field name="eType" as="select">*/}
-                                {/*<option value={''}>&nbsp;</option>*/}
-                                {/*{types.map(({ eType, eTypeTitle }, i) => (*/}
-                                  {/*<option key={i} value={eType}>{eTypeTitle}</option>*/}
-                                {/*))}*/}
+                            {/*<option value={''}>&nbsp;</option>*/}
+                            {/*{types.map(({ eType, eTypeTitle }, i) => (*/}
+                            {/*<option key={i} value={eType}>{eTypeTitle}</option>*/}
+                            {/*))}*/}
                             {/*</Field>*/}
 
                             <Field name="eType">
                                 {({ field, form }) => (
                                   <>
                                       <select {...field} onChange={(event) => {
-                                          const index = event.nativeEvent.target.selectedIndex;
+                                          const index = event.nativeEvent.target.selectedIndex
                                           const eTypeTitle = event.nativeEvent.target[index].text
                                           form.setFieldValue(field.name, event.target.value)
                                           form.setFieldValue('eTypeTitle', eTypeTitle)

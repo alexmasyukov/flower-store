@@ -1,5 +1,17 @@
 import React from "react"
 
+
+const fixSizes = {}
+// const fixSizes = sizes.map(size => {
+//     size.flowers = [16, 18, 17]//product.flowers,
+//     size.flowers_counts = [2, 8, 5]//product.flowers,
+//     size.fast = Math.random() >= 0.5
+//     return size
+// })
+//
+// product.bouquetType = Math.random() >= 0.5 ? 28 : 29
+
+
 const t = () => {
    return (
       <>

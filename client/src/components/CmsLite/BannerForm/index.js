@@ -21,6 +21,17 @@ const bannerSchema = Yup.object({
 
 
 class BannerForm extends Component {
+    handleSave(data) {
+        this.props.save(data)
+          .then(res => {
+              if (res && 'status' in res && res.status === 'done') {
+                  this.props.history.push('/cmslite/banners')
+              } else {
+                  alert('Ошибка при сохранении. Подробности в консоли')
+              }
+          })
+    }
+
     render() {
         const { banner, uploadImages, getImage } = this.props
 
@@ -32,8 +43,7 @@ class BannerForm extends Component {
             validationSchema={bannerSchema}
             onSubmit={(values, { setSubmitting }) => {
                 setSubmitting(false)
-                alert(JSON.stringify(values, null, 2))
-                // saveTeambanner(JSON.stringify(values, null, 2))
+                this.handleSave(values)
             }}
           >
               {({ values }) => (

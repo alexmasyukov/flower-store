@@ -1,16 +1,14 @@
 const productSizeModel = {
-    id: 0,
     city_id: 1,
-    product_id: 0,
-    public: false,
-    fast: false,
     order: 0,
-    title: '',
-    price: '',
-    diameter: '',
-    flowers: [],
-    flowers_counts: [],
-    images: []
+    public: false,
+    fast: true,
+    title: 6,
+    price: 55,
+    diameter: 66,
+    flowers: [15],
+    flowers_counts: [16],
+    images: ['thumb_15780ef2-fc21-4d0a-a1d4-33b60043dca5.png']
 }
 
 export default productSizeModel

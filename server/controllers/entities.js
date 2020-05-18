@@ -44,7 +44,6 @@ module.exports = {
    async createOne(req, res, next) {
       try {
          const { id: _, ...base } = req.body
-         console.log(base)
          const id = await knex('entities')
             .returning('id')
             .insert(base)
@@ -55,6 +54,23 @@ module.exports = {
          res.json({
             status: 'done',
             result: id[0]
+         })
+      } catch (e) {
+         next(utils.error(500, 'ERROR', e.message))
+      }
+   },
+
+   async updateOne(req, res, next) {
+      try {
+         const { id, ...base } = req.body
+         const updateId = await knex('entities')
+           .update(base)
+           .where('id', '=', id)
+           .returning('id')
+
+         res.json({
+            status: 'done',
+            result: updateId[0]
          })
       } catch (e) {
          next(utils.error(500, 'ERROR', e.message))

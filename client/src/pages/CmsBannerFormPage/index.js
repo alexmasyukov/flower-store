@@ -18,9 +18,9 @@ const BannerForm = loadable(() => import('components/CmsLite/BannerForm'), {
 const mapMethodsToProps = (apiService, props) => {
     return {
         getBanner: apiService.getBanner(props.id),
-        saveBanner: apiService.saveBanner,
         uploadImages: apiService.uploadImages,
-        getImage: apiService.getImage
+        getImage: apiService.getImage,
+        save: apiService.updateBanner
     }
 }
 
@@ -38,13 +38,14 @@ const BannerFormContainer = compose(
 
 const mapMethodsToProps_NewItem = (apiService) => {
     return {
-        saveBanner: apiService.saveBanner,
+        save: apiService.saveBanner,
         uploadImages: apiService.uploadImages,
         getImage: apiService.getImage
     }
 }
 
 const BannerFormContainer_NewItem = compose(
+  withRouterParams,
   withApiService(mapMethodsToProps_NewItem)
 )(BannerForm)
 

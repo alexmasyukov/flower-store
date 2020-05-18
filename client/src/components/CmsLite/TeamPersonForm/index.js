@@ -22,6 +22,17 @@ const teamPersonSchema = Yup.object({
 
 
 class TeamPersonForm extends Component {
+    handleSave(data) {
+        this.props.save(data)
+          .then(res => {
+              if (res && 'status' in res && res.status === 'done') {
+                  this.props.history.push('/cmslite/team')
+              } else {
+                  alert('Ошибка при сохранении. Подробности в консоли')
+              }
+          })
+    }
+
     render() {
         const { person, uploadImages, getImage } = this.props
 
@@ -33,8 +44,7 @@ class TeamPersonForm extends Component {
             validationSchema={teamPersonSchema}
             onSubmit={(values, { setSubmitting }) => {
                 setSubmitting(false)
-                alert(JSON.stringify(values, null, 2))
-                // saveTeamPerson(JSON.stringify(values, null, 2))
+                this.handleSave(values)
             }}
           >
               {({ values }) => (

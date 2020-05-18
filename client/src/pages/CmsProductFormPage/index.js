@@ -51,7 +51,6 @@ const ProductFormContainer = compose(
 )(ProductForm)
 
 
-
 const mapMethodsToProps_NewItem = (apiService) => {
     return {
         getAllEntities: apiService.getAllEntities,
@@ -63,6 +62,7 @@ const mapMethodsToProps_NewItem = (apiService) => {
 }
 
 const ProductFormContainer_NewItem = compose(
+  withRouterParams,
   withApiService(mapMethodsToProps_NewItem),
   withData({
       getDataMethod: 'getAllEntities',
@@ -80,14 +80,12 @@ const emptyProductWithEmptySize = {
     ...productModel,
     sizes: [
         {
-            ...productSizeModel,
-            flowers: [0, 0],
-            flowers_counts: [0, 0],
+            ...productSizeModel
         }
     ]
 }
 
-const CmsProductFormPage = ({isNew}) => (
+const CmsProductFormPage = ({ isNew }) => (
   <CmsLayout>
       {isNew ? (
         <ProductFormContainer_NewItem product={emptyProductWithEmptySize}/>

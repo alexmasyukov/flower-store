@@ -24,29 +24,30 @@ export default class ApiService {
         return await res.json()
     }
 
-    postResource = async (url) => {
-        return await axios.post(`${this._apiBase}${url}`, {}, {
+    // postResource = async (url) => {
+    //     return await axios.post(`${this._apiBase}${url}`, {}, {
+    //         responseType: 'json'
+    //     })
+    //       .then(res => res.data)
+    //       .catch(function(error) {
+    //           alert('Ошибка в запросе / ' + error)
+    //           throw new Error(`Could not fetch ${url}` +
+    //             `, received ${error}`)
+    //       })
+    // }
+
+    putResource = async (url, obj = {}, params = {}) => {
+        return await axios.put(`${this._apiBase}${url}`, obj, params)
+          .then(res => res.data)
+          .catch(this._apiErrHandler)
+    }
+
+    postResource = async (url, obj) => {
+        return await axios.post(`${this._apiBase}${url}`, obj, {
             responseType: 'json'
         })
           .then(res => res.data)
-          .catch(function(error) {
-              alert('Ошибка в запросе / ' + error)
-              throw new Error(`Could not fetch ${url}` +
-                `, received ${error}`)
-          })
-    }
-
-    putResource = async (url) => {
-        return await axios.put(`${this._apiBase}${url}`)
-          .then(res => {
-              console.log(res)
-              return res.data
-          })
-          .catch(function(error) {
-              alert('Ошибка в запросе / ' + error)
-              throw new Error(`Could not fetch ${url}` +
-                `, received ${error}`)
-          })
+          .catch(this._apiErrHandler)
     }
 
     // todo: fix it on async await like as above
@@ -64,19 +65,17 @@ export default class ApiService {
           })
     }
 
-    // todo fix it on async await like as above
-    saveProduct = (product) => {
-        alert('saveProduct' + product)
-    }
+    saveProduct = async (product) =>
+      await this.postResource(`/products`, product)
 
-    // todo fix it on async await like as above
-    updateProduct = (product) => {
-        alert('updateProduct' + product)
-    }
+    updateProduct = async (product) =>
+      await this.putResource(`/products/${product.id}`, product, {
+          responseType: 'json'
+      })
 
     getAllProducts = (convertEntities = false) => async () => {
-        const res = await this.getResource(`/products?withUnpublic=true&withUnpublicSizes=true&convertEntities=${convertEntities}`)
-        return res //.map(this._transformProduct)
+        return await this.getResource(`/products?withUnpublic=true&withUnpublicSizes=true&convertEntities=${convertEntities}`)
+        //.map(this._transformProduct)
     }
 
     updateProductPublic = async (id, boolValue = true) => {
@@ -96,33 +95,36 @@ export default class ApiService {
         //.map(this._transformProduct)
     }
 
-    getAllEntities = async () => {
-        return await this.getResource(`/entities`)
-    }
 
-    getEntitie = (id) => async () => {
-        return await this.getResource(`/entities/${id}`)
-    }
+    // Entities
+    getAllEntities = async () => await this.getResource(`/entities`)
+    getEntitie = (id) => async () => await this.getResource(`/entities/${id}`)
+    updateEntitie = async (entitie) => await this.putResource(`/entities/${entitie.id}`, entitie, {
+        responseType: 'json'
+    })
+    saveEntitie = async (entitie) =>
+      await this.postResource(`/entities`, entitie)
 
-    getAllFlorists = async () => {
-        return await this.getResource(`/team?isFlorist=true`)
-    }
+    // Team
+    getAllFlorists = async () => await this.getResource(`/team?isFlorist=true`)
+    getTeam = async () => await this.getResource(`/team?withUnpublic=true`)
+    getTeamPerson = (id) => async () => await this.getResource(`/team/${id}?withUnpublic=true`)
+    updateTeamPerson = async (person) => await this.putResource(`/team/${person.id}`, person, {
+        responseType: 'json'
+    })
+    saveTeamPerson = async (person) =>
+      await this.postResource(`/team`, person)
 
-    getTeam = async () => {
-        return await this.getResource(`/team?withUnpublic=true`)
-    }
 
-    getTeamPerson = (id) => async () => {
-        return await this.getResource(`/team/${id}?withUnpublic=true`)
-    }
+    // Banners
+    getAllBanners = async () => await this.getResource(`/banners?withUnpublic=true`)
+    getBanner = (id) => async () => await this.getResource(`/banners/${id}?withUnpublic=true`)
+    updateBanner = async (banner) => await this.putResource(`/banners/${banner.id}`, banner, {
+        responseType: 'json'
+    })
+    saveBanner = async (banner) =>
+      await this.postResource(`/banners`, banner)
 
-    getAllBanners = async () => {
-        return await this.getResource(`/banners?withUnpublic=true`)
-    }
-
-    getBanner = (id) => async () => {
-        return await this.getResource(`/banners/${id}?withUnpublic=true`)
-    }
 
     getAllContent = async () => {
         return await this.getResource(`/content?withUnpublic=true`)
@@ -136,12 +138,42 @@ export default class ApiService {
         return await this.getResource(`/cities`)
     }
 
-    _transformProduct = product => ({
-        ...product
-    })
+
+    _apiErrHandler = (error) => {
+        alert('Ошибка в запросе')
+        if (error.response) {
+            /*
+             * The request was made and the server responded with a
+             * status code that falls out of the range of 2xx
+             */
+            console.log(error.response.data)
+            // console.log(error.response.data);
+            console.log(error.response.headers)
+            // .errors.map(err => err.path + ' ' + err.message)
+        } else if (error.request) {
+            /*
+             * The request was made but no response was received, `error.request`
+             * is an instance of XMLHttpRequest in the browser and an instance
+             * of http.ClientRequest in Node.js
+             */
+            console.log(error.request)
+        } else {
+            // Something happened in setting up the request and triggered an Error
+            console.log('Error', error.message)
+        }
+        // console.log(error.errors.map(err => err.message).join('\n'))
+        // console.log()
+        // alert('Ошибка в запросе / ' + error)
+        // throw new Error(`Could not fetch` +
+        //   `, received ${error}`)
+    }
 
 
     // OTHER
+    //
+    // _transformProduct = product => ({
+    //         ...product
+    //     })
     getAllPeople = async () => {
         const res = await this.getResource(`/people/`)
         return res.results.map(this._transformPerson)

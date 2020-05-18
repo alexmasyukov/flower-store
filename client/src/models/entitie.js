@@ -1,5 +1,4 @@
 const entitieModel = {
-    id: 1,
     eType: '',
     eTypeTitle: '',
     value: '',

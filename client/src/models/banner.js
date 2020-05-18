@@ -1,8 +1,7 @@
 const bannerModel = {
-    id: '',
     city_id: 1,
     order: 0,
-    public: false,
+    public: true,
     title: '',
     images: []
 }

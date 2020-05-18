@@ -18,7 +18,7 @@ const EntitieForm = loadable(() => import('components/CmsLite/EntitieForm'), {
 const mapMethodsToProps = (apiService, props) => ({
     getAllEntities: apiService.getAllEntities,
     getEntitie: apiService.getEntitie(props.id),
-    saveEntitie: apiService.saveEntitie
+    save: apiService.updateEntitie
 })
 
 const EntitieFormContainer = compose(
@@ -39,10 +39,11 @@ const EntitieFormContainer = compose(
 
 const mapMethodsToProps_NewItem = (apiService) => ({
     getAllEntities: apiService.getAllEntities,
-    saveEntitie: apiService.saveEntitie
+    save: apiService.saveEntitie
 })
 
 const EntitieFormContainer_NewItem = compose(
+  withRouterParams,
   withApiService(mapMethodsToProps_NewItem),
   withData({
       getDataMethod: 'getAllEntities',

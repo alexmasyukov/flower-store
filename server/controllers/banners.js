@@ -55,5 +55,38 @@ module.exports = {
         } catch (e) {
             next(utils.error(500, 'ERROR', e.message))
         }
+    },
+
+    async createOne(req, res, next) {
+        try {
+            const { id: _, ...base } = req.body
+            const id = await knex('banners')
+              .returning('id')
+              .insert(base)
+
+            res.json({
+                status: 'done',
+                result: id[0]
+            })
+        } catch (e) {
+            next(utils.error(500, 'ERROR', e.message))
+        }
+    },
+
+    async updateOne(req, res, next) {
+        try {
+            const { id, ...base } = req.body
+            const updateId = await knex('banners')
+              .update(base)
+              .where('id', '=', id)
+              .returning('id')
+
+            res.json({
+                status: 'done',
+                result: updateId[0]
+            })
+        } catch (e) {
+            next(utils.error(500, 'ERROR', e.message))
+        }
     }
 }
