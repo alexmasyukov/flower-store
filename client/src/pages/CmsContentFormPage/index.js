@@ -17,7 +17,7 @@ const ContentForm = loadable(() => import('components/CmsLite/ContentForm'), {
 
 const mapMethodsToProps = (apiService, props) => ({
     getContent: apiService.getContent(props.id),
-    saveContent: apiService.saveContent
+    save: apiService.updateContent
 })
 
 const ContentFormContainer = compose(
@@ -32,10 +32,11 @@ const ContentFormContainer = compose(
 
 
 const mapMethodsToProps_NewItem = (apiService) => ({
-    saveContent: apiService.saveContent
+    save: apiService.saveContent
 })
 
 const ContentFormContainer_NewItem = compose(
+  withRouterParams,
   withApiService(mapMethodsToProps_NewItem)
 )(ContentForm)
 

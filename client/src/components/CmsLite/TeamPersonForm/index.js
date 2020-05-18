@@ -69,7 +69,7 @@ class TeamPersonForm extends Component {
                                    component={Checkbox}/>
                         </div>
                         <div className="col-md-2">
-                            <Field name={`is_florist`} title="Флорист" type="checkbox"
+                            <Field name={`isFlorist`} title="Флорист" type="checkbox"
                                    component={Checkbox}/>
                         </div>
                     </Row>

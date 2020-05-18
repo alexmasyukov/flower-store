@@ -4,6 +4,7 @@ import CmsLayout from "layouts/Cms"
 import { compose } from "utils"
 import withApiService from "components/hoc/withApiService"
 import withData from "components/hoc/withData"
+import withRouterParams from "components/hoc/withRouterParams"
 
 const fallback = () => (
   <div>Загрузка модуля...</div>
@@ -18,11 +19,13 @@ const mapMethodsToProps = (apiService) => ({
     getImage: apiService.getImage,
     updateProductPublic: apiService.updateProductPublic,
     updateProductSizePublic: apiService.updateProductSizePublic,
-    updateProductSizeFast: apiService.updateProductSizeFast
+    updateProductSizeFast: apiService.updateProductSizeFast,
+    deleteProduct: apiService.deleteProduct,
 })
 
 
 const ProductListContainer = compose(
+  withRouterParams,
   withApiService(mapMethodsToProps),
   withData({
       getDataMethod: 'getAllProducts',

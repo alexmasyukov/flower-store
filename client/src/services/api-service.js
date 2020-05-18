@@ -42,6 +42,12 @@ export default class ApiService {
           .catch(this._apiErrHandler)
     }
 
+    deleteResource = async (url, params = {}) => {
+        return await axios.delete(`${this._apiBase}${url}`, params)
+          .then(res => res.data)
+          .catch(this._apiErrHandler)
+    }
+
     postResource = async (url, obj) => {
         return await axios.post(`${this._apiBase}${url}`, obj, {
             responseType: 'json'
@@ -65,6 +71,8 @@ export default class ApiService {
           })
     }
 
+
+    // Products
     saveProduct = async (product) =>
       await this.postResource(`/products`, product)
 
@@ -78,23 +86,17 @@ export default class ApiService {
         //.map(this._transformProduct)
     }
 
-    updateProductPublic = async (id, boolValue = true) => {
-        return await this.putResource(`/products/${id}/public?public=${boolValue}`)
-    }
+    updateProductPublic = async (id, boolValue = true) =>
+      await this.putResource(`/products/${id}/public?public=${boolValue}`)
 
-    updateProductSizePublic = async (id, boolValue = true) => {
-        return await this.putResource(`/product-sizes/${id}/public?value=${boolValue}`)
-    }
+    updateProductSizePublic = async (id, boolValue = true) =>
+      await this.putResource(`/product-sizes/${id}/public?value=${boolValue}`)
 
-    updateProductSizeFast = async (id, boolValue = true) => {
-        return await this.putResource(`/product-sizes/${id}/fast?value=${boolValue}`)
-    }
+    updateProductSizeFast = async (id, boolValue = true) =>
+      await this.putResource(`/product-sizes/${id}/fast?value=${boolValue}`)
 
-    getProduct = (id) => async () => {
-        return await this.getResource(`/products/${id}?withUnpublic=true&withUnpublicSizes=true&convertEntities=false`)
-        //.map(this._transformProduct)
-    }
-
+    getProduct = (id) => async () => await this.getResource(`/products/${id}?withUnpublic=true&withUnpublicSizes=true&convertEntities=false`)
+    deleteProduct = async (id) => await this.deleteResource(`/products/${id}`)
 
     // Entities
     getAllEntities = async () => await this.getResource(`/entities`)
@@ -105,6 +107,7 @@ export default class ApiService {
     saveEntitie = async (entitie) =>
       await this.postResource(`/entities`, entitie)
 
+
     // Team
     getAllFlorists = async () => await this.getResource(`/team?isFlorist=true`)
     getTeam = async () => await this.getResource(`/team?withUnpublic=true`)
@@ -112,8 +115,9 @@ export default class ApiService {
     updateTeamPerson = async (person) => await this.putResource(`/team/${person.id}`, person, {
         responseType: 'json'
     })
-    saveTeamPerson = async (person) =>
-      await this.postResource(`/team`, person)
+    saveTeamPerson = async (person) => await this.postResource(`/team`, person)
+    deleteTeamPerson = async (id) => await this.deleteResource(`/team/${id}`)
+
 
 
     // Banners
@@ -122,17 +126,17 @@ export default class ApiService {
     updateBanner = async (banner) => await this.putResource(`/banners/${banner.id}`, banner, {
         responseType: 'json'
     })
-    saveBanner = async (banner) =>
-      await this.postResource(`/banners`, banner)
+    saveBanner = async (banner) => await this.postResource(`/banners`, banner)
 
 
-    getAllContent = async () => {
-        return await this.getResource(`/content?withUnpublic=true`)
-    }
+    // Content
+    getAllContent = async () => await this.getResource(`/content?withUnpublic=true`)
+    getContent = (id) => async () => await this.getResource(`/content/${id}?withUnpublic=true`)
+    updateContent = async (content) => await this.putResource(`/content/${content.id}`, content, {
+        responseType: 'json'
+    })
+    saveContent = async (content) => await this.postResource(`/content`, content)
 
-    getContent = (id) => async () => {
-        return await this.getResource(`/content/${id}?withUnpublic=true`)
-    }
 
     getAllCities = async () => {
         return await this.getResource(`/cities`)

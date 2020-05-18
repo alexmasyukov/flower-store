@@ -34,6 +34,18 @@ class ContentForm extends Component {
         }))
     }
 
+    handleSave(data) {
+        this.props.save(data)
+          .then(res => {
+              if (res && 'status' in res && res.status === 'done') {
+                  this.props.history.push('/cmslite/content')
+              } else {
+                  alert('Ошибка при сохранении. Подробности в консоли')
+              }
+          })
+    }
+
+
     render() {
         // const { content } = this.props
         const { inititalValues } = this.state
@@ -48,9 +60,8 @@ class ContentForm extends Component {
                 validationSchema={contentSchema}
                 onSubmit={(values, { setSubmitting }) => {
                     setSubmitting(false)
-                    alert(JSON.stringify(values, null, 2))
+                    this.handleSave(values)
                     // saveTeamcontent(JSON.stringify(values, null, 2))
-
                 }}
               >
                   {({ values }) => (

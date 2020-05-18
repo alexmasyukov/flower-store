@@ -82,10 +82,10 @@ class ProductsList extends Component {
 
     render() {
         const { products } = this.state
-        const { getImage } = this.props
+        const { getImage, deleteProduct } = this.props
 
         const productsRender = products.map(product => (
-          <Row key={product.id} className={cn('mb-4', !product.public && styles.unpublic)}>
+          <Row key={product.id} className={cn(!product.public && styles.unpublic)}>
               <div className="col-md-2">
                   <img style={{ width: '100%' }}
                        src={getImage(product.sizes[0].images[0])}
@@ -106,7 +106,6 @@ class ProductsList extends Component {
                     isOn={product.public}
                     isLoading={product.public === ''}
                     onSwitch={() => this.handleProductPublicChange(product.id, !product.public)}/>
-                  <br/>
 
                   {product.sizes.map(size =>
                     <Row key={size.id}>
@@ -126,7 +125,24 @@ class ProductsList extends Component {
                         </div>
                     </Row>
                   )}
+
+                  <button
+                    className="mt-3"
+                    onClick={() => {
+                        if (window.confirm("Удалить товар?"))
+                            deleteProduct(product.id)
+                              .then(res => {
+                                  console.log(res)
+                                  if (res && 'status' in res && res.status === 'done') {
+                                      this.props.history.go()
+                                  } else {
+                                      alert('Ошибка при удалении. Подробности в консоли')
+                                  }
+                              })
+                    }}>Удалить
+                  </button>
               </div>
+              <hr/>
           </Row>
         ))
 
