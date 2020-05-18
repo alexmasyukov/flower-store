@@ -170,7 +170,7 @@ const saveFiles = async (path, prefix, processedFiles, next) => {
 const saveImages = async (req, res, next) => {
     const thumb_width = 250
     const sm_width = 400
-    const lg_width = 960
+    const lg_width = 1920
 
     const thumb = await resizeImages(thumb_width, req.processedFiles, next)
       .then(files => compressImages(files, next))

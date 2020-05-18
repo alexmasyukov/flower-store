@@ -15,9 +15,7 @@ const yup_string_2_255_required = Yup.string()
 
 const teamPersonSchema = Yup.object({
     name: yup_string_2_255_required,
-    rule: yup_string_2_255_required,
-    photo: Yup.string()
-      .required('Добавьте фото')
+    rule: yup_string_2_255_required
 })
 
 
@@ -47,7 +45,7 @@ class TeamPersonForm extends Component {
                 this.handleSave(values)
             }}
           >
-              {({ values }) => (
+              {({ values, form }) => (
                 <Form>
                     <Row className="mb-4">
                         <div className="col-md-1">
@@ -91,13 +89,25 @@ class TeamPersonForm extends Component {
                         <div className="col-md-12">
                             <span className={styles.btitle}>Фото</span>
 
-
                             <Field
                               name="photo"
                               component={PhotosAndUploader}
                               getImage={getImage}
                               uploadImages={uploadImages}
                             />
+                            {values.photo && (
+                              <Field name="photo">
+                                  {({ field, form }) => (
+                                    <button
+                                      className="mt-3"
+                                      onClick={(e) => {
+                                          if (window.confirm("Удалить фото?"))
+                                              form.setFieldValue(field.name, '')
+                                          e.preventDefault()
+                                      }}>Удалить</button>
+                                  )}
+                              </Field>
+                            )}
 
                             <ErrorMessage name={`photo`} component={ErrorTitle}/>
                         </div>

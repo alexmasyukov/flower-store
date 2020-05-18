@@ -5,6 +5,8 @@ import { useParams, useHistory } from "react-router-dom"
 
 const withRouterParams = WrappedComponent => {
     const Hoc = (props) => {
+        // todo fix it id не используется в большинстве случаев,
+        //  и в итоге затирает переданные
         let { id } = useParams()
         let history = useHistory()
 

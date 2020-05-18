@@ -20,6 +20,11 @@ import CmsEntitieFormPage from "pages/CmsEntitieFormPage"
 import CmsOrdersPage from "pages/CmsOrdersPage"
 import CmsContentPage from "pages/CmsContentsPage"
 import CmsContentFormPage from "pages/CmsContentFormPage"
+import ContactsPage from "pages/Contacts"
+import QuestionsPage from "pages/Questions"
+import RecomendationsPage from "pages/Recomendations"
+import DeliveryPage from "pages/Delivery"
+import AboutPage from "pages/About"
 
 
 // const Product = loadable(() => import('pages/Product'), () => <div>Loading...</div>)
@@ -35,6 +40,13 @@ const App = ({ history }) => (
           <Route path="/cart/" exact component={CartPage}/>
           <Route path="/cart_old/" exact component={CartPageOld}/>
 
+          <Route path="/about/" exact component={AboutPage}/>
+          <Route path="/contacts/" exact component={ContactsPage}/>
+          <Route path="/delivery/" exact component={DeliveryPage}/>
+          <Route path="/voprosy-i-otvety/" exact component={QuestionsPage}/>
+          <Route path="/instrukciya-svezhesti/" exact component={RecomendationsPage}/>
+
+          {/*CMS*/}
           <Route path="/Cmslite/" exact component={CmsProductsListPage}/>
           <Route path="/Cmslite/products/" exact component={CmsProductsListPage}/>
           <Route path="/Cmslite/products/:id" component={CmsProductFormPage}/>
