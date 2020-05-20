@@ -2,6 +2,7 @@ const express = require('express')
 const cacheControl = require('express-cache-controller')
 const router = express.Router()
 const contentController = require("../controllers/content")
+const commonController = require("../controllers/common")
 const { Content } = require('../models/content')
 const { validateSchema } = require('../middlewares/jsonSchemaValidator')
 
@@ -24,6 +25,6 @@ router.route('/:id')
     validateSchema(Content.jsonSchema),
     contentController.updateOne
   )
-  .delete(contentController.deleteOne)
+  .delete(commonController.deleteOne('content'))
 
 module.exports = router

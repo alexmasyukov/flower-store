@@ -6,6 +6,7 @@ import withRouterParams from "components/hoc/withRouterParams"
 import withApiService from "components/hoc/withApiService"
 import withData from "components/hoc/withData"
 import entitieModel from "models/entitie"
+import FormName from "components/CmsLite/FormName"
 
 const fallback = () => (
   <div>Загрузка модуля...</div>
@@ -54,6 +55,7 @@ const EntitieFormContainer_NewItem = compose(
 
 const CmsEntitieFormPage = ({ isNew }) => (
   <CmsLayout>
+      <FormName isNew={isNew}/>
       {isNew ? (
         <EntitieFormContainer_NewItem entitie={entitieModel}/>
       ) : (

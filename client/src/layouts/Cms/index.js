@@ -1,20 +1,13 @@
 import React, { Component } from 'react'
-import { Link } from "react-router-dom"
-import styles from './pageLayout.module.sass'
+import cn from 'classnames'
+import CmsMenu from "components/CmsLite/Menu"
+import styles from './cmsLayout.module.sass'
 
 class CmsLayout extends Component {
     render() {
         return (
-          <div className="container">
-              <div className={styles.menu}>
-                  <Link to="/cmslite/products">Товары</Link>
-                  <Link to="/cmslite/entities">Справочник</Link>
-                  <Link to="/cmslite/banners">Баннеры</Link>
-                  <Link to="/cmslite/team">Команда</Link>
-                  <Link to="/cmslite/content">Контент</Link>
-                  <Link to="/cmslite/orders">Заказы</Link>
-              </div>
-              <br/>
+          <div className={cn('container', styles.layout)}>
+              <CmsMenu className={styles.menu}/>
               {this.props.children}
           </div>
         )

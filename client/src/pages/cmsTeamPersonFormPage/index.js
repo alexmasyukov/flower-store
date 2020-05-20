@@ -6,6 +6,7 @@ import withRouterParams from "components/hoc/withRouterParams"
 import withApiService from "components/hoc/withApiService"
 import withData from "components/hoc/withData"
 import teamPersonModel from "models/teamPerson"
+import FormName from "components/CmsLite/FormName"
 
 const fallback = () => (
   <div>Загрузка модуля...</div>
@@ -52,6 +53,7 @@ const TeamPersonFormContainer_NewItem = compose(
 
 const CmsTeamPersonFormPage = ({ isNew }) => (
   <CmsLayout>
+      <FormName isNew={isNew}/>
       {isNew ? (
         <TeamPersonFormContainer_NewItem person={teamPersonModel}/>
       ) : (

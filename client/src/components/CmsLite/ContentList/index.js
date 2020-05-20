@@ -18,13 +18,9 @@ class ContentList extends Component {
         ))
 
         return (
-          <>
-              <Link to="/cmslite/content-add">Добавить</Link>
-              <br/><br/>
-              <Row>
-                  {contentRender}
-              </Row>
-          </>
+          <Row>
+              {contentRender}
+          </Row>
         )
     }
 }

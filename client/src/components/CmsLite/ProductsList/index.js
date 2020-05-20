@@ -84,7 +84,7 @@ class ProductsList extends Component {
         const { products } = this.state
         const { getImage, deleteProduct } = this.props
 
-        const productsRender = products.map(product => (
+        return products.map(product => (
           <Row key={product.id} className={cn(!product.public && styles.unpublic)}>
               <div className="col-md-2">
                   <img style={{ width: '100%' }}
@@ -145,14 +145,6 @@ class ProductsList extends Component {
               <hr/>
           </Row>
         ))
-
-        return (
-          <>
-              <Link to="/cmslite/product-add">Добавить букет</Link>
-              <br/><br/>
-              {productsRender}
-          </>
-        )
     }
 }
 

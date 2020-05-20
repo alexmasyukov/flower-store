@@ -7,6 +7,7 @@ import withApiService from "components/hoc/withApiService"
 import withData from "components/hoc/withData"
 import productModel from "models/product"
 import productSizeModel from "models/productSize"
+import FormName from "components/CmsLite/FormName"
 
 // import pMinDelay from 'p-min-delay' pMinDelay(,2000)
 
@@ -87,6 +88,7 @@ const emptyProductWithEmptySize = {
 
 const CmsProductFormPage = ({ isNew }) => (
   <CmsLayout>
+      <FormName isNew={isNew}/>
       {isNew ? (
         <ProductFormContainer_NewItem product={emptyProductWithEmptySize}/>
       ) : (

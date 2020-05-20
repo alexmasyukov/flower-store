@@ -109,6 +109,17 @@ export default class ApiService {
     saveEntitie = async (entitie) =>
       await this.postResource(`/entities`, entitie)
 
+    // Reviews
+    getAllReviews = async () => await this.getResource(`/reviews?withUnpublic=true`)
+    getReview = (id) => async () => await this.getResource(`/reviews/${id}?withUnpublic=true`)
+    updateReview = async (review) => await this.putResource(`/reviews/${review.id}`, review, {
+        responseType: 'json'
+    })
+    saveReview = async (review) =>
+      await this.postResource(`/reviews`, review)
+    deleteReview = async (id) => await this.deleteResource(`/reviews/${id}`)
+
+
 
     // Team
     getAllFlorists = async () => await this.getResource(`/team?isFlorist=true`)

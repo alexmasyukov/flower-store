@@ -6,6 +6,7 @@ import withRouterParams from "components/hoc/withRouterParams"
 import withApiService from "components/hoc/withApiService"
 import withData from "components/hoc/withData"
 import contentModel from "models/content"
+import FormName from "components/CmsLite/FormName"
 
 const fallback = () => (
   <div>Загрузка модуля...</div>
@@ -42,6 +43,7 @@ const ContentFormContainer_NewItem = compose(
 
 const CmsContentFormPage = ({ isNew }) => (
   <CmsLayout>
+      <FormName isNew={isNew}/>
       {isNew ? (
         <ContentFormContainer_NewItem content={contentModel}/>
       ) : (

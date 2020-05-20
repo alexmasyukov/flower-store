@@ -5,61 +5,60 @@ import { compose } from "utils"
 import withRouterParams from "components/hoc/withRouterParams"
 import withApiService from "components/hoc/withApiService"
 import withData from "components/hoc/withData"
-import bannerModel from "models/banner"
+import reviewModel from "models/review"
 import FormName from "components/CmsLite/FormName"
 
 const fallback = () => (
   <div>Загрузка модуля...</div>
 )
 
-const BannerForm = loadable(() => import('components/CmsLite/BannerForm'), {
+const ReviewForm = loadable(() => import('components/CmsLite/ReviewForm'), {
     fallback: fallback()
 })
 
 const mapMethodsToProps = (apiService, props) => {
     return {
-        getBanner: apiService.getBanner(props.id),
+        getReview: apiService.getReview(props.id),
         uploadImages: apiService.uploadImages,
         getImage: apiService.getImage,
-        save: apiService.updateBanner
+        save: apiService.updateReview
     }
 }
 
-const BannerFormContainer = compose(
+const ReviewFormContainer = compose(
   withRouterParams,
   withApiService(mapMethodsToProps),
   withData({
-      getDataMethod: 'getBanner',
-      dataPropName: 'banner',
-      loadingText: 'banner'
+      getDataMethod: 'getReview',
+      dataPropName: 'review',
+      loadingText: 'review'
   })
-)(BannerForm)
-
+)(ReviewForm)
 
 
 const mapMethodsToProps_NewItem = (apiService) => {
     return {
-        save: apiService.saveBanner,
+        save: apiService.saveReview,
         uploadImages: apiService.uploadImages,
         getImage: apiService.getImage
     }
 }
 
-const BannerFormContainer_NewItem = compose(
+const ReviewFormContainer_NewItem = compose(
   withRouterParams,
   withApiService(mapMethodsToProps_NewItem)
-)(BannerForm)
+)(ReviewForm)
 
 
-const CmsBannerFormPage = ({isNew}) => (
+const CmsReviewFormPage = ({ isNew }) => (
   <CmsLayout>
       <FormName isNew={isNew}/>
       {isNew ? (
-        <BannerFormContainer_NewItem banner={bannerModel}/>
-      ): (
-        <BannerFormContainer/>
+        <ReviewFormContainer_NewItem review={reviewModel}/>
+      ) : (
+        <ReviewFormContainer/>
       )}
   </CmsLayout>
 )
 
-export default CmsBannerFormPage
+export default CmsReviewFormPage

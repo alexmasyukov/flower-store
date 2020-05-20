@@ -39,8 +39,6 @@ const EntitiesList = (props) => {
 
     return (
       <div className={styles.entitiesPage}>
-          <Link to="/cmslite/entities-add">Создать сущность</Link>
-          <br/><br/>
           <select value={filter} onChange={handleTypesChange}>
               <option value="">Все сущности</option>
               {types.map(item => <option key={item.id} value={item.eTypeTitle}>{item.eTypeTitle}</option>)}

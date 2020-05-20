@@ -8,7 +8,7 @@ class BannersList extends Component {
     render() {
         const { banners, getImage } = this.props
 
-        const bannersRender = banners.map(({ id, public: pub, title, images }) => (
+        return banners.map(({ id, public: pub, title, images }) => (
           <Row key={id} className={cn(!pub && styles.unpublic)}>
               <div className="col-md-2">
                   <img style={{ width: '100%' }}
@@ -23,14 +23,6 @@ class BannersList extends Component {
               <hr/>
           </Row>
         ))
-
-        return (
-          <>
-              <Link to="/cmslite/banners-add">Добавить баннер</Link>
-              <br/><br/>
-              {bannersRender}
-          </>
-        )
     }
 }
 

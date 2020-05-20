@@ -4,6 +4,8 @@ import CmsLayout from "layouts/Cms"
 import { compose } from "utils"
 import withApiService from "components/hoc/withApiService"
 import withData from "components/hoc/withData"
+import { Link } from "react-router-dom"
+import styles from "layouts/Cms/cmsLayout.module.sass"
 
 const fallback = () => (
   <div>Загрузка модуля...</div>
@@ -28,6 +30,8 @@ const ContentListContainer = compose(
 
 const CmsContentPage = () => (
   <CmsLayout>
+      <h1>Контент</h1>
+      <Link className={styles.addBtn} to="/cmslite/content-add">Добавить</Link>
       <ContentListContainer/>
   </CmsLayout>
 )

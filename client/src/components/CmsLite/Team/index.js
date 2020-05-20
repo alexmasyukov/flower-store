@@ -8,7 +8,7 @@ class Team extends Component {
     render() {
         const { team, getImage, delete: deletePerson } = this.props
 
-        const teamRender = team.map(({ id, name, public: pub, photo, isFlorist, rule }) => (
+        return team.map(({ id, name, public: pub, photo, isFlorist, rule }) => (
           <Row key={id} className={cn(!pub && styles.unpublic)}>
               <div className="col-md-2">
                   <img style={{ width: '100%' }}
@@ -26,30 +26,22 @@ class Team extends Component {
                   <button
                     className="mt-3"
                     onClick={() => {
-                      if (window.confirm("Удалить сотрудника?"))
-                          deletePerson(id)
-                            .then(res => {
-                                console.log(res)
-                                if (res && 'status' in res && res.status === 'done') {
-                                    this.props.history.go()
-                                } else {
-                                    alert('Ошибка при удалении. Подробности в консоли')
-                                }
-                            })
-                  }}>Удалить
+                        if (window.confirm("Удалить сотрудника?"))
+                            deletePerson(id)
+                              .then(res => {
+                                  console.log(res)
+                                  if (res && 'status' in res && res.status === 'done') {
+                                      this.props.history.go()
+                                  } else {
+                                      alert('Ошибка при удалении. Подробности в консоли')
+                                  }
+                              })
+                    }}>Удалить
                   </button>
               </div>
               <hr/>
           </Row>
         ))
-
-        return (
-          <>
-              <Link to="/cmslite/team-add">Добавить сотрудника</Link>
-              <br/><br/>
-              {teamRender}
-          </>
-        )
     }
 }
 

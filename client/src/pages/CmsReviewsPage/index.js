@@ -11,34 +11,33 @@ import styles from "layouts/Cms/cmsLayout.module.sass"
 const fallback = () => (
   <div>Загрузка модуля...</div>
 )
-const Team = loadable(() => import('components/CmsLite/Team'), {
+const ReviewsList = loadable(() => import('components/CmsLite/ReviewsList'), {
     fallback: fallback()
 })
 
 
 const mapMethodsToProps = (apiService) => ({
-    getImage: apiService.getImage,
-    getTeam: apiService.getTeam,
-    delete: apiService.deleteTeamPerson
+    getAllReviews: apiService.getAllReviews,
+    delete: apiService.deleteReview
 })
 
 
-const TeamContainer = compose(
+const ReviewsListContainer = compose(
   withRouterParams,
   withApiService(mapMethodsToProps),
   withData({
-      getDataMethod: 'getTeam',
-      dataPropName: 'team',
-      loadingText: 'team'
+      getDataMethod: 'getAllReviews',
+      dataPropName: 'reviews',
+      loadingText: 'reviews'
   })
-)(Team)
+)(ReviewsList)
 
-const CmsTeamPage = () => (
+const CmsReviewsPage = () => (
   <CmsLayout>
-      <h1>Команда</h1>
-      <Link className={styles.addBtn} to="/cmslite/team-add">Добавить</Link>
-      <TeamContainer/>
+      <h1>Отзывы</h1>
+      <Link className={styles.addBtn} to="/cmslite/reviews-add">Добавить</Link>
+      <ReviewsListContainer/>
   </CmsLayout>
 )
 
-export default CmsTeamPage
+export default CmsReviewsPage

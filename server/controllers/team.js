@@ -92,30 +92,5 @@ module.exports = {
       } catch (e) {
          next(utils.error(500, 'ERROR', e.message))
       }
-   },
-
-   async deleteOne(req, res, next) {
-      try {
-         const { id = false } = req.params
-
-         if (!Number.isInteger(Number(id))) {
-            return next(utils.error(500, 'ERROR', 'id should be Integer'))
-         }
-
-         const result = await knex('team')
-           .where('id', id)
-           .del()
-
-         if (!result) {
-            return next(utils.error(404, 'NOT FOUND', 'not found'))
-         }
-
-         res.json({
-            status: 'done',
-            result
-         })
-      } catch (e) {
-         next(utils.error(500, 'ERROR', e.message))
-      }
    }
 }
