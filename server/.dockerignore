@@ -8,5 +8,4 @@ dockerfile.dev
 yarn-error.log
 .idea_OLD
 .idea
-uploads
 *.sql

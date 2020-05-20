@@ -7,9 +7,10 @@ exports.up = function (knex) {
          table.boolean('public').defaultTo(false)
          table.integer('order')
          table.timestamp('created_at').defaultTo(knex.fn.now())
-         table.string('client_name', 100).notNullable()
-         table.string('link', 200).notNullable()
-         table.string('text', 2000).notNullable()
+         table.string('name', 200)
+         table.string('telegram', 200)
+         table.string('instagram', 200)
+         table.string('text', 5000).notNullable()
       })
 }
 

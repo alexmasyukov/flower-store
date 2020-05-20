@@ -1,30 +1,25 @@
 version: '3.7'
 
 services:
-
   app:
+    image: alexmasyukov/klumba_app:latest
     container_name: app
     networks:
-      - front
-    build:
-      context: ./client
-      dockerfile: Dockerfile.prod
-    #    ports:
-    #      - 3000:80
+      - proxy.front-network
+    expose:
+      - 80
     restart: always
 
   api:
+    image: alexmasyukov/klumba_api:latest
     container_name: api
     networks:
-      - front
+      - proxy.front-network
       - db
-    build:
-      context: ./server
-      dockerfile: Dockerfile.prod
     environment:
-      - NODE_ENV=development
-    #    ports:
-    #      - 5000:3500
+      - NODE_ENV=production
+    expose:
+      - 3500
     restart: always
 
   postgres:
@@ -44,6 +39,40 @@ services:
     networks:
       - db
     restart: always
+
+  nginx:
+    image: nginx:1.17.9-alpine
+    container_name: nginx
+    networks:
+#      - front
+#      - db
+      - proxy.front-network
+    depends_on:
+      - postgres
+      - api
+      - app
+    volumes:
+      - ./settings/nginx:/etc/nginx/conf.d
+    #      - ./data/certbot/conf:/etc/letsencrypt
+    #      - ./data/certbot/www:/app
+    #      - ./data/certbot/www:/var/www/certbot
+    ports:
+      - 80:80
+    #      - 443:443
+    restart: unless-stopped
+    # Перезапустит контейнер в непредвиденных ситуациях
+    #    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    # Перезапустит nginx контейнер каждые 6 часов и подгрузит новые сертификаты, если есть
+
+networks:
+#  front:
+#    name: front
+  db:
+    driver: bridge
+  proxy.front-network:
+    driver: bridge
+
+
 
   #  certbot:
   #    image: certbot/certbot
@@ -69,36 +98,6 @@ services:
   #      - ./settings/sslnginx:/etc/nginx/conf.d
   #      - ./data/certbot/www:/usr/share/nginx/html
   #    restart: unless-stopped
-
-  nginx:
-    image: nginx:1.17.9-alpine
-    container_name: nginx
-    networks:
-      - front
-      - db
-    depends_on:
-      - postgres
-      - api
-      - app
-    volumes:
-      - ./settings/nginx:/etc/nginx/conf.d
-    #      - ./data/certbot/conf:/etc/letsencrypt
-    #      - ./data/certbot/www:/app
-    #      - ./data/certbot/www:/var/www/certbot
-    ports:
-      - 80:80
-    #      - 443:443
-    restart: unless-stopped
-    # Перезапустит контейнер в непредвиденных ситуациях
-    #    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
-    # Перезапустит nginx контейнер каждые 6 часов и подгрузит новые сертификаты, если есть
-
-networks:
-  front:
-    name: front
-  db:
-    name: db
-    driver: bridge
 
 
 #  docker-compose -f docker-compose.prod.yml up --build
