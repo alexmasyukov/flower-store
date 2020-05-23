@@ -120,6 +120,16 @@ export default class ApiService {
     deleteReview = async (id) => await this.deleteResource(`/reviews/${id}`)
 
 
+    // Additives
+    getAllAdditives = async () => await this.getResource(`/additives?withUnpublic=true`)
+    getAdditive = (id) => async () => await this.getResource(`/additives/${id}?withUnpublic=true`)
+    updateAdditive = async (additive) => await this.putResource(`/additives/${additive.id}`, additive, {
+        responseType: 'json'
+    })
+    saveAdditive = async (additive) =>
+      await this.postResource(`/additives`, additive)
+    deleteAdditive = async (id) => await this.deleteResource(`/additives/${id}`)
+
 
     // Team
     getAllFlorists = async () => await this.getResource(`/team?isFlorist=true`)

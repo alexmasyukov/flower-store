@@ -27,6 +27,8 @@ import DeliveryPage from "pages/Delivery"
 import AboutPage from "pages/About"
 import CmsReviewsPage from "pages/CmsReviewsPage"
 import CmsReviewFormPage from "pages/CmsReviewFormPage"
+import CmsAdditivesPage from "pages/CmsAdditivesPage"
+import CmsAdditiveFormPage from "pages/CmsAdditiveFormPage"
 
 
 // const Product = loadable(() => import('pages/Product'), () => <div>Loading...</div>)
@@ -84,6 +86,12 @@ const App = ({ history }) => (
           <Route path="/Cmslite/reviews/:id" component={CmsReviewFormPage}/>
           <Route path="/Cmslite/reviews-add" exact>
               <CmsReviewFormPage isNew={true}/>
+          </Route>
+
+          <Route path="/Cmslite/additives" exact component={CmsAdditivesPage}/>
+          <Route path="/Cmslite/additives/:id" component={CmsAdditiveFormPage}/>
+          <Route path="/Cmslite/additives-add" exact>
+              <CmsAdditiveFormPage isNew={true}/>
           </Route>
 
           {/*<Route path="/Cmslite/orders" exact component={CmsOrdersPage}/>*/}

@@ -6,7 +6,7 @@ import styles from 'components/CmsLite/cmslite.module.sass'
 import productSizeModel from "models/productSize"
 import ErrorTitle from "components/CmsLite/common/ErrorTitle"
 import Checkbox from "components/CmsLite/common/Checkbox"
-import { useHistory } from "react-router-dom"
+import ListItemsControlButtons from "components/CmsLite/common/ListItemsControlButtons"
 
 
 const yup_number_more0_required = Yup.number()
@@ -45,41 +45,6 @@ const productSchema = Yup.object({
 })
 
 
-const SizeButtons = ({ index, length, arrayHelpers }) => (
-  <>
-      <span className={styles.mtitle}>Переместить </span>
-      <button
-        type="button"
-        onClick={() => {
-            if (index > 0) arrayHelpers.swap(index, index - 1)
-        }} // remove a friend from the list
-      >
-          Вверх
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-            if (index < length) arrayHelpers.swap(index, index + 1)
-        }} // remove a friend from the list
-      >
-          Вниз
-      </button>
-      |
-      <button
-        type="button"
-        className="ml-1"
-        onClick={() => {
-            const r = window.confirm("Удалить этот размер?")
-            if (r === true) arrayHelpers.remove(index)
-        }} // remove a friend from the list
-      >
-          Удалить размер
-      </button>
-      <br/>
-  </>
-)
-
-
 class ProductForm extends Component {
     state = {
         imgIsLoading: false
@@ -115,6 +80,8 @@ class ProductForm extends Component {
     render() {
         const { product, florists, uploadImages, getImage } = this.props
         const { imgIsLoading } = this.state
+
+        const maxSizesItems = 2
 
         return (
           <Formik
@@ -266,8 +233,13 @@ class ProductForm extends Component {
                                               <span><b>ID:</b> {size.id}</span>
                                           </div>
                                           <div className="col-md-6">
-                                              <SizeButtons index={index} length={values.sizes.length - 1}
-                                                           arrayHelpers={arrayHelpers}/>
+                                              <ListItemsControlButtons
+                                                index={index}
+                                                length={values.sizes.length - 1}
+                                                maxItems={maxSizesItems}
+                                                arrayHelpers={arrayHelpers}
+                                                deleteTitle={"Удалить размер"}
+                                              />
                                           </div>
                                       </Row>
 
@@ -417,9 +389,7 @@ class ProductForm extends Component {
                                                 )}
                                               />
 
-                                              <ErrorMessage
-                                                name={`sizes.${index}.images`}
-                                                component={ErrorTitle}/>
+                                              <ErrorMessage name={`sizes.${index}.images`} component={ErrorTitle}/>
                                           </div>
                                       </Row>
 
@@ -427,13 +397,11 @@ class ProductForm extends Component {
                                   </div>
                                 ))}
 
-                                {/*<ErrorMessage name="sizes"/>*/}
-                                {/*<div>{Array.isArray(getIn(errors, 'sizes')) ? (*/}
-                                {/*<div>{getIn(errors, 'sizes').map(err => err)}</div>*/}
-                                {/*) : getIn(errors, 'sizes')}</div>*/}
 
-
-                                <button type="button" onClick={() => arrayHelpers.push(productSizeModel)}>
+                                <button
+                                  type="button"
+                                  disabled={values.sizes.length > maxSizesItems}
+                                  onClick={() => arrayHelpers.push(productSizeModel)}>
                                     Добавить размер
                                 </button>
                             </div>

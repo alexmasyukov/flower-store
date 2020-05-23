@@ -18,7 +18,7 @@ const PhotosAndUploader = ({ field, form, getImage, uploadImages }) => {
 
     const handleDelete = (index) => (e) => {
         e.preventDefault()
-        if (!window.confirm("Удалить этот размер?")) return
+        if (!window.confirm("Удалить?")) return
         const items = field.value.filter((item, i) => i !== index)
         form.setFieldValue(field.name, items)
     }

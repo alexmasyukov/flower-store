@@ -20,10 +20,16 @@ class Additive {
                 public: { type: 'boolean' },
                 title: { type: 'string' },
                 data: {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
+                    type: "array",
+                    items: {
+                        type: "object",
+                        required: [
+                            'order',
+                            'button',
+                            'price',
+                            'image'
+                        ],
+                        properties: {
                             order: { type: 'integer' },
                             button: { type: 'string' },
                             price: { type: 'integer' },
