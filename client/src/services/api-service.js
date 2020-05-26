@@ -3,11 +3,11 @@ import axios from 'axios'
 export default class ApiService {
     // https://create-react-app.dev/docs/adding-custom-environment-variables/
     _apiBase = process.env.NODE_ENV === 'production' ?
-      'http://flower-cms.ru/api/v1' :
+      'https://flower-cms.ru/api/v1' :
       'http://localhost/api/v1'
 
     _uploadImagesBase = process.env.NODE_ENV === 'production' ?
-      'http://flower-cms.ru/api/upload/' :
+      'https://flower-cms.ru/api/upload/' :
       'http://localhost/api/upload/'
 
     _imageBase = '/api/static/'

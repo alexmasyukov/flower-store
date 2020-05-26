@@ -6,12 +6,45 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile.prod
+    image: alexmasyukov/klumba_app:latest
+    environment:
+      - PUBLIC_URL=/
+
+#  cms:
+#    container_name: cms
+#    build:
+#      context: ./cmslite
+#      dockerfile: Dockerfile.prod
+##    image: alexmasyukov/klumba_cms:latest
+#    volumes:
+#      - './cmslite:/app'
+#      - '/app/node_modules'
+#    ports:
+#      - 4000:4000
+#    environment:
+#      - NODE_ENV=production
+#      - PUBLIC_URL=/
+
+#  cms-test:
+#    container_name: cms-test
+#    image: alexmasyukov/klumba_cms:latest
+#    networks:
+#      - front
+#    environment:
+#      - NODE_ENV=production
+#      - PUBLIC_URL=/
+#    expose:
+#      - 4000
+#    ports:
+#      - 4000:4000
+#    restart: always
 
   api:
     container_name: api
     build:
       context: ./server
       dockerfile: Dockerfile.prod
+    image: alexmasyukov/klumba_api:latest
 
   api-test:
     image: klumba_api:latest

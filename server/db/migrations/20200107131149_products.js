@@ -18,6 +18,7 @@ exports.up = function(knex) {
           table.string('packing', 50)
           table.string('bouquetType', 50)
           table.specificType('additionalProducts', 'int[]')
+          table.specificType('additives', 'int[]')
             // table.string('available')
           // table.specificType('collection', 'int[]')
           // Можно ли добавить травы

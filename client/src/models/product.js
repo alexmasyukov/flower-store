@@ -14,7 +14,8 @@ const productModel = {
     packing: 23,
     bouquetType: 29,
     additionalProducts: [],
-    sizes: []
+    sizes: [],
+    additives: []
 }
 
 export default productModel

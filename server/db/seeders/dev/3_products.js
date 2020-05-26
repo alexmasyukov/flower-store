@@ -18,12 +18,11 @@ exports.seed = function(knex) {
                   shade: 12,
                   packing: 23,
                   bouquetType: 28,
-                  additionalProducts: [1, 2, 3]
+                  additionalProducts: [1, 2, 3],
+                  additives: [1, 2]
                   // collection: [24, 27],
                   // available: knex.fn.now(),
-                  // grass: true,
                   // cashback: 1,
-                  // velvet_hat_box: true
               },
               {
                   id: 2,
@@ -40,7 +39,8 @@ exports.seed = function(knex) {
                   shade: 14,
                   packing: 23,
                   bouquetType: 29,
-                  additionalProducts: [2]
+                  additionalProducts: [2],
+                  additives: [2]
               }
           ])
       })

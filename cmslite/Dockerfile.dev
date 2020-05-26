@@ -1,24 +1,7 @@
 FROM node:12-alpine
-#RUN useradd -l -g ${GROUP_ID} -u ${USER_ID} -k /root -m ${USER_NAME}
-# set working directory
-WORKDIR /cmslite
-# install app dependencies
-COPY package.json /cmslite/package.json
-COPY yarn.lock /cmslite/yarn.lock
-# add `/app/node_modules/.bin` to $PATH
-ENV PATH /cmslite/node_modules/.bin:$PATH
+WORKDIR /app
+COPY package.json /app/package.json
+COPY yarn.lock /app/yarn.lock
+ENV PATH /app/node_modules/.bin:$PATH
 RUN yarn
-# start app
 CMD ["yarn", "start"]
-
-
-# docker run -it --rm -v ${PWD}:/app -v ${PWD}/node_modules:/app/node_modules -p 3001:3000 client:dev
-
-#docker run \
-#    -it \
-#    --rm \
-#    -v ${PWD}:/app \
-#    -v /app/node_modules \
-#    -p 3001:3000 \
-#    -e CHOKIDAR_USEPOLLING=true \
-#    client:dev

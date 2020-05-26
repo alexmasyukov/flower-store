@@ -10,6 +10,17 @@ services:
       - 80
     restart: always
 
+#  cms:
+#    image: alexmasyukov/klumba_cms:latest
+#    container_name: cms
+#    networks:
+#      - proxy.front-network
+##    expose:
+##      - 4000
+#    ports:
+#      - 4000:4000
+#    restart: always
+
   api:
     image: alexmasyukov/klumba_api:latest
     container_name: api
@@ -40,12 +51,25 @@ services:
       - db
     restart: always
 
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    networks:
+      - proxy.front-network
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+      - ./data/certbot/log:/var/log/letsencrypt/
+    restart: unless-stopped
+    entrypoint:  "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    # Проверяет каждые 12 часов, нужны ли новые сертификаты
+
   nginx:
     image: nginx:1.17.9-alpine
     container_name: nginx
     networks:
-#      - front
-#      - db
+      #      - front
+      #      - db
       - proxy.front-network
     depends_on:
       - postgres
@@ -53,20 +77,18 @@ services:
       - app
     volumes:
       - ./settings/nginx:/etc/nginx/conf.d
-    #      - ./data/certbot/conf:/etc/letsencrypt
-    #      - ./data/certbot/www:/app
-    #      - ./data/certbot/www:/var/www/certbot
+      - ./data/certbot/www:/var/www/certbot
+      - ./data/certbot/conf:/etc/letsencrypt
     ports:
       - 80:80
-    #      - 443:443
+      - 443:443
     restart: unless-stopped
-    # Перезапустит контейнер в непредвиденных ситуациях
-    #    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
     # Перезапустит nginx контейнер каждые 6 часов и подгрузит новые сертификаты, если есть
 
 networks:
-#  front:
-#    name: front
+  #  front:
+  #    name: front
   db:
     driver: bridge
   proxy.front-network:
@@ -74,18 +96,7 @@ networks:
 
 
 
-  #  certbot:
-  #    image: certbot/certbot
-  #    container_name: certbot
-  #    networks:
-  #      - front
-  #    volumes:
-  #      - ./data/certbot/conf:/etc/letsencrypt
-  #      - ./data/certbot/www:/app
-  ##      - ./data/certbot/www:/var/www/certbot
-  #    restart: unless-stopped
-  #    entrypoint:  "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-  # Проверяет каждые 12 часов, нужны ли новые сертификаты
+
 
   #  sslnginx:
   #    image: nginx:1.17.9-alpine

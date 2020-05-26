@@ -4,7 +4,7 @@ services:
   app-dev:
     container_name: app-dev
     networks:
-      - front
+      - db
     build:
       context: ./client
       dockerfile: Dockerfile.dev
@@ -15,8 +15,44 @@ services:
 #      - 3000:3000
     environment:
       - NODE_ENV=development
-#      - PUBLIC_URL=/edit
+      - PUBLIC_URL=/
 #      - CHOKIDAR_USEPOLLING=true
+#    env_file:
+#      - ./common.env
+#      - ./apps/web.env
+#      - /opt/runtime_opts.env
+#    logging:
+#      driver: syslog
+#      options:
+#        syslog-address: "tcp://192.168.0.42:123"
+#        max-size: "200k"
+#        max-file: "10"
+#      logging:
+#        driver: "json-file"
+#        options:
+#          max-size: "200k"
+#          max-file: "10"
+
+#  cms-dev:
+#    container_name: cms-dev
+#    networks:
+#      - db
+#      - front
+#    build:
+#      context: ./cmslite
+#      dockerfile: Dockerfile.prod
+#    #  dockerfile: Dockerfile.dev
+#    #    image: alexmasyukov/klumba_cms:latest
+#    volumes:
+#      - './cmslite:/app'
+#      - '/app/node_modules'
+#    environment:
+#      - NODE_ENV=development
+##      - PORT=3006
+##      - PUBLIC_URL=/
+##      - NODE_ENV=production
+##      - PUBLIC_URL=/test
+
 
 #  cms-lite-dev:
 #    container_name: cms-lite-dev
@@ -36,7 +72,6 @@ services:
   api-dev:
     container_name: api-dev
     networks:
-      - front
       - db
     build:
       context: ./server
@@ -73,13 +108,12 @@ services:
     image: nginx:1.17.9-alpine
     container_name: nginx-dev
     networks:
-      - front
       - db
     depends_on:
       - postgres-dev
       - api-dev
       - app-dev
-#      - cms-lite-dev
+#      - cms-dev
     volumes:
       - ./settings/nginx_dev:/etc/nginx/conf.d
     ports:

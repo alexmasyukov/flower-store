@@ -43,6 +43,10 @@ class Product {
                     type: 'array',
                     items: { type: 'object' },
                     minItems: 1
+                },
+                additives: {
+                    type: 'array',
+                    items: { type: 'integer' },
                 }
                 // available: { type: ['string', 'null'] }, //, format: 'date-time'
                 // collection: {

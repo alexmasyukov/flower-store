@@ -7,6 +7,7 @@ const withRouterParams = WrappedComponent => {
     const Hoc = (props) => {
         // todo fix it id не используется в большинстве случаев,
         //  и в итоге затирает переданные
+        // todo history уже создана в роутере, может ее использовать?
         let { id } = useParams()
         let history = useHistory()
 

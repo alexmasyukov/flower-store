@@ -12,7 +12,7 @@ import resetFilters from "store/middleware/resetFilters"
 import cleanerAdditionalProductsMiddleware from "store/middleware/cleanerAdditionalProducts"
 import verifierUnavailableProductsInCart from "store/middleware/verifierUnavailableProductsInCart"
 
-export const history = createBrowserHistory()
+export const history = createBrowserHistory({ basename: process.env.PUBLIC_URL })
 
 
 export default function configureStore(preloadedState) {
