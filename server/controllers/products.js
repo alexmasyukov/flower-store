@@ -302,15 +302,17 @@ module.exports = {
 
     async updateProductField(req, res, next) {
         try {
-            const { id = false, field = false } = req.params
+            const { id = false, field } = req.params
             const { value } = req.body
 
             if (!Number.isInteger(Number(id))) {
                 return next(utils.error(500, 'ERROR', 'id should be Integer'))
             }
 
+            if (field === undefined)
+                return next(utils.error(500, 'ERROR', 'field should be'))
             if (value === undefined)
-                return next(utils.error(500, 'ERROR', 'value would be'))
+                return next(utils.error(500, 'ERROR', 'value should be'))
 
             const update = await knex
               .from('products')

@@ -2,27 +2,27 @@ const knex = require('../db/knex')
 const utils = require('../utils')
 
 module.exports = {
-    async updateProductSizeProp(req, res, next) {
+    async updateProductSizeField(req, res, next) {
         try {
-            const { id = false, prop = '' } = req.params
+            const { id = false, field } = req.params
             const { value } = req.body
 
-            if (prop === '')
-                return next(utils.error(500, 'ERROR', 'prop value should be'))
-            if (value !== "true" && value !== "false")
-                return next(utils.error(500, 'ERROR', 'public value not Boolean (true/false)'))
+            if (field === undefined)
+                return next(utils.error(500, 'ERROR', 'field should be'))
+            if (value === undefined)
+                return next(utils.error(500, 'ERROR', 'value should be'))
 
             const update = await knex
               .from('product_sizes')
               .where('id', id)
               .update({
-                  [prop]: value
+                  [field]: value
               })
 
             const sizePublic = await knex
               .from('product_sizes')
               .where('id', id)
-              .select([prop])
+              .select([field])
               .first()
 
             if (!sizePublic)

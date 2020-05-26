@@ -89,13 +89,19 @@ export default class ApiService {
     }
 
     updateProductPublic = async (id, boolValue = true) =>
-      await this.putResource(`/products/${id}/public?public=${boolValue}`)
+      await this.putResource(`/products/${id}/public`, {
+          value: boolValue
+      })
 
     updateProductSizePublic = async (id, boolValue = true) =>
-      await this.putResource(`/product-sizes/${id}/public?value=${boolValue}`)
+      await this.putResource(`/product-sizes/${id}/public`, {
+          value: boolValue
+      })
 
     updateProductSizeFast = async (id, boolValue = true) =>
-      await this.putResource(`/product-sizes/${id}/fast?value=${boolValue}`)
+      await this.putResource(`/product-sizes/${id}/fast`, {
+          value: boolValue
+      })
 
     getProduct = (id) => async () => await this.getResource(`/products/${id}?withUnpublic=true&withUnpublicSizes=true&convertEntities=false`)
     deleteProduct = async (id) => await this.deleteResource(`/products/${id}`)
@@ -140,7 +146,6 @@ export default class ApiService {
     })
     saveTeamPerson = async (person) => await this.postResource(`/team`, person)
     deleteTeamPerson = async (id) => await this.deleteResource(`/team/${id}`)
-
 
 
     // Banners
