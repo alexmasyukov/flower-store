@@ -96,7 +96,8 @@ class ProductsList extends Component {
                       {product.title}</Link>
 
                   <span className={styles.listLabel}>
-                          <b>ID:</b> {product.id}
+                          <b>ID:</b> {product.id} &nbsp;|&nbsp;
+                          <b>Order:</b> {product.order}
                       </span>
                   <br/>
 

@@ -25,7 +25,7 @@ router.route('/:id')
   )
   .delete(productController.deleteProduct)
 
-router.route('/:id/public')
-  .put(productController.updateProductPublic)
+router.route('/:id/:field')
+  .put(productController.updateProductField)
 
 module.exports = router

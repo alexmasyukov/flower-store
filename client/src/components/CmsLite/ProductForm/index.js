@@ -54,6 +54,14 @@ class ProductForm extends Component {
         return this.props.entities.filter(item => item.eType === eType)
     }
 
+    getAdditiveTitleById(id) {
+        const findItem = this.props.additives.find(item => item.id === id)
+        if (findItem && 'title' in findItem) {
+            return findItem.title
+        }
+        return `[title not found] (id: ${id})`
+    }
+
     handleSaveProduct(product) {
         product.florist_id = Number.parseInt(product.florist_id)
         product.stability = Number.parseInt(product.stability)
@@ -78,36 +86,31 @@ class ProductForm extends Component {
     }
 
     render() {
-        const { product, florists, uploadImages, getImage } = this.props
+        const { product, florists, additives, uploadImages, getImage } = this.props
         const { imgIsLoading } = this.state
+
+        const {
+            florist_name: _1,
+            florist_photo: _2,
+            order: _3,
+            ...baseProduct
+        } = product
 
         const maxSizesItems = 2
 
         return (
           <Formik
             initialValues={{
-                id: product.id,
-                order: product.order,
-                city_id: product.city_id,
-                title: product.title,
-                public: product.public,
-                florist_id: product.florist_id,
-                florist_text: product.florist_text,
-                slug: product.slug,
-                color: product.color,
-                stability: product.stability,
-                shade: product.shade,
-                packing: product.packing,
-                bouquetType: product.bouquetType,
-                sizes: product.sizes
+                ...baseProduct,
+                selected_additive: 0
             }}
             validationSchema={productSchema}
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={({ selected_additive: _, ...values }, { setSubmitting }) => {
                 setSubmitting(true)
                 this.handleSaveProduct(values)
             }}
           >
-              {({ values, errors }) => {
+              {({ values }) => {
                   // console.log(props)
                   // const error = ;
                   // const touch = getIn(props.touched, 'sizes');
@@ -213,7 +216,51 @@ class ProductForm extends Component {
                             </div>
                         </Row>
 
-                        <h2>Размеры</h2>
+                        <h2>Добавки</h2>
+                        <Row className="mb-4 align-items-end">
+                            <FieldArray
+                              name={`additives`}
+                              render={ahf => (
+                                <>
+                                    {values.additives && values.additives.length > 0 &&
+                                    values.additives.map((id, ad_index) => (
+                                      <div className="col-md-12 mb-3" key={ad_index}>
+                                          «{this.getAdditiveTitleById(id)}» (id: {id})
+                                          <button type="button" className="ml-2"
+                                                  onClick={() => {
+                                                      ahf.remove(ad_index)
+                                                  }}>Удалить
+                                          </button>
+                                      </div>
+                                    ))}
+
+                                    <div className="col-12 mt-1">
+                                        <Field name={`selected_additive`} as="select">
+                                            <option value={0}>&nbsp;</option>
+                                            {additives.map(({ id, title }) => (
+                                              <option key={id}
+                                                      value={Number.parseInt(id)}>{title} (id: {id})</option>
+                                            ))}
+                                        </Field>
+                                        <button disabled={values.selected_additive <= 0}
+                                                className="mt-2 ml-3"
+                                                type="button"
+                                                onClick={() => {
+                                                    if (values.additives.some(item => Number.parseInt(item) === Number.parseInt(values.selected_additive))) {
+                                                        alert('Такая добавка уже есть')
+                                                        return
+                                                    }
+                                                    ahf.push(Number.parseInt(values.selected_additive))
+                                                }}>Добавить
+                                        </button>
+                                    </div>
+                                </>
+                              )}
+                            />
+                        </Row>
+
+
+                        <h2 className="mt-5">Размеры</h2>
 
                         <FieldArray
                           name="sizes"

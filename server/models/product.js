@@ -9,7 +9,6 @@ class Product {
             required: [
                 'city_id',
                 'public',
-                'order',
                 // 'available',
                 'slug',
                 'title',

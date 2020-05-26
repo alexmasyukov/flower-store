@@ -18,73 +18,73 @@ const ProductForm = loadable(() => import('components/CmsLite/ProductForm'), {
     fallback: fallback()
 })
 
+const emptyProductWithEmptySize = {
+    ...productModel,
+    sizes: [{ ...productSizeModel }]
+}
+
+const commonApi = (apiService) => ({
+    getAllEntities: apiService.getAllEntities,
+    getAllFlorists: apiService.getAllFlorists,
+    getAllAdditives: apiService.getAllAdditives,
+    uploadImages: apiService.uploadImages,
+    getImage: apiService.getImage
+
+})
+
+const commonHOCs = (WrappedComponent) =>
+  compose(
+    withData({
+        getDataMethod: 'getAllEntities',
+        dataPropName: 'entities',
+        loadingText: 'entities'
+    }),
+    withData({
+        getDataMethod: 'getAllFlorists',
+        dataPropName: 'florists',
+        loadingText: 'florists'
+    }),
+    withData({
+        getDataMethod: 'getAllAdditives',
+        dataPropName: 'additives',
+        loadingText: 'additives'
+    })
+  )(WrappedComponent)
+
 
 const mapMethodsToProps = (apiService, props) => {
     return {
+        ...commonApi(apiService),
         getProduct: apiService.getProduct(props.id),
-        getAllEntities: apiService.getAllEntities,
-        getAllFlorists: apiService.getAllFlorists,
-        saveProduct: apiService.updateProduct,
-        uploadImages: apiService.uploadImages,
-        getImage: apiService.getImage
+        saveProduct: apiService.updateProduct
     }
 }
-
 
 const ProductFormContainer = compose(
   withRouterParams,
   withApiService(mapMethodsToProps),
+  commonHOCs,
   withData({
       getDataMethod: 'getProduct',
       dataPropName: 'product',
       loadingText: 'product'
-  }),
-  withData({
-      getDataMethod: 'getAllEntities',
-      dataPropName: 'entities',
-      loadingText: 'entities'
-  }),
-  withData({
-      getDataMethod: 'getAllFlorists',
-      dataPropName: 'florists',
-      loadingText: 'florists'
   })
 )(ProductForm)
 
 
 const mapMethodsToProps_NewItem = (apiService) => {
     return {
-        getAllEntities: apiService.getAllEntities,
-        getAllFlorists: apiService.getAllFlorists,
-        saveProduct: apiService.saveProduct,
-        uploadImages: apiService.uploadImages,
-        getImage: apiService.getImage
+        ...commonApi(apiService),
+        saveProduct: apiService.saveProduct
     }
 }
 
 const ProductFormContainer_NewItem = compose(
   withRouterParams,
   withApiService(mapMethodsToProps_NewItem),
-  withData({
-      getDataMethod: 'getAllEntities',
-      dataPropName: 'entities',
-      loadingText: 'entities'
-  }),
-  withData({
-      getDataMethod: 'getAllFlorists',
-      dataPropName: 'florists',
-      loadingText: 'florists'
-  })
+  commonHOCs
 )(ProductForm)
 
-const emptyProductWithEmptySize = {
-    ...productModel,
-    sizes: [
-        {
-            ...productSizeModel
-        }
-    ]
-}
 
 const CmsProductFormPage = ({ isNew }) => (
   <CmsLayout>

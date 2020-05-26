@@ -300,29 +300,37 @@ module.exports = {
         }
     },
 
-    async updateProductPublic(req, res, next) {
+    async updateProductField(req, res, next) {
         try {
-            const { id = false } = req.params
+            const { id = false, field = false } = req.params
+            const { value } = req.body
 
-            if (req.query.public !== "true" && req.query.public !== "false")
-                return next(utils.error(500, 'ERROR', 'public value not Boolean (true/false)'))
+            if (!Number.isInteger(Number(id))) {
+                return next(utils.error(500, 'ERROR', 'id should be Integer'))
+            }
+
+            if (value === undefined)
+                return next(utils.error(500, 'ERROR', 'value would be'))
 
             const update = await knex
               .from('products')
               .where('id', id)
               .update({
-                  public: req.query.public
+                  [field]: value
               })
 
-            const porductPublic = await knex
+            const porductField = await knex
               .from('products')
               .where('id', id)
-              .select(['public'])
+              .select([field])
               .first()
+
+            if (!porductField)
+                return next(utils.error(404, 'NOT FOUND', 'not found'))
 
             res.json({
                 status: 'done',
-                result: porductPublic
+                result: porductField
             })
         } catch (e) {
             next(utils.error(500, 'ERROR', e.message))
