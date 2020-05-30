@@ -15,7 +15,7 @@ export const VALIDATION_MESSAGES = {
    MIN_SYMBOLS: (min, otherText) => `Минимум ${min} ${otherText}`
 }
 
-// export const AVAILABLE_TYPES = {
-//    BASE: 'BASE',
-//    FAST: 'FAST'
-// }
+export const AVAILABLE_TYPES = {
+   BASE: 'BASE',
+   FAST: 'FAST'
+}

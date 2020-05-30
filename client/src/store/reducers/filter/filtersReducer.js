@@ -1,10 +1,11 @@
 import { FETCH_PRODUCTS_SUCCESS, FILTERS_SET_ITEMS } from "store/actionTypes"
+import { AVAILABLE_TYPES } from "constants/common"
 
-
-const filters_sizesPrice = {
-    bySizesPrice: [10000, 10000]
-}
-
+// todo Пока не используем, нужно сделать кнопки цвета с extra
+// todo это невозмножно получить в таком виде с сервера,
+//  сейчас просто цвет приходит, значит нужно делать отдельный запрос
+//  или вычислять и отправлять в ключе api/products?date=
+//  (как даты недоступности)
 const filters_colors = {
     byColors: [
         {
@@ -22,34 +23,28 @@ const filters_colors = {
     ]
 }
 
-const filters_typeArray = {
+
+const initialState = {
+    bySizesPrice: [0, 0],
+    byAvailability: [{
+        title: 'Готовые букеты',
+        extra: {
+            type: AVAILABLE_TYPES.FAST,
+        }
+    }, {
+        title: 'Ожидание 90 минут',
+        extra: {
+            type: AVAILABLE_TYPES.BASE,
+        }
+    }],
     bySizes: [],
     byFlowers: [],
     byStability: [],
     byShades: [],
     byPacking: [],
-    // byAvailability: [],
-    byBouquetType: []
-}
-
-const initialState = {
-    ...filters_sizesPrice,
-    ...filters_typeArray,
-    ...filters_colors
-    // //[1900, 9080], // initial min max for price range
-    // byPacking: [], //'Бумага флисовая', 'Шляпная коробка', 'Фет', 'Коробка'
-    // bySizes: [],//['Стандартный', 'Большой', 'Премиум'],
-    // byFlowers: [], //['Гортензия', 'Розы', 'Кустовая роза', 'Кустовая пионовидная роза''Астра', 'Хризантема'],
-    // byStability: [], //['+', '++', '+++'],
-    // byShades: [], //['Нежный', 'Яркий', 'Темный'],
-    // byAvailability: [], //['Готовые букеты', 'Ожидание 90 минут'],
-    // byBouquetType: [], // ['Монобукет', 'Сборный']
-    // todo это невозмножно получить в таком виде с сервера,
-    //  сейчас просто цвет приходит, значит нужно делать отдельный запрос
-    //  или вычислять и отправлять в ключе api/products?date=
-    //  (как даты недоступности)
-
-    // НЕ ИСПОЛЬЗУЕТСЯ
+    byColors: [],
+    byBouquetType: [],
+    // НЕ ИСПОЛЬЗУЕТСЯ пока
     // byCollections: [],//['23 февраля', '8 марта', 'Новый год'],
 }
 
@@ -80,7 +75,8 @@ const filtersReducer = (state = initialState, action) => {
                     byStability: [...state.byStability, stability],
                     byShades: [...state.byShades, shade],
                     byBouquetType: [...state.byBouquetType, bouquetType],
-                    byPacking: [...state.byPacking, packing]
+                    byPacking: [...state.byPacking, packing],
+                    byColors: [...state.byColors, color]
                 }
             }, { ...state })
 

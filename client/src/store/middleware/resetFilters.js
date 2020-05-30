@@ -3,7 +3,7 @@ import {
    SELECTED_FILTERS_SET_PRICE_RANGE
 } from "store/actionTypes"
 import { resetFilter } from "store/actions/selectedFiltersActions"
-import { filtersEntities } from "constants/filtersEntities"
+import { fitlerButtonsGroupsSettings } from "constants/filters"
 
 /**
  * UI
@@ -24,7 +24,7 @@ const resetFilters = store => next => action => {
          // Если у фильтра свойство multiply = false, нужно отключить возможность
          // множественного выбора (например: одновременно выбранные кнопки - Ожидание и Готовые букеты)
          // Находим фильтр по его ключу
-         const filter = filtersEntities[filterKey]
+         const filter = fitlerButtonsGroupsSettings[filterKey]
          if (filter) {
             if ('multiply' in filter && filter.multiply === false) {
                next(resetFilter(filterKey))

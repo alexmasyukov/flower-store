@@ -1,5 +1,5 @@
 import React from 'react'
-import { filtersEntities } from 'constants/filtersEntities'
+import { fitlerButtonsGroupsSettings } from 'constants/filters'
 import ButtonsGroupCollapseContainer from "containers/buttonsGroupCollapse"
 import styles from "components/Filter/Filter.module.sass"
 
@@ -8,8 +8,8 @@ const Filter = () => (
   <div className={styles.filter}>
     {
       // Более функциональный стиль, чем с Object.keys
-      // Потому что, мы не будем из нутри обращаться к filtersEntities[key]
-      Object.entries(filtersEntities).map(item => {
+      // Потому что, мы не будем из нутри обращаться к fitlerButtonsGroupsSettings[key]
+      Object.entries(fitlerButtonsGroupsSettings).map(item => {
           const [filterKey, filter] = item
           return (
             <ButtonsGroupCollapseContainer
