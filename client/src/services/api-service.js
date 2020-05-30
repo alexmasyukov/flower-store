@@ -83,8 +83,12 @@ export default class ApiService {
           responseType: 'json'
       })
 
-    getAllProducts = (convertEntities = false) => async () => {
-        return await this.getResource(`/products?withUnpublic=true&withUnpublicSizes=true&convertEntities=${convertEntities}`)
+    getAllProducts = (
+      convertEntities = false,
+      withUnpublic = false,
+      withUnpublicSizes = false
+    ) => async () => {
+        return await this.getResource(`/products?withUnpublic=${withUnpublic}&withUnpublicSizes=${withUnpublicSizes}&convertEntities=${convertEntities}`)
         //.map(this._transformProduct)
     }
 
@@ -101,6 +105,18 @@ export default class ApiService {
     updateProductSizeFast = async (id, boolValue = true) =>
       await this.putResource(`/product-sizes/${id}/fast`, {
           value: boolValue
+      })
+
+    updateProductOrderUp = async (order) =>
+      await this.putResource(`/products/update-order`, {
+          direction: 'up',
+          value: order
+      })
+
+    updateProductOrderDown = async (order) =>
+      await this.putResource(`/products/update-order`, {
+          direction: 'down',
+          value: order
       })
 
     getProduct = (id) => async () => await this.getResource(`/products/${id}?withUnpublic=true&withUnpublicSizes=true&convertEntities=false`)
@@ -201,6 +217,15 @@ export default class ApiService {
     }
 
 
+    _transformProduct = ({ sizes, ...base }) => ({
+        ...base,
+        sizes: sizes.map(({ images, ...sizeBase }) => ({
+            images: images.map(img => this.getImage(img)),
+            ...sizeBase
+        }))
+    })
+
+
     // OTHER
     //
     // _transformProduct = product => ({
@@ -284,4 +309,6 @@ export default class ApiService {
         passengers: starship.passengers,
         cargoCapacity: starship.cargo_capacity
     })
+
+
 }

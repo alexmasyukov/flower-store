@@ -12,97 +12,116 @@ import styles from "components/Product/Product.module.sass"
 
 
 const Product = ({
-                    id = 0,
-                    title = '[title]',
-                    slug = '[slug]',
-                    available = {
-                       expect: false,
-                       fast: false
-                    },
-                    showPriceAllSizes = false,
-                    firstActiveSizeIndex = 0,
-                    sizes = [{
-                       title: '[sizeTitle]',
-                       price: 0,
-                       image: '',
-                       circle: 0
-                    }]
+                     id = 0,
+                     city_id = 1,
+                     public: pub = true,
+                     order = 0,
+                     available = {
+                         // expect: false,
+                         // fast: false
+                     },
+                     slug = '[slug]',
+                     title = '[title]',
+
+                     florist_text = '',
+                     florist_photo = '',
+                     florist_name = '',
+
+                     color = '',
+                     stability = '',
+                     shade = '',
+                     packing = '',
+                     bouquetType = '',
+                     additives = [],
+                     additionalProducts = [],
+                     sizes = [{
+                         title: '[sizeTitle]',
+                         fast: false,
+                         diameter: 0,
+                         flowers: [],
+                         flowers_counts: [],
+                         price: 0,
+                         images: []
+                     }],
+
+                     showPriceAllSizes = false,
+                     firstActiveSizeIndex = 0
                  }) => {
-   const [activeSizeIndex, setActiveSizeIndex] = useState(firstActiveSizeIndex)
-   const [isDetails, setIsDetails] = useState(false)
+    const [activeSizeIndex, setActiveSizeIndex] = useState(firstActiveSizeIndex)
+    const [isDetails, setIsDetails] = useState(false)
 
-   useEffect(() => {
-      setActiveSizeIndex(firstActiveSizeIndex)
+    useEffect(() => {
+        setActiveSizeIndex(firstActiveSizeIndex)
+    }, [firstActiveSizeIndex])
 
-   }, [firstActiveSizeIndex])
+    const currentSize = sizes[activeSizeIndex]
 
-   const firstSize = sizes[activeSizeIndex]
+    const handleSizeClick = (index) => {
+        setIsDetails(true)
+        setActiveSizeIndex(index)
+    }
 
-   const handleSizeClick = (index) => {
-      setActiveSizeIndex(index)
-   }
+    // const onMouseEnter = (e) => {
+    //     console.log('enter')
+    //     setIsDetails(true)
+    // }
 
-   const onMouseEnter = (e) => {
-      console.log('enter')
-      setIsDetails(true)
-   }
+    // const onMouseOut = (e) => {
+    //     console.log('out')
+    //     setIsDetails(false)
+    // }
+// onMouseEnter={(e) => onMouseEnter(e)}
+    // onMouseLeave={(e) => onMouseOut(e)}
 
-   const onMouseOut = (e) => {
-      console.log('out')
-      setIsDetails(false)
-   }
-
-   return (
-      <div
-         key={id}
-         onMouseEnter={(e) => onMouseEnter(e)}
-         onMouseLeave={(e) => onMouseOut(e)}
-         className={cn(styles.product, 'col-4', 'mb-2', 'pl-1', 'pr-1')}
+    return (
+      <div key={id}
+           className={cn(styles.product, 'col-6', 'col-md-4', 'mb-2', 'pl-1', 'pr-1')}
       >
-         <Link className={styles.image} to={`/catalog/${slug}`}>
-            {/*<p className={styles.size}>{firstSize.h}см / {firstSize.w}см</p>*/}
-            <Photo src={firstSize.image}/>
-            <SizeInfo className={styles.size} circle={firstSize.circle}/>
-         </Link>
+          <Link className={styles.image} to={`/catalog/${id}`}>
+              <Photo src={currentSize.images[0]}/>
+              <SizeInfo className={styles.size} diameter={currentSize.diameter}/>
+          </Link>
 
-         <Available
-            {...available}
+          <Available
+            fast={currentSize.fast}
             small={true}
-            isDetails={isDetails}/>
+            isDetails={isDetails}
+          />
 
-         <Link className={styles.title} to={`/catalog/${slug}`}>
-            {title}
-         </Link>
+          <Link className={styles.title} to={`/catalog/${id}`}>
+              {title}
+          </Link>
 
-         <div className={styles.sizes}>
-            {sizes.map(({ title, price, active }, i) => (
-               <SizeTitle
-                  key={i}
+          <div className={styles.sizes}>
+              {sizes.map(({ id, fast, title, price, active }, i) => (
+                <SizeTitle
+                  key={id}
                   title={title}
                   price={price}
+                  fast={fast}
                   active={activeSizeIndex === i}
                   onClick={() => handleSizeClick(i)}
-               />
-            ))}
-         </div>
-         <hr/>
+                />
+              ))}
+          </div>
+          <hr/>
       </div>
-   )
+    )
 }
 
 
-Product.propTypes = {
-   id: PropTypes.string.isRequired,
-   title: PropTypes.string.isRequired,
-   slug: PropTypes.string.isRequired,
-   available: PropTypes.shape({
-      expect: PropTypes.bool.isRequired,
-      fast: PropTypes.bool.isRequired
-   }),
-   sizes: PropTypes.array.isRequired,
-   showPriceAllSizes: PropTypes.bool,
-   firstActiveSizeIndex: PropTypes.number
-}
+// Product.propTypes = {
+//     id: PropTypes.string.isRequired,
+//     title: PropTypes.string.isRequired,
+//     slug: PropTypes.string.isRequired,
+//     available: PropTypes.shape({
+//         expect: PropTypes.bool.isRequired,
+//         fast: PropTypes.bool.isRequired
+//     }),
+//     sizes: PropTypes.array.isRequired,
+//     showPriceAllSizes: PropTypes.bool,
+//     firstActiveSizeIndex: PropTypes.number
+// }
 
 
 export default Product

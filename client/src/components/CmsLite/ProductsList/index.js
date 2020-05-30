@@ -79,12 +79,32 @@ class ProductsList extends Component {
           })
     }
 
+    handleProductSortUp = (order) => () => {
+        this.props.updateProductOrderUp(order)
+          .then(res => {
+              setTimeout(() => {
+                  console.log(res)
+                  // alert('update')
+              }, 500)
+          })
+    }
+
+    handleProductSortDown = (order) => () => {
+        this.props.updateProductOrderDown(order)
+          .then(res => {
+              setTimeout(() => {
+                  console.log(res)
+                  // alert('update down')
+              }, 500)
+          })
+    }
+
 
     render() {
         const { products } = this.state
         const { getImage, deleteProduct } = this.props
 
-        return products.map(product => (
+        return products.map((product, i) => (
           <Row key={product.id} className={cn(!product.public && styles.unpublic)}>
               <div className="col-md-2">
                   <img style={{ width: '100%' }}
@@ -95,10 +115,40 @@ class ProductsList extends Component {
                   <Link to={`/cmslite/products/${product.id}`}>
                       {product.title}</Link>
 
-                  <span className={styles.listLabel}>
+                  <div className=" mt-4">
+                      <span className="mr-5">
                           <b>ID:</b> {product.id} &nbsp;|&nbsp;
                           <b>Order:</b> {product.order}
                       </span>
+                      <span className={styles.mtitle}>Переместить </span>
+                      <button
+                        type="button"
+                        disabled={i === 0}
+                        onClick={this.handleProductSortUp(product.order)}>
+                          Вверх
+                      </button>
+                      <button
+                        type="button"
+                        disabled={i === products.length - 1}
+                        onClick={this.handleProductSortDown(product.order)}>
+                          Вниз
+                      </button>
+                      |
+                      <button
+                        onClick={() => {
+                            if (window.confirm("Удалить товар?"))
+                                deleteProduct(product.id)
+                                  .then(res => {
+                                      console.log(res)
+                                      if (res && 'status' in res && res.status === 'done') {
+                                          this.props.history.go()
+                                      } else {
+                                          alert('Ошибка при удалении. Подробности в консоли')
+                                      }
+                                  })
+                        }}>Удалить
+                      </button>
+                  </div>
                   <br/>
 
                   <Switcher
@@ -127,21 +177,7 @@ class ProductsList extends Component {
                     </Row>
                   )}
 
-                  <button
-                    className="mt-3"
-                    onClick={() => {
-                        if (window.confirm("Удалить товар?"))
-                            deleteProduct(product.id)
-                              .then(res => {
-                                  console.log(res)
-                                  if (res && 'status' in res && res.status === 'done') {
-                                      this.props.history.go()
-                                  } else {
-                                      alert('Ошибка при удалении. Подробности в консоли')
-                                  }
-                              })
-                    }}>Удалить
-                  </button>
+
               </div>
               <hr/>
           </Row>

@@ -16,6 +16,9 @@ router.route('/')
     productController.createProduct
   )
 
+router.route('/update-order')
+  .put(productController.updateOrder)
+
 router.route('/:id')
   .get(productController.getProduct)
   .put(

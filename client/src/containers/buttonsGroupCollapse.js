@@ -5,20 +5,23 @@ import { getFilters } from "store/selectors/filters"
 import { resetFilter, setPriceRange, updateSelect } from "store/actions/selectedFiltersActions"
 
 
-function mapStateToProps(state) {
-   return {
-      selectedFilters: getSelectedFilters(state),
-      filters: getFilters(state)
-   }
+function mapStateToProps(state, { filterKey }) {
+    // console.log(props)
+    // console.log('state', state)
+    // console.log('getFilters', getFilters(state))
+    return {
+        selectedFilters: getSelectedFilters(state),
+        filters: getFilters(state)
+    }
 }
 
 const mapDispatchToProps = {
-   updateSelect,
-   setPriceRange,
-   resetFilter
+    updateSelect,
+    setPriceRange,
+    resetFilter
 }
 
 export default connect(
-   mapStateToProps,
-   mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(ButtonsGroupCollapse)

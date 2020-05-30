@@ -109,7 +109,7 @@ customerSchema
          path: item.path,
          message: item.message
       }))
-      console.log(errors)
+      // console.log(errors)
    })
 
 

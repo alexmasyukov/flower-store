@@ -17,11 +17,13 @@ const ProductsList = loadable(() => import('components/CmsLite/ProductsList'), {
 
 
 const mapMethodsToProps = (apiService) => ({
-    getAllProducts: apiService.getAllProducts(true),
+    getAllProducts: apiService.getAllProducts(true, true, true),
     getImage: apiService.getImage,
     updateProductPublic: apiService.updateProductPublic,
     updateProductSizePublic: apiService.updateProductSizePublic,
     updateProductSizeFast: apiService.updateProductSizeFast,
+    updateProductOrderUp: apiService.updateProductOrderUp,
+    updateProductOrderDown: apiService.updateProductOrderDown,
     deleteProduct: apiService.deleteProduct,
 })
 

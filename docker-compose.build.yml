@@ -45,6 +45,23 @@ services:
       context: ./server
       dockerfile: Dockerfile.prod
     image: alexmasyukov/klumba_api:latest
+    environment:
+      - NODE_ENV=production
+
+
+  tbot:
+    container_name: tbot
+    image: alexmasyukov/klumba_tbot:latest
+    build:
+      context: ./telegram-bot
+      dockerfile: Dockerfile.dev
+    volumes:
+      - './telegram-bot:/app'
+      - '/app/node_modules'
+    environment:
+      - NODE_ENV=development
+    #      - CHOKIDAR_USEPOLLING=true
+    restart: always
 
   api-test:
     image: klumba_api:latest

@@ -20,6 +20,20 @@ services:
 #    ports:
 #      - 4000:4000
 #    restart: always
+  tbot:
+    container_name: tbot
+    image: alexmasyukov/klumba_tbot:latest
+    networks:
+      - proxy.front-network
+      - db
+    volumes:
+      - './telegram-bot:/app'
+      - '/app/node_modules'
+    environment:
+      - NODE_ENV=development
+    ports:
+      - 5000:3500
+    restart: always
 
   api:
     image: alexmasyukov/klumba_api:latest

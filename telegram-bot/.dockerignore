@@ -1,0 +1,6 @@
+.git
+.gitignore
+.github
+.firebase
+node_modules
+yarn-error.log

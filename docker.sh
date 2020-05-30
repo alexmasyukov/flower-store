@@ -1,7 +1,8 @@
 #!/bin/bash
 
-services=(app api nginx)
-images=(alexmasyukov/klumba_app:latest alexmasyukov/klumba_api:latest)
+services=(app api nginx tbot)
+images=(alexmasyukov/klumba_app:latest alexmasyukov/klumba_api:latest
+alexmasyukov/klumba_tbot:latest)
 # alexmasyukov/klumba_cms:latest
 
 echo
@@ -36,5 +37,5 @@ echo "### Done ###";echo
 
 
 echo "### Start services ..."
-docker-compose -f docker-compose.yml up -d "${services[@]}"
+docker-compose -f docker-compose.yml up -d --remove-orphans "${services[@]}"
 echo

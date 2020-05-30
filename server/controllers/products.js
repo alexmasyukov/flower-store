@@ -43,17 +43,18 @@ const addSizesToProduct = (allSizes) => (product) => {
 const convertIntitiesToValues = (entities) => (product) => {
     const base = R.compose(
       floristToGroup,
-      convertEntitie('colors', entities),
+      convertEntitie('color', entities),
       convertEntitie('packing', entities),
       convertEntitie('stability', entities),
       convertEntitie('shade', entities),
-      convertEntitie('collection', entities)
+      convertEntitie('bouquetType', entities)
+      // convertEntitie('collection', entities)
     )(product)
 
     const sizes = product.sizes.map(size =>
       R.compose(
-        convertEntitie('flowers_count', entities),
-        convertEntitie('title', entities)
+        convertEntitie('title', entities),
+        convertEntitie('flowers', entities)
       )(size))
 
     return {
@@ -333,6 +334,59 @@ module.exports = {
             res.json({
                 status: 'done',
                 result: porductField
+            })
+        } catch (e) {
+            next(utils.error(500, 'ERROR', e.message))
+        }
+    },
+
+    async updateOrder(req, res, next) {
+        try {
+            const { direction, value } = req.body
+
+            if (value === undefined || direction === undefined)
+                return next(utils.error(500, 'ERROR', 'field should be'))
+
+            const products = await knex
+              .select('id')
+              .from('products')
+              .where('order', '>=', value)
+              .order('order')
+              .limit(2)
+
+            if (!products)
+                return next(utils.error(404, 'NOT FOUND', 'not found'))
+
+            // products.forEach(async product => {
+            //     try {
+            //         const updateSize = await knex('product_sizes')
+            //           .where('id', '=', size.id)
+            //
+            //
+            //         const updateProduct = await knex
+            //           .from('products')
+            //           .where('id', product.id)
+            //           .update('order', )
+            //     } catch (e) {
+            //         return next(utils.error(500, 'ERROR', e.errors))
+            //     }
+            // })
+
+
+            // const update = await knex
+            //   .from('products')
+            //   .where('id', id)
+            //   .update({
+            //       [field]: value
+            //   })
+
+
+
+
+
+            res.json({
+                status: 'done',
+                result: products
             })
         } catch (e) {
             next(utils.error(500, 'ERROR', e.message))
