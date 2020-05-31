@@ -7,7 +7,15 @@ const getProducts = state =>
 export const getProductById = (state, id) => state.entities.products.byId[id]
 export const getStatusSizesFilter = state => 'bySizes' in state.ui.selectedFilters
 export const getStatusPriceFilter = state => 'bySizesPrice' in state.ui.selectedFilters
-export const getSelectedFilters = state => state.ui.selectedFilters
+
+
+// export const getSelectedFilters = state => state.ui.selectedFilters
+export const getSelectedFilters = createSelector(
+  (state) => state.ui.selectedFilters,
+  (selectedFilters) => selectedFilters)
+
+
+
 export const getSizesAndPriceSelectedFilters = state => {
   const { bySizes, bySizesPrice } = getSelectedFilters(state)
   return {

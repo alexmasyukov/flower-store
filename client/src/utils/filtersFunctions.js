@@ -1,11 +1,10 @@
-import { fitlerButtonsGroupsSettings } from 'constants/filters'
 import { AVAILABLE_TYPES } from "constants/common"
 
 export const byColors = (products, selected = []) =>
   products.filter(product => selected.includes(product.color))
 
 export const byBouquetType = (products, selected = []) =>
-  products.filter(({ bouquetType }) =>  selected.includes(bouquetType))
+  products.filter(({ bouquetType }) => selected.includes(bouquetType))
 
 export const byShades = (products, selected = []) =>
   products.filter(({ shade }) => selected.includes(shade))
@@ -20,14 +19,13 @@ export const bySizes = (products, selected = []) =>
     )
   )
 
-export const bySizesPrice = (products, selected = []) => {
-    const [min, max] = selected
-    return products.filter(product =>
-      product.sizes.some(size =>
-        size.price >= min && size.price <= max
-      )
+export const bySizesPrice = (products, [min, max]) =>
+  products.filter(product =>
+    product.sizes.some(size =>
+      size.price >= min && size.price <= max
     )
-}
+  )
+
 
 export const byFlowers = (products, selected = []) =>
   products.filter(product =>
@@ -43,8 +41,9 @@ export const byStability = (products, selected = []) =>
     }
   )
 
-export const byAvailability = (products, selectedButtons) => {
-    const [button] = selectedButtons
+// Всегда в массиве только одна кнопка
+// Работает методом исключения в redux
+export const byAvailability = (products, [button]) => {
     const availableType = button.extra.type
 
     switch (availableType) {

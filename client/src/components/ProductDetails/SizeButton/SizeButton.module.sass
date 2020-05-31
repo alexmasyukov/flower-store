@@ -3,6 +3,7 @@
   justify-content: flex-start
 
 .button
+  position: relative
   display: flex
   padding: 10px 20px
   border: 1px solid #ddd
@@ -10,7 +11,34 @@
   text-align: center
   margin-right: 15px
 
+.fast
+  &:before
+    position: absolute
+    top: -9px
+    left: -3px
+    content: 'Готовый букет'
+    border-radius: 20px
+    color: #fff
+    padding: 0 6px 1px 6px
+    font-size: 12px
+    font-weight: bold
+    background: deeppink
+
+    //position: absolute
+    //top: -10px
+    //left: 0
+    //content: 'Готовый букет'
+    ///* border-radius: 20px; */
+    //color: #fff
+    //padding: 0 6px 1px 6px
+    //font-size: 12px
+    //font-weight: bold
+    //background: #111
+    //width: 100%
 
 .active
   font-weight: bold
   border-color: black
+  //&.fast
+  //  border: 1px solid deeppink
+  //  color: deeppink

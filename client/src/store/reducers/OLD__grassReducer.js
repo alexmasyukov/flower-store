@@ -19,11 +19,11 @@ const initialState = {
   allIds: ['id0', 'id1', 'id2']
 }
 
-const grassReducer = (state = initialState, action) => {
+const OLD__grassReducer = (state = initialState, action) => {
   switch (action.type) {
     default:
       return state
   }
 }
 
-export default grassReducer
+export default OLD__grassReducer

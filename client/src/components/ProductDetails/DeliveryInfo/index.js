@@ -1,20 +1,12 @@
-import React, { useState } from 'react'
+import React  from 'react'
+import ExpandBlock from "components/ProductDetails/ExpandBlock"
+import ContentContainer from "containers/content"
 
-const DeliveryInfo = () => {
-  const [visible, setVisible] = useState(false)
-  return (
-    <div>
-      <h4 onClick={() => setVisible(!visible)}>Доставка</h4>
-      {
-        visible && (
-          <>
-            Вот здесь информация о доставке,
-            скорее всего нужно вынести в отдельный компонент
-          </>
-        )
-      }
-    </div>
-  );
-};
+
+const DeliveryInfo = () => (
+  <ExpandBlock title="Доставка">
+      <ContentContainer contentId="1"/>
+  </ExpandBlock>
+)
 
 export default DeliveryInfo

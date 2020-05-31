@@ -14,6 +14,10 @@ import verifierUnavailableProductsInCart from "store/middleware/verifierUnavaila
 
 export const history = createBrowserHistory({ basename: process.env.PUBLIC_URL })
 
+history.listen((location) => {
+  console.log('history listen', location)
+  // store.dispatch(fireThisAction(location));
+})
 
 export default function configureStore(preloadedState) {
   const middlewares = [thunkMiddleware, routerMiddleware(history),

@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import React, { useState } from 'react'
+// import PropTypes from 'prop-types'
 import cn from 'classnames'
 import Button from "components/Filter/Button"
 import { FILTER_COMPONENTS_TYPES } from "constants/filters"
@@ -7,45 +7,25 @@ import styles from './ButtonsGroupCollapse.module.sass'
 import ColorButton from "components/Filter/ColorButton"
 import InputPriceRange from "components/Filter/InputPriceRange"
 
+const ButtonsGroupCollapse = ({
+                                  isOpened: isOpenedInit = true,
+                                  filterType = '[filterType]',
+                                  title = '[title]',
+                                  children = [],
+                                  filterKey = '[filterKey]',
+                                  filters = {},
+                                  setPriceRange = f => f,
+                                  selectedFilters = {},
+                                  updateSelect = f => f,
+                                    ...props
+                              }) => {
+    const [isOpened, setIsOpened] = useState(isOpenedInit)
 
-class ButtonsGroupCollapse extends Component {
-    static defaultProps = {
-        filterType: '[filterType]',
-        title: '[title]',
-        children: [],
-        filterKey: '[filterKey]',
-        isOpened: true,
-        filters: {},
-        selectedFilters: {},
-        updateSelect: f => f,
-        resetFilter: f => f
-    }
+    const { [filterKey]: filterItems = [] } = filters
+    const { [filterKey]: filterSelectedItems = [] } = selectedFilters
+    // const isSet = !!filterSelectedItems.length
 
-    static propTypes = {
-        title: PropTypes.string.isRequired,
-        children: PropTypes.array,
-        filterKey: PropTypes.string.isRequired,
-        openedDefault: PropTypes.bool,
-        filters: PropTypes.object.isRequired,
-        selectedFilters: PropTypes.object.isRequired,
-        updateSelect: PropTypes.func.isRequired,
-        resetFilter: PropTypes.func.isRequired
-    }
-
-    state = {
-        isOpened: this.props.isOpened
-    }
-
-    renderFilterButtonGroupByType = (filterItems, filterSelectedItems) => {
-        const {
-            filters,
-            selectedFilters,
-            setPriceRange,
-            filterKey,
-            filterType,
-            updateSelect
-        } = this.props
-
+    const renderFilterButtonGroupByType = (filterItems, filterSelectedItems) => {
         switch (filterType) {
             case FILTER_COMPONENTS_TYPES.RANGE: {
                 const { bySizesPrice: [minInitial, maxInitial] } = filters
@@ -96,49 +76,56 @@ class ButtonsGroupCollapse extends Component {
         }
     }
 
-    render() {
-        const {
-            filterKey,
-            title,
-            filters,
-            selectedFilters,
-            resetFilter
-        } = this.props
+    return (
+      <div className={cn(styles[filterKey])}>
+          <p>
+                    <span
+                      onClick={() => setIsOpened(!isOpened)}
+                      className={styles.group}
+                    >
+                      {title}
+                        {!isOpened && <span> &bull;</span>}
+                    </span>
 
-        const { isOpened } = this.state
-        const { [filterKey]: filterItems = [] } = filters
-        const { [filterKey]: filterSelectedItems = [] } = selectedFilters
-        // const isSet = !!filterSelectedItems.length
+              {/*{isSet && (*/}
+              {/*<span*/}
+              {/*onClick={() => resetFilter(filterKey)}*/}
+              {/*className={styles.reset}*/}
+              {/*>Сбросить</span>*/}
+              {/*)}*/}
+          </p>
 
-        return (
-          <div className={cn(styles[filterKey])}>
-              <p>
-        <span
-          onClick={() => this.setState(prevState =>
-            ({ isOpened: !prevState.isOpened })
+          {isOpened && (
+            <ul>
+                {renderFilterButtonGroupByType(filterItems, filterSelectedItems)}
+            </ul>
           )}
-          className={styles.group}
-        >
-          {title}
-            {!isOpened && <span> &bull;</span>}
-        </span>
-
-                  {/*{isSet && (*/}
-                  {/*<span*/}
-                  {/*onClick={() => resetFilter(filterKey)}*/}
-                  {/*className={styles.reset}*/}
-                  {/*>Сбросить</span>*/}
-                  {/*)}*/}
-              </p>
-
-              {isOpened && (
-                <ul>
-                    {this.renderFilterButtonGroupByType(filterItems, filterSelectedItems)}
-                </ul>
-              )}
-          </div>
-        )
-    }
+      </div>
+    )
 }
 
 export default ButtonsGroupCollapse
+
+
+// static defaultProps = {
+//     filterType: '[filterType]',
+//     title: '[title]',
+//     children: [],
+//     filterKey: '[filterKey]',
+//     isOpened: true,
+//     filters: {},
+//     selectedFilters: {},
+//     updateSelect: f => f,
+//     resetFilter: f => f
+// }
+//
+// static propTypes = {
+//     title: PropTypes.string.isRequired,
+//     children: PropTypes.array,
+//     filterKey: PropTypes.string.isRequired,
+//     openedDefault: PropTypes.bool,
+//     filters: PropTypes.object.isRequired,
+//     selectedFilters: PropTypes.object.isRequired,
+//     updateSelect: PropTypes.func.isRequired,
+//     resetFilter: PropTypes.func.isRequired
+// }

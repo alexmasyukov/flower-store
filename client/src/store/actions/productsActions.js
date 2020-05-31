@@ -65,16 +65,19 @@ export const fetchProducts = (date) => async dispatch => {
     }
 }
 
-export const fetchProduct = (slug) => async dispatch => {
+export const fetchProduct = (id) => async dispatch => {
     // todo use it. Get product from state or from other API /product?slug=...
 
     // bookstoreService.getBooks()
     //   .then((data) => dispatch(booksLoaded(data)))
     //   .catch((err) => dispatch(booksError(err)));
 
+    console.log('fetchProduct action', id)
+
     dispatch(requestProduct())
     try {
-        const response = await fetchProductApi(slug)
+        const response = await fetchProductApi(id)
+        console.log(response)
         dispatch(
           successProduct(response)
         )

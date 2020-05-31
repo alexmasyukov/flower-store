@@ -1,334 +1,321 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux"
-import styles from "./productDetails.module.sass"
 // import propTypes from "prop-types"
 // import Page404 from "pages/404"
 // import { getRouter } from "store/selectors/router"
-import { push } from 'connected-react-router'
-import loadable from "@loadable/component"
-import pMinDelay from 'p-min-delay'
+// import { push } from 'connected-react-router'
+// import loadable from "@loadable/component"
 import Preloader from "components/Preloader"
-import { slugFromUrlSelector } from "store/selectors/router"
-import { fetchProduct } from "store/actions/productsActions"
-import { activeProductSelector, grassSelector } from "store/selectors/product"
 import FloristSay from "components/ProductDetails/FloristSay"
 import Available from "components/ProductDetails/Available"
 import SizeButton from "components/ProductDetails/SizeButton"
-import GrassPluserButton from "components/ProductDetails/GrassPluserButton"
 import SizeInformer from "components/ProductDetails/SizeInformer"
 import RoubleSymbol from "components/UI/RoubleSymbol"
-import Details from "components/ProductDetails/Details"
 import FlowersInstruction from "components/ProductDetails/FlowersInstruction"
 import DeliveryInfo from "components/ProductDetails/DeliveryInfo"
+import ExpandBlock from "components/ProductDetails/ExpandBlock"
+import { slugFromUrlSelector } from "store/selectors/router"
+import { fetchProduct } from "store/actions/productsActions"
+import { activeProductSelector } from "store/selectors/product"
 import { cartProductAdd } from "store/actions/cart/productsActions"
+import styles from "./productDetails.module.sass"
+// import GrassPluserButton from "components/ProductDetails/GrassPluserButton"
 
-const fallback = () => (
-   <div>Loading...</div>
-)
 
-const DatePicker = loadable(() =>
-   pMinDelay(import('components/ProductDetails/DatePicker'), 500), {
-   fallback: fallback()
-})
+// const fallback = () => (
+//    <div>Loading...</div>
+// )
 
-const AdditionalProducts = loadable(() =>
-   pMinDelay(import('containers/additionalProductsContainer'), 100), {
-   fallback: fallback()
-})
+// const AdditionalProducts = loadable(() =>
+//   import('containers/additionalProductsContainer'),
+//    fallback: fallback()
+// })
 
-// todo fix it перенеси это конфигуратор товара, так как в ПУ
-//  будет чекбокс для указания, есть доп коробка и цена для нее
-//  считывать title в корзине нет смысла так как это не названия коробки
-const box = [
-   {
-      id: "id0",
-      price: 0,
-      title: "Нет"
-   },
-   {
-      id: "id0",
-      price: 1500,
-      title: "Да"
-   }
-]
+// // todo fix it перенеси это конфигуратор товара, так как в ПУ
+// //  будет чекбокс для указания, есть доп коробка и цена для нее
+// //  считывать title в корзине нет смысла так как это не названия коробки
+// const box = [
+//    {
+//       id: "id0",
+//       price: 0,
+//       title: "Нет"
+//    },
+//    {
+//       id: "id0",
+//       price: 1500,
+//       title: "Да"
+//    }
+// ]
 
 class ProductDetailsContainer extends Component {
-   // static propTypes = {
-   //   products: propTypes.array.isRequired
-   // }
+    // static propTypes = {
+    //   products: propTypes.array.isRequired
+    // }
 
-   static defaultProps = {
-      product: {}
-   }
+    static defaultProps = {
+        product: {}
+    }
 
-   state = {
-      activeSizeIndex: 0,
-      activeGrassIndex: 0,
-      activeBoxIndex: 0,
-      activeAdditionalProducts: [],
-      showCalendar: false,
-      error: false
-   }
+    state = {
+        activeSizeIndex: 0,
+        // activeGrassIndex: 0,
+        // activeBoxIndex: 0,
+        // activeAdditionalProducts: [],
+        error: false
+    }
 
-   renderSizesButtons = (sizes) => {
-      return (
-         <div className={styles.sizesButtons}>
-            {sizes.map((size, i) =>
-               <SizeButton
+    renderSizesButtons = (sizes) => {
+        return (
+          <div className={styles.sizesButtons}>
+              {sizes.map((size, i) =>
+                <SizeButton
                   key={i}
                   sizeIndex={i}
                   title={size.title}
                   price={size.price}
+                  isFast={size.fast}
                   active={this.state.activeSizeIndex === i}
                   onClick={this.handleSizeButtonClick}
-               />
-            )}
-         </div>
-      )
-   }
+                />
+              )}
+          </div>
+        )
+    }
 
 
-   renderGrassPluserButtons = (grasses, activeIndex, onClick) => (
-      <div className={styles.grassPluserButtons}>
-         {grasses.map((button, i) =>
-            <GrassPluserButton
-               key={i}
-               index={i}
-               title={button.title}
-               price={button.price}
-               active={activeIndex === i}
-               onClick={onClick}
-            />
-         )}
-      </div>
-   )
+    // renderGrassPluserButtons = (grasses, activeIndex, onClick) => (
+    //    <div className={styles.grassPluserButtons}>
+    //       {grasses.map((button, i) =>
+    //          <GrassPluserButton
+    //             key={i}
+    //             index={i}
+    //             title={button.title}
+    //             price={button.price}
+    //             active={activeIndex === i}
+    //             onClick={onClick}
+    //          />
+    //       )}
+    //    </div>
+    // )
 
-   renderFlowers = (flowers) => (
+    renderFlowers = (flowers, flowers_counts) => (
       <ul className={styles.properties}>
-         {flowers.map((flowerEntity, i) => {
-               const [name, count] = flowerEntity
-               return (
-                  <li key={i}>
-                     <b>{name}:</b> {count} шт.
-                  </li>
-               )
-            }
-         )}
+          {flowers.map((flower, i) => (
+              <li key={i}>
+                  <b>{flower}</b>{flowers_counts[i] > 0 && `: ${flowers_counts[i]} шт.`}
+              </li>
+            )
+          )}
       </ul>
-   )
+    )
 
-   getTotalPriceAdditionalProducts = () => {
-      return this.state.activeAdditionalProducts.reduce(
-         (total, current) => {
-            if (Object.prototype.hasOwnProperty.call(current, 'price')) {
-               return total + current.price
-            } else {
-               return total
-            }
-         }, 0)
-   }
+    // getTotalPriceAdditionalProducts = () => {
+    //    return this.state.activeAdditionalProducts.reduce(
+    //       (total, current) => {
+    //          if (Object.prototype.hasOwnProperty.call(current, 'price')) {
+    //             return total + current.price
+    //          } else {
+    //             return total
+    //          }
+    //       }, 0)
+    // }
 
-   getAdditionalProductsIds = () => {
-      return this.state.activeAdditionalProducts.map(({ id }) => id)
-   }
+    // getAdditionalProductsIds = () => {
+    //    return this.state.activeAdditionalProducts.map(({ id }) => id)
+    // }
 
-   handleSizeButtonClick = (activeSizeIndex) => {
-      this.setState({
-         activeSizeIndex
-      })
-   }
+    handleSizeButtonClick = (activeSizeIndex) => {
+        this.setState({
+            activeSizeIndex
+        })
+    }
 
-   handleGrassButtonClick = (activeGrassIndex) => {
-      this.setState({
-         activeGrassIndex
-      })
-   }
+    // handleGrassButtonClick = (activeGrassIndex) => {
+    //    this.setState({
+    //       activeGrassIndex
+    //    })
+    // }
 
-   handleBoxButtonClick = (activeBoxIndex) => {
-      this.setState({
-         activeBoxIndex
-      })
-   }
+    // handleBoxButtonClick = (activeBoxIndex) => {
+    //    this.setState({
+    //       activeBoxIndex
+    //    })
+    // }
 
-   handleAdditionalProductClick = ({ id, price }) => {
-      if (this.getAdditionalProductsIds().includes(id)) {
-         this.setState(prevState => ({
-            activeAdditionalProducts:
-               prevState.activeAdditionalProducts.filter(item => item.id !== id)
-         }))
-      } else {
-         const newItem = {
-            id,
-            price
-         }
-         this.setState(prevState => ({
-            activeAdditionalProducts:
-               [...prevState.activeAdditionalProducts, newItem]
-         }))
-      }
-   }
+    // handleAdditionalProductClick = ({ id, price }) => {
+    //    if (this.getAdditionalProductsIds().includes(id)) {
+    //       this.setState(prevState => ({
+    //          activeAdditionalProducts:
+    //             prevState.activeAdditionalProducts.filter(item => item.id !== id)
+    //       }))
+    //    } else {
+    //       const newItem = {
+    //          id,
+    //          price
+    //       }
+    //       this.setState(prevState => ({
+    //          activeAdditionalProducts:
+    //             [...prevState.activeAdditionalProducts, newItem]
+    //       }))
+    //    }
+    // }
 
-   handleAddToCart = () => {
-      const { product, grass, c } = this.props
+    handleAddToCart = () => {
+        const { product } = this.props
 
-      // todo вынеси это отдельными функциями для получения и внутри карточке
-      //  избавляемся от дублирования кода
-      const {
-         activeSizeIndex,
-         activeGrassIndex,
-         activeBoxIndex
-      } = this.state
+        // todo вынеси это отдельными функциями для получения и внутри карточке
+        //  избавляемся от дублирования кода
+        const {
+            activeSizeIndex
+            // activeGrassIndex,
+            // activeBoxIndex
+        } = this.state
 
-      // todo add it to new
-      //   activeAdditionalProducts: [],
+        // todo add it to new
+        //   activeAdditionalProducts: [],
 
-      const image = product.sizes[activeSizeIndex].image
-      const sizePrice = product.sizes[activeSizeIndex].price
-      const sizeTitle = product.sizes[activeSizeIndex].title
-      const grassItem = grass[activeGrassIndex]
-      const boxItem = box[activeBoxIndex]
+        const image = product.sizes[activeSizeIndex].image
+        const sizePrice = product.sizes[activeSizeIndex].price
+        const sizeTitle = product.sizes[activeSizeIndex].title
+        // const grassItem = grass[activeGrassIndex]
+        // const boxItem = box[activeBoxIndex]
 
-      // console.log(grassItem)
-      // console.log(boxItem)
+        // console.log(grassItem)
+        // console.log(boxItem)
 
-      // todo вынеси это отдельной функцией,
-      //  чтобы ключи объекты были стандартизированы и прозрачны
-      const newProduct = {
-         id: product.id,
-         title: product.title,
-         image: image,
-         options: {
-            grass: {
-               title: grassItem.title,
-               price: grassItem.price
+        // todo вынеси это отдельной функцией,
+        //  чтобы ключи объекты были стандартизированы и прозрачны
+        const newProduct = {
+            id: product.id,
+            title: product.title,
+            image: image,
+            options: {
+                // grass: {
+                //    title: grassItem.title,
+                //    price: grassItem.price
+                // },
+                // box: {
+                //    title: boxItem.title,
+                //    price: boxItem.price
+                // }
             },
-            box: {
-               title: boxItem.title,
-               price: boxItem.price
-            }
-         },
-         size: sizeTitle,
-         price: sizePrice // + grassItem.price + boxItem.price
-      }
-      this.props.addToCart(newProduct)
-   }
+            size: sizeTitle,
+            price: sizePrice // + grassItem.price + boxItem.price
+        }
+        this.props.addToCart(newProduct)
+    }
 
-   componentDidMount() {
-      const { slug, fetchProduct } = this.props
+    componentDidMount() {
+        const { slug, fetchProduct } = this.props
+        fetchProduct(slug)
+    }
 
-      if (slug) {
-         fetchProduct(slug)
-      } else {
-         this.setState({
-            error: true
-         })
-      }
-   }
+    render() {
+        const { product } = this.props
 
-   render() {
-      const { product, grass } = this.props
+        // todo Понять как сделать редирект на 404
+        // this.props.goToLink('/404')
+        // if (!isLoading) return <Page404 />
 
-      // todo Понять как сделать редирект на 404
-      // this.props.goToLink('/404')
-      // if (!isLoading) return <Page404 />
+        if (!product) return <Preloader/>
 
-      if (!product) return <Preloader/>
+        const {
+            activeSizeIndex //activeGrassIndex, //activeBoxIndex
+            // activeAdditionalProducts
+        } = this.state
+        const { florist, sizes } = product
+        const activeSize = sizes[activeSizeIndex]
+        const activeSize_activeImage = activeSize.images[0]
+        // const activeGrass = grass[activeGrassIndex]
+        // const activeBox = box[activeBoxIndex]
+        const totalPrice = activeSize.price
+        // + activeGrass.price
+        // + this.getTotalPriceAdditionalProducts()
+        // + activeBox.price
 
-      const {
-         activeSizeIndex, activeGrassIndex, activeBoxIndex,
-         activeAdditionalProducts
-      } = this.state
-      const { florist, sizes } = product
-      const activeSize = sizes[activeSizeIndex]
-      const activeGrass = grass[activeGrassIndex]
-      const activeBox = box[activeBoxIndex]
-      const totalPrice =
-         activeSize.price + activeGrass.price + activeBox.price +
-         this.getTotalPriceAdditionalProducts()
+        return (
+          <div className="row mt-2">
+              <div className={`col-5 ${styles.photo}`}>
+                  <div className={styles.photoSizeTitle}>
+                      «{activeSize.title}»
+                  </div>
+                  <img src={activeSize_activeImage} alt=""/>
 
-      return (
-         <div className="row mt-2">
-            <div className={`col-5 ${styles.photo}`}>
-               <div className={styles.photoSizeTitle}>
-                  «{activeSize.title}»
-               </div>
-               <img src={activeSize.image} alt=""/>
+                  <FloristSay
+                    photo={florist.photo}
+                    name={florist.name}
+                    text={florist.text}
+                  />
+              </div>
+              <div className={`col-7 ${styles.usn}`}>
+                  <h1>{product.title}</h1>
 
-               <FloristSay
-                  photo={florist.photo}
-                  name={florist.name}
-                  text={florist.text}
-               />
+                  <Available
+                    fast={activeSize.fast}
+                    isDetails={true}
+                  />
 
-               <FlowersInstruction/>
-            </div>
-            <div className={`col-7 ${styles.usn}`}>
-               <h1>{product.title}</h1>
+                  {this.renderSizesButtons(product.sizes)}
 
-               <Available {...product.available} />
+                  <SizeInformer
+                    className={styles.sizeInformer}
+                    diameter={activeSize.diameter}
+                  />
 
-               {this.renderSizesButtons(product.sizes)}
+                  {/*<p className={styles.btitle}>Добавить зелени?</p>*/}
+                  {/*{this.renderGrassPluserButtons(*/}
+                  {/*grass,*/}
+                  {/*activeGrassIndex,*/}
+                  {/*this.handleGrassButtonClick*/}
+                  {/*)}*/}
 
-               <SizeInformer
-                  className={styles.sizeInformer}
-                  circle={activeSize.circle}
-               />
-
-               <p className={styles.btitle}>Добавить зелени?</p>
-               {this.renderGrassPluserButtons(
-                  grass,
-                  activeGrassIndex,
-                  this.handleGrassButtonClick
-               )}
-
-               {product.title.includes('Сборный') && (
-                  <>
-                     <p className={styles.btitle}>Использовать бархатную коробку?</p>
-                     {this.renderGrassPluserButtons(
-                        box,
-                        activeBoxIndex,
-                        this.handleBoxButtonClick
-                     )}
-                  </>
-               )}
+                  {/*{product.title.includes('Сборный') && (*/}
+                  {/*<>*/}
+                  {/*<p className={styles.btitle}>Использовать бархатную коробку?</p>*/}
+                  {/*{this.renderGrassPluserButtons(*/}
+                  {/*box,*/}
+                  {/*activeBoxIndex,*/}
+                  {/*this.handleBoxButtonClick*/}
+                  {/*)}*/}
+                  {/*</>*/}
+                  {/*)}*/}
 
 
-               {/*// todo Дополнительные фото к товару*/}
-               {/*// todo Выделение и подсчет доп товара*/}
-               {/*// todo Добавление товара в корзину*/}
-               {/*// todo  ОК  Дополнительная Каробка бархатная как трава*/}
-               {/*// todo Отзыв случайный*/}
+                  {/*// todo Дополнительные фото к товару*/}
+                  {/*// todo Выделение и подсчет доп товара*/}
+                  {/*// todo Добавление товара в корзину*/}
+                  {/*// todo  ОК  Дополнительная Каробка бархатная как трава*/}
+                  {/*// todo Отзыв случайный*/}
 
-               <p className={styles.btitle}>Приятные мелочи</p>
-               <AdditionalProducts
-                  activeIds={this.getAdditionalProductsIds()}
-                  onClick={this.handleAdditionalProductClick}
-               />
+                  {/*<p className={styles.btitle}>Приятные мелочи</p>*/}
+                  {/*<AdditionalProducts*/}
+                  {/*activeIds={this.getAdditionalProductsIds()}*/}
+                  {/*onClick={this.handleAdditionalProductClick}*/}
+                  {/*/>*/}
 
-               <br/>
-               <h1>{totalPrice.toLocaleString('ru-RU')} <RoubleSymbol/></h1>
+                  <br/>
+                  <h1>{totalPrice.toLocaleString('ru-RU')} <RoubleSymbol/></h1>
 
 
-               <div
-                  className={styles.deliveryButtons}
-                  onClick={this.handleAddToCart}
-               >
-                  В корзину
-               </div>
-               <p>Купить в один клик</p>
+                  <div
+                    className={styles.addToCartBtn}
+                    onClick={this.handleAddToCart}>
+                      В корзину
+                  </div>
+                  {/*<p>Купить в один клик</p>*/}
 
-               <Details>
                   {activeSize.flowers && (
-                     this.renderFlowers(activeSize.flowers)
+                    <ExpandBlock title="Состав композиции" initVisible={true}>
+                        {this.renderFlowers(activeSize.flowers, activeSize.flowers_counts)}
+                    </ExpandBlock>
                   )}
-               </Details>
 
-               <DeliveryInfo/>
-
-            </div>
-         </div>
-      )
-   }
+                  <DeliveryInfo/>
+                  <FlowersInstruction/>
+              </div>
+          </div>
+        )
+    }
 }
 
 // todo СДЕЛАЙ ТО, ЧТО НАПИСАНО ВО ВКЛАДКАХ СПРАВА
@@ -336,25 +323,19 @@ class ProductDetailsContainer extends Component {
 // https://codesandbox.io/s/github/reduxjs/redux/tree/master/examples/shopping-cart?from-embed
 
 const mapStateToProps = state => ({
-   slug: slugFromUrlSelector(state),
-   product: activeProductSelector(state),
-   grass: grassSelector(state),
-   box
+    slug: slugFromUrlSelector(state),
+    product: activeProductSelector(state)
 })
 
-const mapDispatchToProps = dispatch => ({
-   fetchProduct: (slug) => {
-      // console.log(slug)
-      return dispatch(fetchProduct(slug))
-   },
-   addToCart: (product) => dispatch(cartProductAdd(product)),
-   goToLink: push
+const mapDispatchToProps = ({
+    fetchProduct,
+    addToCart: cartProductAdd
 })
 
 // todo https://stackoverflow.com/questions/49213602/how-to-get-id-params-to-redux-action-from-react-router
 // todo use it
 
 export default connect(
-   mapStateToProps,
-   mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(ProductDetailsContainer)

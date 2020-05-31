@@ -16,6 +16,7 @@ export default class ApiService {
       `${this._imageBase}${name}`
 
     getResource = async (url) => {
+        console.log('getResource', url)
         const res = await fetch(`${this._apiBase}${url}`, {
             'Accept-Encoding': 'compress, gzip'
         })
@@ -119,7 +120,11 @@ export default class ApiService {
           value: order
       })
 
-    getProduct = (id) => async () => await this.getResource(`/products/${id}?withUnpublic=true&withUnpublicSizes=true&convertEntities=false`)
+    getProduct = (id) => async (
+      convertEntities = true,
+      withUnpublic = true,
+      withUnpublicSizes = false
+    ) => await this.getResource(`/products/${id}??withUnpublic=${withUnpublic}&withUnpublicSizes=${withUnpublicSizes}&convertEntities=${convertEntities}`)
     deleteProduct = async (id) => await this.deleteResource(`/products/${id}`)
 
     // Entities

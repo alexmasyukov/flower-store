@@ -19,6 +19,7 @@ import axios from 'axios'
 import ApiService from "services/api-service"
 const apiServiceInstance = new ApiService()
 const getProducts = apiServiceInstance.getAllProducts(true)
+const getProduct = apiServiceInstance.getProduct
 
 export const fetchProducts = async (date) => {
    return getProducts()
@@ -57,16 +58,29 @@ export const fetchProducts = async (date) => {
    // })
 }
 
-export const fetchProduct = async (slug) => {
-   // console.log('api fetchProduct', slug)
-   return new Promise((resolve, reject) => {
-      resolve({})
-      // const product = mockProducts.find(item => item.slug === slug)
-      // console.log(product, slug)
-      // product ?
-      //    setTimeout(() => resolve(product), 0) :
-      //    reject('no product 404')
-   })
+const _transformProduct = ({sizes, florist,  ...base}) => ({
+    ...base,
+    florist: {
+        ...florist,
+        photo: apiServiceInstance.getImage(florist.photo)
+    },
+    sizes: sizes.map(({ images, ...sizeBase }) => ({
+        images: images.map(img => apiServiceInstance.getImage(img)),
+        ...sizeBase
+    }))
+})
+
+export const fetchProduct = async (id) => {
+   console.log('api fetchProduct (id)', id)
+    console.log(getProduct(id))
+    return getProduct(id)(true, false, false)
+      .then(product => {
+          console.log(product)
+          return _transformProduct(product)
+      })
+      .catch((error) => {
+          console.log(error)
+      })
 }
 
 export const fetchAdditionalProducts = async () => {

@@ -5,10 +5,10 @@ import { getFilters } from "store/selectors/filters"
 import { resetFilter, setPriceRange, updateSelect } from "store/actions/selectedFiltersActions"
 
 
-function mapStateToProps(state, { filterKey }) {
-    // console.log(props)
+function mapStateToProps(state) {
     // console.log('state', state)
     // console.log('getFilters', getFilters(state))
+    // console.log('getFilters', getSelectedFilters(state))
     return {
         selectedFilters: getSelectedFilters(state),
         filters: getFilters(state)

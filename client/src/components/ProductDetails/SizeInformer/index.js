@@ -1,10 +1,10 @@
 import React from 'react';
 
 
-const SizeInformer = ({ className, circle }) => {
+const SizeInformer = ({ className, diameter }) => {
   return (
     <div className={className}>
-      Диаметр букета: <div>{circle} см</div>
+      Диаметр букета: <b>{diameter} см</b>
     </div>
   );
 };
