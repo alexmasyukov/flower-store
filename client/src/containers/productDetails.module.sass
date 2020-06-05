@@ -10,6 +10,10 @@ h1
 
 .photo
   position: relative
+  overflow: hidden
+  &>img
+    width: 100%
+    margin-bottom: 10px
   .photoSizeTitle
     position: absolute
     top: 10px
@@ -20,9 +24,7 @@ h1
     padding: 3px 9px
     opacity: .6
     border-radius: 20px
-  img
-    max-width: 100%
-    margin-bottom: 15px
+
 
 .sizeInformer
   margin: 20px 0 20px 0
@@ -96,3 +98,20 @@ h4
   //font-weight: bold
   text-transform: uppercase
   margin: 20px 0 5px 0
+
+.thumb
+  display: inline-flex
+  overflow: hidden
+  cursor: pointer
+  &:hover
+    opacity: .7
+  &.active
+    img
+      border: 10px solid #ccc
+  img
+    width: 100px
+
+  //height: 88px
+  //overflow: hidden
+  //&:nth-of-type(2n)
+  //  margin-left: 10px

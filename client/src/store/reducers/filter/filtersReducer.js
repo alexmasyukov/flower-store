@@ -1,4 +1,4 @@
-import { FETCH_PRODUCTS_SUCCESS, FILTERS_SET_ITEMS } from "store/actionTypes"
+import { FETCH_PRODUCTS_SUCCESS } from "store/actionTypes"
 import { AVAILABLE_TYPES } from "constants/common"
 
 // todo Пока не используем, нужно сделать кнопки цвета с extra

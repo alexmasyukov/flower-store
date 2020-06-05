@@ -11,39 +11,12 @@ import React from "react"
 
 // let location = useLocation()
 
-export function updateSelect(filterKey, value) {
-
-
-    // history.push(`${history.location.pathname}?${filterKey}=${value}`)
-    // const { filterKey, value } = action
-    // // todo А что возвращает деструктуризация?
-    // //  Новый объект или ссылку?
-    // const { [filterKey]: selected = [] } = state
-    //
-    // console.log('SELECTED_FILTERS_UPDATE_SELECTED', action)
-    //
-    // // todo Разберись с этим, страшно выглядит push
-    // // todo Если ссылку переписывай это на filter и ...rest
-    // selected.includes(value) ?
-    //   selected.splice(selected.indexOf(value), 1) :
-    //   selected.push(value)
-    //
-    // console.log(selected)
-    // console.log(state)
-    //
-    // if (selected.length) {
-    //   return {
-    //     ...state,
-    //     [filterKey]: selected
-    //   }
-    // } else {
-    //   return getObjectWithoutKeys(state, [filterKey])
-    // }
-
+export function updateSelect(filterKey, value, filtersResetHistory) {
     return {
         type: SELECTED_FILTERS_UPDATE_SELECTED,
         filterKey,
-        value
+        value,
+        filtersResetHistory
     }
 }
 
@@ -62,10 +35,11 @@ export function setPriceRange(min, max) {
     }
 }
 
-export function resetFilter(filterKey) {
+export function resetFilter(filterKey, value) {
     return {
         type: SELECTED_FILTERS_RESET,
-        filterKey
+        filterKey,
+        value
     }
 }
 

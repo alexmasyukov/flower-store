@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux"
+import cn from 'classnames'
 // import propTypes from "prop-types"
 // import Page404 from "pages/404"
 // import { getRouter } from "store/selectors/router"
@@ -19,6 +20,8 @@ import { fetchProduct } from "store/actions/productsActions"
 import { activeProductSelector } from "store/selectors/product"
 import { cartProductAdd } from "store/actions/cart/productsActions"
 import styles from "./productDetails.module.sass"
+import Additive from "components/ProductDetails/Additive"
+import { Row } from "components/Bootstrap"
 // import GrassPluserButton from "components/ProductDetails/GrassPluserButton"
 
 
@@ -58,6 +61,8 @@ class ProductDetailsContainer extends Component {
 
     state = {
         activeSizeIndex: 0,
+        activeImageIndex: 0,
+        selectedAdditives: [],
         // activeGrassIndex: 0,
         // activeBoxIndex: 0,
         // activeAdditionalProducts: [],
@@ -126,7 +131,8 @@ class ProductDetailsContainer extends Component {
 
     handleSizeButtonClick = (activeSizeIndex) => {
         this.setState({
-            activeSizeIndex
+            activeSizeIndex,
+            activeImageIndex: 0
         })
     }
 
@@ -205,6 +211,21 @@ class ProductDetailsContainer extends Component {
         this.props.addToCart(newProduct)
     }
 
+    handleAdditiveButtonClick = (id, button) => {
+        this.setState(prev => ({
+            selectedAdditives: {
+                ...prev.selectedAdditives,
+                [`additive_${id}`]: button.price
+            }
+        }))
+    }
+
+    handleSetIndexImage = (index) => (e) => {
+        this.setState({
+            activeImageIndex: index
+        })
+    }
+
     componentDidMount() {
         const { slug, fetchProduct } = this.props
         fetchProduct(slug)
@@ -216,19 +237,28 @@ class ProductDetailsContainer extends Component {
         // todo Понять как сделать редирект на 404
         // this.props.goToLink('/404')
         // if (!isLoading) return <Page404 />
-
         if (!product) return <Preloader/>
 
         const {
-            activeSizeIndex //activeGrassIndex, //activeBoxIndex
+            activeSizeIndex,
+            selectedAdditives,
+            activeImageIndex
+            //activeGrassIndex, //activeBoxIndex
             // activeAdditionalProducts
         } = this.state
-        const { florist, sizes } = product
+        const { florist, additives, sizes } = product
+
         const activeSize = sizes[activeSizeIndex]
-        const activeSize_activeImage = activeSize.images[0]
+        const activeImage = activeSize.images[activeImageIndex]
         // const activeGrass = grass[activeGrassIndex]
         // const activeBox = box[activeBoxIndex]
+
+        const totalSelectedAdditives = Object
+          .entries(selectedAdditives)
+          .reduce((total, [id, price]) => total + price, 0)
+
         const totalPrice = activeSize.price
+          + totalSelectedAdditives
         // + activeGrass.price
         // + this.getTotalPriceAdditionalProducts()
         // + activeBox.price
@@ -239,13 +269,25 @@ class ProductDetailsContainer extends Component {
                   <div className={styles.photoSizeTitle}>
                       «{activeSize.title}»
                   </div>
-                  <img src={activeSize_activeImage} alt=""/>
+                  <img src={activeImage} alt=""/>
+
+                  <div>
+                      {activeSize.images.map((img, i) => (
+                        <div key={i} className={cn(styles.thumb, i > 0 && "ml-2",
+                          activeImageIndex === i && styles.active)}>
+                            <img src={img} onClick={this.handleSetIndexImage(i)} alt=""/>
+                        </div>
+                      ))}
+                  </div>
+
 
                   <FloristSay
                     photo={florist.photo}
                     name={florist.name}
                     text={florist.text}
                   />
+
+                  <FlowersInstruction/>
               </div>
               <div className={`col-7 ${styles.usn}`}>
                   <h1>{product.title}</h1>
@@ -261,6 +303,15 @@ class ProductDetailsContainer extends Component {
                     className={styles.sizeInformer}
                     diameter={activeSize.diameter}
                   />
+
+                  {additives && additives.length > 0 && (
+                    additives.map(additive =>
+                      <Additive
+                        {...additive}
+                        key={additive.id}
+                        onButtonClick={this.handleAdditiveButtonClick}
+                      />
+                    ))}
 
                   {/*<p className={styles.btitle}>Добавить зелени?</p>*/}
                   {/*{this.renderGrassPluserButtons(*/}
@@ -311,7 +362,7 @@ class ProductDetailsContainer extends Component {
                   )}
 
                   <DeliveryInfo/>
-                  <FlowersInstruction/>
+
               </div>
           </div>
         )

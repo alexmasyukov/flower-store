@@ -2,6 +2,7 @@ const R = require('ramda')
 const knex = require('../db/knex')
 const utils = require('../utils')
 const modificators = require("../utils/modificators")
+const dbService = require("../services/db")
 const { convertEntitie, isBoolean } = utils
 
 
@@ -38,6 +39,11 @@ const addSizesToProduct = (allSizes) => (product) => {
         sizes
     }
 }
+
+const additivesIdsToObjects = (allAdditives) => (product) => ({
+    ...product,
+    additives: allAdditives.filter(({ id }) => product.additives.includes(id))
+})
 
 
 const convertIntitiesToValues = (entities) => (product) => {
@@ -198,10 +204,16 @@ module.exports = {
               .orderBy('products.order')
             // .toString()
 
+
+            // products.map(product => )
+
+            // const additives =
+
             if (!products.length)
                 res.json([])
 
             const entities = utils.normalize(await knex.select().from('entities'), 'id')
+            const additives = await dbService.getAllAdditives()
 
             const productsIds = products.map(product => product.id)
             const productsSizes = await knex
@@ -218,11 +230,19 @@ module.exports = {
                 return convertIntitiesToValues(entities)
             }
 
+            const additivesToValues = (additives) => {
+                if (convertEntities === 'false') {
+                    return (products) => products
+                }
+                return additivesIdsToObjects(additives)
+            }
+
             const finisedProducts = products
               .map(product =>
                 R.compose(
                   entitiesToValues(entities),
-                  addSizesToProduct(productsSizes)
+                  addSizesToProduct(productsSizes),
+                  additivesToValues(additives)
                 )(product))
               .filter(product => 'sizes' in product && product.sizes.length)
 
@@ -282,6 +302,7 @@ module.exports = {
             }
 
             const entities = utils.normalize(await knex.select().from('entities'), 'id')
+            const additives = await dbService.getAllAdditives()
 
             const entitiesToValues = (entities) => {
                 if (convertEntities === 'false') {
@@ -290,9 +311,17 @@ module.exports = {
                 return convertIntitiesToValues(entities)
             }
 
+            const additivesToValues = (additives) => {
+                if (convertEntities === 'false') {
+                    return (products) => products
+                }
+                return additivesIdsToObjects(additives)
+            }
+
             const finishedProduct = R.compose(
               entitiesToValues(entities),
-              addSizesToProduct(productSizes)
+              addSizesToProduct(productSizes),
+              additivesToValues(additives)
             )(product)
 
             res.json(finishedProduct)
@@ -379,9 +408,6 @@ module.exports = {
             //   .update({
             //       [field]: value
             //   })
-
-
-
 
 
             res.json({

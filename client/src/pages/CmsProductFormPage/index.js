@@ -55,7 +55,7 @@ const commonHOCs = (WrappedComponent) =>
 const mapMethodsToProps = (apiService, props) => {
     return {
         ...commonApi(apiService),
-        getProduct: apiService.getProduct(props.id),
+        getProduct: apiService.getProduct(props.id, false, true, true),
         saveProduct: apiService.updateProduct
     }
 }

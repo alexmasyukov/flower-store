@@ -84,6 +84,14 @@ export default class ApiService {
           responseType: 'json'
       })
 
+    getProduct = (
+      id,
+      convertEntities = false,
+      withUnpublic = false,
+      withUnpublicSizes = false
+    ) => async () => await this.getResource(`/products/${id}??withUnpublic=${withUnpublic}&withUnpublicSizes=${withUnpublicSizes}&convertEntities=${convertEntities}`)
+    deleteProduct = async (id) => await this.deleteResource(`/products/${id}`)
+
     getAllProducts = (
       convertEntities = false,
       withUnpublic = false,
@@ -120,12 +128,6 @@ export default class ApiService {
           value: order
       })
 
-    getProduct = (id) => async (
-      convertEntities = true,
-      withUnpublic = true,
-      withUnpublicSizes = false
-    ) => await this.getResource(`/products/${id}??withUnpublic=${withUnpublic}&withUnpublicSizes=${withUnpublicSizes}&convertEntities=${convertEntities}`)
-    deleteProduct = async (id) => await this.deleteResource(`/products/${id}`)
 
     // Entities
     getAllEntities = async () => await this.getResource(`/entities`)

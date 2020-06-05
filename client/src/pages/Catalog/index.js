@@ -22,7 +22,7 @@ const CatalogPage = () => (
         <div className="col-3">
           <Filter/>
           <FilterResetAllButtonContainer/>
-          <SelectedFiltersToRouterContainer/>
+          {/*<SelectedFiltersToRouterContainer/>*/}
         </div>
         <div className="col-9 pt-3">
           <ProductsListContainer/>

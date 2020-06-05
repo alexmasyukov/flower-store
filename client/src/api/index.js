@@ -17,48 +17,49 @@
 
 import axios from 'axios'
 import ApiService from "services/api-service"
+
 const apiServiceInstance = new ApiService()
 const getProducts = apiServiceInstance.getAllProducts(true)
 const getProduct = apiServiceInstance.getProduct
 
 export const fetchProducts = async (date) => {
-   return getProducts()
-     .then(products => {
-        return products.map(apiServiceInstance._transformProduct)
-     })
-     .catch((error) => {
-        console.log(error)
-     })
-   // compose(
-   //   withRouterPsarams,
-   //   ,
-   //   withData({
-   //      getDataMethod: 'getAllEntities',
-   //      dataPropName: 'entities',
-   //      loadingText: 'entities'
-   //   }),
-   // return new Promise((resolve, reject) => {
-   //    // switch (date) {
-   //       resolve([])
-   //       // case date_25:
-   //       //    // setTimeout(() => resolve(mockProducts_25), 500)
-   //       //    setTimeout(() => resolve(mockProducts), 0)
-   //       //    break
-   //       //
-   //       // case date_26:
-   //       //    // setTimeout(() => resolve(mockProducts_26), 500)
-   //       //    setTimeout(() => resolve(mockProducts), 0)
-   //       //    break
-   //       //
-   //       // default:
-   //       //    setTimeout(() => resolve(mockProducts), 500)
-   //    // }
-   //
-   //    // resolve()
-   // })
+    return getProducts(true, false, false)
+      .then(products => {
+          return products.map(apiServiceInstance._transformProduct)
+      })
+      .catch((error) => {
+          console.log(error)
+      })
+    // compose(
+    //   withRouterPsarams,
+    //   ,
+    //   withData({
+    //      getDataMethod: 'getAllEntities',
+    //      dataPropName: 'entities',
+    //      loadingText: 'entities'
+    //   }),
+    // return new Promise((resolve, reject) => {
+    //    // switch (date) {
+    //       resolve([])
+    //       // case date_25:
+    //       //    // setTimeout(() => resolve(mockProducts_25), 500)
+    //       //    setTimeout(() => resolve(mockProducts), 0)
+    //       //    break
+    //       //
+    //       // case date_26:
+    //       //    // setTimeout(() => resolve(mockProducts_26), 500)
+    //       //    setTimeout(() => resolve(mockProducts), 0)
+    //       //    break
+    //       //
+    //       // default:
+    //       //    setTimeout(() => resolve(mockProducts), 500)
+    //    // }
+    //
+    //    // resolve()
+    // })
 }
 
-const _transformProduct = ({sizes, florist,  ...base}) => ({
+const _transformProduct = ({ sizes, florist, ...base }) => ({
     ...base,
     florist: {
         ...florist,
@@ -71,9 +72,9 @@ const _transformProduct = ({sizes, florist,  ...base}) => ({
 })
 
 export const fetchProduct = async (id) => {
-   console.log('api fetchProduct (id)', id)
+    console.log('api fetchProduct (id)', id)
     console.log(getProduct(id))
-    return getProduct(id)(true, false, false)
+    return getProduct(id, true, false, false)()
       .then(product => {
           console.log(product)
           return _transformProduct(product)
@@ -84,20 +85,20 @@ export const fetchProduct = async (id) => {
 }
 
 export const fetchAdditionalProducts = async () => {
-   return new Promise((resolve, reject) => {
-      // setTimeout(() => resolve(mockAdditional), 0)
-      resolve([])
-   })
+    return new Promise((resolve, reject) => {
+        // setTimeout(() => resolve(mockAdditional), 0)
+        resolve([])
+    })
 }
 
 export const fetchOrderConfirmation = async () => {
-   const url = `http://localhost:3500/api/v1/order-confirmation`
+    const url = `http://localhost:3500/api/v1/order-confirmation`
 
-   return await axios.get(url)
-      .then(function (response) {
-         return response.data
+    return await axios.get(url)
+      .then(function(response) {
+          return response.data
       })
-      .catch(function (error) {
-         console.log(error)
+      .catch(function(error) {
+          console.log(error)
       })
 }

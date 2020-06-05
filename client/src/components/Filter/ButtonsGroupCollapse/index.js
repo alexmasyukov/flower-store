@@ -6,16 +6,18 @@ import { FILTER_COMPONENTS_TYPES } from "constants/filters"
 import styles from './ButtonsGroupCollapse.module.sass'
 import ColorButton from "components/Filter/ColorButton"
 import InputPriceRange from "components/Filter/InputPriceRange"
+import { updateSelect } from "store/actions/selectedFiltersActions"
 
 const ButtonsGroupCollapse = ({
                                   isOpened: isOpenedInit = true,
                                   filterType = '[filterType]',
                                   title = '[title]',
                                   children = [],
+                                  filtersResetHistory = {},
                                   filterKey = '[filterKey]',
                                   filters = {},
-                                  setPriceRange = f => f,
                                   selectedFilters = {},
+                                  setPriceRange = f => f,
                                   updateSelect = f => f,
                                     ...props
                               }) => {
@@ -24,6 +26,10 @@ const ButtonsGroupCollapse = ({
     const { [filterKey]: filterItems = [] } = filters
     const { [filterKey]: filterSelectedItems = [] } = selectedFilters
     // const isSet = !!filterSelectedItems.length
+
+    const setOnFilter = (value) => {
+        updateSelect(filterKey, value, filtersResetHistory)
+    }
 
     const renderFilterButtonGroupByType = (filterItems, filterSelectedItems) => {
         switch (filterType) {
@@ -45,7 +51,7 @@ const ButtonsGroupCollapse = ({
                   <Button
                     key={i}
                     title={title}
-                    onClick={() => updateSelect(filterKey, title)}
+                    onClick={() => setOnFilter(title)}
                     active={filterSelectedItems.includes(title)}
                   />
                 ))
@@ -57,7 +63,7 @@ const ButtonsGroupCollapse = ({
                     color={button.color}
                     active={filterSelectedItems.includes(button.title)}
                     title={button.title}
-                    onClick={() => updateSelect(filterKey, button.title)}
+                    onClick={() => setOnFilter(button.title)}
                   />
                 )
 
@@ -66,7 +72,7 @@ const ButtonsGroupCollapse = ({
                   <Button
                     key={i}
                     title={button.title}
-                    onClick={() => updateSelect(filterKey, button)}
+                    onClick={() => setOnFilter(button)}
                     active={filterSelectedItems.find(({ title }) => title === button.title)}
                   />
                 )
@@ -115,7 +121,7 @@ export default ButtonsGroupCollapse
 //     isOpened: true,
 //     filters: {},
 //     selectedFilters: {},
-//     updateSelect: f => f,
+//     setOnFilter: f => f,
 //     resetFilter: f => f
 // }
 //
@@ -126,6 +132,6 @@ export default ButtonsGroupCollapse
 //     openedDefault: PropTypes.bool,
 //     filters: PropTypes.object.isRequired,
 //     selectedFilters: PropTypes.object.isRequired,
-//     updateSelect: PropTypes.func.isRequired,
+//     setOnFilter: PropTypes.func.isRequired,
 //     resetFilter: PropTypes.func.isRequired
 // }

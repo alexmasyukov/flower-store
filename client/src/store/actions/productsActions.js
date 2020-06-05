@@ -12,7 +12,6 @@ import {
     fetchProducts as fetchProductsApi,
     fetchProduct as fetchProductApi
 } from 'api'
-import { setFilterItems } from "store/actions/filterActions"
 
 
 export const requestProducts = () => ({
@@ -59,7 +58,6 @@ export const fetchProducts = (date) => async dispatch => {
         dispatch(
           successProducts(normalize(response, schema.items))
         )
-        dispatch(setFilterItems())
     } catch (e) {
         dispatch(failureProducts(e))
     }
