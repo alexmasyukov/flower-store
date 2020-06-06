@@ -6,14 +6,12 @@ import { FILTER_COMPONENTS_TYPES } from "constants/filters"
 import styles from './ButtonsGroupCollapse.module.sass'
 import ColorButton from "components/Filter/ColorButton"
 import InputPriceRange from "components/Filter/InputPriceRange"
-import { updateSelect } from "store/actions/selectedFiltersActions"
 
 const ButtonsGroupCollapse = ({
                                   isOpened: isOpenedInit = true,
                                   filterType = '[filterType]',
                                   title = '[title]',
                                   children = [],
-                                  filtersResetHistory = {},
                                   filterKey = '[filterKey]',
                                   filters = {},
                                   selectedFilters = {},
@@ -28,7 +26,7 @@ const ButtonsGroupCollapse = ({
     // const isSet = !!filterSelectedItems.length
 
     const setOnFilter = (value) => {
-        updateSelect(filterKey, value, filtersResetHistory)
+        updateSelect(filterKey, value)
     }
 
     const renderFilterButtonGroupByType = (filterItems, filterSelectedItems) => {

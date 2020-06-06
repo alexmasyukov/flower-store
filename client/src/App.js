@@ -2,36 +2,54 @@ import React from 'react'
 // import 'mdn-polyfills/Object.assign' // Это не нужно, у нас webpack
 import { ConnectedRouter } from 'connected-react-router'
 import { Route, Switch } from 'react-router-dom'
-// import loadable from "@loadable/component"
+import loadable from "@loadable/component"
 
 import CatalogPage from "pages/Catalog"
 import ProductPage from "pages/Product"
 import Page404 from "pages/404"
 import CartPage from "pages/Cart"
 import CartPageOld from "pages/Cart/old"
-import CmsProductsListPage from "pages/CmsProductsListPage"
-import CmsProductFormPage from "pages/CmsProductFormPage"
-import CmsTeamPage from "pages/CmsTeamPage"
-import CmsTeamPersonFormPage from "pages/CmsTeamPersonFormPage"
-import CmsBannersPage from "pages/CmsBannersPage"
-import CmsBannerFormPage from "pages/CmsBannerFormPage"
-import CmsEntitiesPage from "pages/CmsEntitiesPage"
-import CmsEntitieFormPage from "pages/CmsEntitieFormPage"
-import CmsOrdersPage from "pages/CmsOrdersPage"
-import CmsContentPage from "pages/CmsContentsPage"
-import CmsContentFormPage from "pages/CmsContentFormPage"
+
+// import CmsProductsListPage from "pages/CmsProductsListPage"
+// import CmsProductFormPage from "pages/CmsProductFormPage"
+// import CmsTeamPage from "pages/CmsTeamPage"
+// import CmsTeamPersonFormPage from "pages/CmsTeamPersonFormPage"
+// import CmsBannersPage from "pages/CmsBannersPage"
+// import CmsBannerFormPage from "pages/CmsBannerFormPage"
+// import CmsEntitiesPage from "pages/CmsEntitiesPage"
+// import CmsEntitieFormPage from "pages/CmsEntitieFormPage"
+// import CmsOrdersPage from "pages/CmsOrdersPage"
+// import CmsContentPage from "pages/CmsContentsPage"
+// import CmsContentFormPage from "pages/CmsContentFormPage"
+// import CmsReviewsPage from "pages/CmsReviewsPage"
+// import CmsReviewFormPage from "pages/CmsReviewFormPage"
+// import CmsAdditivesPage from "pages/CmsAdditivesPage"
+// import CmsAdditiveFormPage from "pages/CmsAdditiveFormPage"
+
 import ContactsPage from "pages/Contacts"
 import QuestionsPage from "pages/Questions"
 import RecomendationsPage from "pages/Recomendations"
 import DeliveryPage from "pages/Delivery"
 import AboutPage from "pages/About"
-import CmsReviewsPage from "pages/CmsReviewsPage"
-import CmsReviewFormPage from "pages/CmsReviewFormPage"
-import CmsAdditivesPage from "pages/CmsAdditivesPage"
-import CmsAdditiveFormPage from "pages/CmsAdditiveFormPage"
 
 
-// const Product = loadable(() => import('pages/Product'), () => <div>Loading...</div>)
+const CmsProductsListPage = loadable(() => import('pages/CmsProductsListPage'), () => <div>Loading...</div>)
+const CmsProductFormPage = loadable(() => import('pages/CmsProductFormPage'), () => <div>Loading...</div>)
+const CmsTeamPage = loadable(() => import('pages/CmsTeamPage'), () => <div>Loading...</div>)
+const CmsTeamPersonFormPage = loadable(() => import('pages/CmsTeamPersonFormPage'), () => <div>Loading...</div>)
+const CmsBannersPage = loadable(() => import('pages/CmsBannersPage'), () => <div>Loading...</div>)
+const CmsBannerFormPage = loadable(() => import('pages/CmsBannerFormPage'), () => <div>Loading...</div>)
+const CmsEntitiesPage = loadable(() => import('pages/CmsEntitiesPage'), () => <div>Loading...</div>)
+const CmsEntitieFormPage = loadable(() => import('pages/CmsEntitieFormPage'), () => <div>Loading...</div>)
+const CmsOrdersPage = loadable(() => import('pages/CmsOrdersPage'), () => <div>Loading...</div>)
+const CmsContentPage = loadable(() => import('pages/CmsContentPage'), () => <div>Loading...</div>)
+const CmsContentFormPage = loadable(() => import('pages/CmsContentFormPage'), () => <div>Loading...</div>)
+const CmsReviewsPage = loadable(() => import('pages/CmsReviewsPage'), () => <div>Loading...</div>)
+const CmsReviewFormPage = loadable(() => import('pages/CmsReviewFormPage'), () => <div>Loading...</div>)
+const CmsAdditivesPage = loadable(() => import('pages/CmsAdditivesPage'), () => <div>Loading...</div>)
+const CmsAdditiveFormPage = loadable(() => import('pages/CmsAdditiveFormPage'), () => <div>Loading...</div>)
+
+const ReviewsPage = loadable(() => import('pages/Reviews'), () => <div>Loading...</div>)
 
 
 const App = ({ history }) => (
@@ -49,6 +67,8 @@ const App = ({ history }) => (
           <Route path="/delivery/" exact component={DeliveryPage}/>
           <Route path="/voprosy-i-otvety/" exact component={QuestionsPage}/>
           <Route path="/instrukciya-svezhesti/" exact component={RecomendationsPage}/>
+
+          <Route path="/reviews/" exact component={ReviewsPage}/>
 
           {/*CMS*/}
           <Route path="/Cmslite/" exact component={CmsProductsListPage}/>

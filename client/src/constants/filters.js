@@ -21,12 +21,12 @@ export const fitlerButtonsGroupsSettings = {
     byAvailability: {
         title: 'Наличие',
         type: FILTER_COMPONENTS_TYPES.AVAILABLE_BUTTONS,
-        multiply: false
+        multiplyTEST: false
     },
     byBouquetType: {
         title: 'Вид букета',
         type: FILTER_COMPONENTS_TYPES.ITEMS,
-        multiply: false,
+        // multiply: false,
         openedDefault: true
     },
     byFlowers: {

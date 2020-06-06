@@ -11,12 +11,11 @@ import React from "react"
 
 // let location = useLocation()
 
-export function updateSelect(filterKey, value, filtersResetHistory) {
+export function updateSelect(filterKey, value) {
     return {
         type: SELECTED_FILTERS_UPDATE_SELECTED,
         filterKey,
-        value,
-        filtersResetHistory
+        value
     }
 }
 

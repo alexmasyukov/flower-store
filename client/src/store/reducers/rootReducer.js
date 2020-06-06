@@ -8,7 +8,6 @@ import cart from "./cart/rootReducer"
 import activeProduct from './productReducer'
 import additionalProducts from "./additionalProductsReducer"
 import delivery from "./ui/deliveryReducer"
-import filtersResetHistory from "store/reducers/filter/filtersResetHistory"
 
 const rootReducer = history => combineReducers({
   entities: combineReducers({
@@ -20,7 +19,6 @@ const rootReducer = history => combineReducers({
   ui: combineReducers({
     delivery,
     selectedFilters,
-    filtersResetHistory,
     activeProduct,
     cart
   }),

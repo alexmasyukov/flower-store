@@ -21,7 +21,10 @@ import { activeProductSelector } from "store/selectors/product"
 import { cartProductAdd } from "store/actions/cart/productsActions"
 import styles from "./productDetails.module.sass"
 import Additive from "components/ProductDetails/Additive"
-import { Row } from "components/Bootstrap"
+import Lightbox from 'react-image-lightbox'
+import 'react-image-lightbox/style.css'
+// import { Row } from "components/Bootstrap"
+
 // import GrassPluserButton from "components/ProductDetails/GrassPluserButton"
 
 
@@ -66,6 +69,7 @@ class ProductDetailsContainer extends Component {
         // activeGrassIndex: 0,
         // activeBoxIndex: 0,
         // activeAdditionalProducts: [],
+        fullScreenPhotoIsOpen: false,
         error: false
     }
 
@@ -183,11 +187,7 @@ class ProductDetailsContainer extends Component {
         const image = product.sizes[activeSizeIndex].image
         const sizePrice = product.sizes[activeSizeIndex].price
         const sizeTitle = product.sizes[activeSizeIndex].title
-        // const grassItem = grass[activeGrassIndex]
-        // const boxItem = box[activeBoxIndex]
 
-        // console.log(grassItem)
-        // console.log(boxItem)
 
         // todo вынеси это отдельной функцией,
         //  чтобы ключи объекты были стандартизированы и прозрачны
@@ -226,6 +226,13 @@ class ProductDetailsContainer extends Component {
         })
     }
 
+    handleFullScreenPhotoClose = () => {
+        this.setState({
+            fullScreenPhotoIsOpen: false
+        })
+    }
+
+
     componentDidMount() {
         const { slug, fetchProduct } = this.props
         fetchProduct(slug)
@@ -240,18 +247,30 @@ class ProductDetailsContainer extends Component {
         if (!product) return <Preloader/>
 
         const {
+            fullScreenPhotoIsOpen,
             activeSizeIndex,
             selectedAdditives,
             activeImageIndex
-            //activeGrassIndex, //activeBoxIndex
             // activeAdditionalProducts
         } = this.state
         const { florist, additives, sizes } = product
 
         const activeSize = sizes[activeSizeIndex]
+        const images = activeSize.images
         const activeImage = activeSize.images[activeImageIndex]
-        // const activeGrass = grass[activeGrassIndex]
-        // const activeBox = box[activeBoxIndex]
+
+        const lightBoxProps = activeSize.images.length > 1 ? {
+            nextSrc: images[(activeImageIndex + 1) % images.length],
+            prevSrc: images[(activeImageIndex + images.length - 1) % images.length],
+            onMovePrevRequest: () =>
+              this.setState({
+                  activeImageIndex: (activeImageIndex + images.length - 1) % images.length
+              }),
+            onMoveNextRequest: () =>
+              this.setState({
+                  activeImageIndex: (activeImageIndex + 1) % images.length
+              })
+        } : {}
 
         const totalSelectedAdditives = Object
           .entries(selectedAdditives)
@@ -259,37 +278,52 @@ class ProductDetailsContainer extends Component {
 
         const totalPrice = activeSize.price
           + totalSelectedAdditives
-        // + activeGrass.price
         // + this.getTotalPriceAdditionalProducts()
-        // + activeBox.price
+
 
         return (
           <div className="row mt-2">
-              <div className={`col-5 ${styles.photo}`}>
+              <div className={cn('col-md-5', styles.photo)}>
                   <div className={styles.photoSizeTitle}>
                       «{activeSize.title}»
                   </div>
-                  <img src={activeImage} alt=""/>
 
-                  <div>
-                      {activeSize.images.map((img, i) => (
-                        <div key={i} className={cn(styles.thumb, i > 0 && "ml-2",
-                          activeImageIndex === i && styles.active)}>
-                            <img src={img} onClick={this.handleSetIndexImage(i)} alt=""/>
-                        </div>
-                      ))}
-                  </div>
-
-
-                  <FloristSay
-                    photo={florist.photo}
-                    name={florist.name}
-                    text={florist.text}
+                  <img
+                    src={activeImage}
+                    onClick={() => this.setState({ fullScreenPhotoIsOpen: true })}
+                    alt=""
                   />
 
-                  <FlowersInstruction/>
+                  {fullScreenPhotoIsOpen && (
+                    <Lightbox
+                      mainSrc={images[activeImageIndex]}
+                      onCloseRequest={this.handleFullScreenPhotoClose}
+                      {...lightBoxProps}
+                    />
+                  )}
+
+                  {activeSize.images.length > 1 && (
+                    activeSize.images.map((img, i) => (
+                      <div key={i} className={cn(styles.thumb, i > 0 && "ml-2",
+                        activeImageIndex === i && styles.active)}>
+                          <img src={img} onClick={this.handleSetIndexImage(i)} alt=""/>
+                      </div>
+                    ))
+                  )}
+
+                  <div className="d-none d-lg-block d-xl-block">
+                      <FloristSay
+                        photo={florist.photo}
+                        name={florist.name}
+                        text={florist.text}
+                      />
+                  </div>
+
+                  <div className="d-none d-lg-block d-xl-block">
+                      <FlowersInstruction/>
+                  </div>
               </div>
-              <div className={`col-7 ${styles.usn}`}>
+              <div className={cn('col-md-7', styles.usn)}>
                   <h1>{product.title}</h1>
 
                   <Available
@@ -313,29 +347,10 @@ class ProductDetailsContainer extends Component {
                       />
                     ))}
 
-                  {/*<p className={styles.btitle}>Добавить зелени?</p>*/}
-                  {/*{this.renderGrassPluserButtons(*/}
-                  {/*grass,*/}
-                  {/*activeGrassIndex,*/}
-                  {/*this.handleGrassButtonClick*/}
-                  {/*)}*/}
-
-                  {/*{product.title.includes('Сборный') && (*/}
-                  {/*<>*/}
-                  {/*<p className={styles.btitle}>Использовать бархатную коробку?</p>*/}
-                  {/*{this.renderGrassPluserButtons(*/}
-                  {/*box,*/}
-                  {/*activeBoxIndex,*/}
-                  {/*this.handleBoxButtonClick*/}
-                  {/*)}*/}
-                  {/*</>*/}
-                  {/*)}*/}
-
 
                   {/*// todo Дополнительные фото к товару*/}
                   {/*// todo Выделение и подсчет доп товара*/}
                   {/*// todo Добавление товара в корзину*/}
-                  {/*// todo  ОК  Дополнительная Каробка бархатная как трава*/}
                   {/*// todo Отзыв случайный*/}
 
                   {/*<p className={styles.btitle}>Приятные мелочи</p>*/}
@@ -355,6 +370,14 @@ class ProductDetailsContainer extends Component {
                   </div>
                   {/*<p>Купить в один клик</p>*/}
 
+                  <div className="d-lg-none d-xl-none">
+                      <FloristSay
+                        photo={florist.photo}
+                        name={florist.name}
+                        text={florist.text}
+                      />
+                  </div>
+
                   {activeSize.flowers && (
                     <ExpandBlock title="Состав композиции" initVisible={true}>
                         {this.renderFlowers(activeSize.flowers, activeSize.flowers_counts)}
@@ -362,6 +385,10 @@ class ProductDetailsContainer extends Component {
                   )}
 
                   <DeliveryInfo/>
+
+                  <div className="d-lg-none d-xl-none">
+                      <FlowersInstruction/>
+                  </div>
 
               </div>
           </div>

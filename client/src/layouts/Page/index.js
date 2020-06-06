@@ -17,6 +17,7 @@ class PageLayout extends Component {
                       <div className="col-md-9">
                           <div className={styles.menu}>
                               <Link to="/catalog/">Каталог</Link>
+                              <Link to="/reviews/">Отзывы</Link>
                               <Link to="/delivery/">Доставка</Link>
                               <Link to="/about/">О нас</Link>
                               <Link to="/voprosy-i-otvety/">Вопросы и ответы</Link>
@@ -38,7 +39,7 @@ class PageLayout extends Component {
                   <ModalSelectDelivetyDateContainer/>
                   <ModalCartQuestionUnavailableBouquetContainer/>
 
-                  <BannerContainer id={9} asImage={true} className={styles.bannerBotton}/>
+                  <BannerContainer id={9} className={styles.bannerBotton}/>
               </div>
           </>
         )

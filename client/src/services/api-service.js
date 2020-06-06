@@ -140,6 +140,7 @@ export default class ApiService {
 
     // Reviews
     getAllReviews = async () => await this.getResource(`/reviews?withUnpublic=true`)
+    getLastReviews = (count = 1) => async () => await this.getResource(`/reviews?count=${count}`)
     getReview = (id) => async () => await this.getResource(`/reviews/${id}?withUnpublic=true`)
     updateReview = async (review) => await this.putResource(`/reviews/${review.id}`, review, {
         responseType: 'json'
