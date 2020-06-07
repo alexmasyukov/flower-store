@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 // import 'mdn-polyfills/Object.assign' // Это не нужно, у нас webpack
 import { ConnectedRouter } from 'connected-react-router'
 import { Route, Switch } from 'react-router-dom'
 import loadable from "@loadable/component"
+import { connect } from "react-redux"
 
 import CatalogPage from "pages/Catalog"
 import ProductPage from "pages/Product"
@@ -31,6 +32,7 @@ import QuestionsPage from "pages/Questions"
 import RecomendationsPage from "pages/Recomendations"
 import DeliveryPage from "pages/Delivery"
 import AboutPage from "pages/About"
+import { fetchProducts } from "store/actions/productsActions"
 
 
 const CmsProductsListPage = loadable(() => import('pages/CmsProductsListPage'), () => <div>Loading...</div>)
@@ -52,74 +54,88 @@ const CmsAdditiveFormPage = loadable(() => import('pages/CmsAdditiveFormPage'), 
 const ReviewsPage = loadable(() => import('pages/Reviews'), () => <div>Loading...</div>)
 
 
-const App = ({ history }) => (
-  <ConnectedRouter history={history}>
-      <Switch>
-          <Route path="/" exact component={CatalogPage}/>
-          <Route path="/catalog/" exact component={CatalogPage}/>
-          <Route path="/catalog/:product/" component={ProductPage}/>
-          {/*<Route exact path="cabinet" component={Home}/>*/}
-          <Route path="/cart/" exact component={CartPage}/>
-          <Route path="/cart_old/" exact component={CartPageOld}/>
+const App = ({ history }) => {
+    // useEffect(() => fetchProducts(), [])
 
-          <Route path="/about/" exact component={AboutPage}/>
-          <Route path="/contacts/" exact component={ContactsPage}/>
-          <Route path="/delivery/" exact component={DeliveryPage}/>
-          <Route path="/voprosy-i-otvety/" exact component={QuestionsPage}/>
-          <Route path="/instrukciya-svezhesti/" exact component={RecomendationsPage}/>
+    return (
+      <ConnectedRouter history={history}>
+          <Switch>
+              <Route path="/" exact component={CatalogPage}/>
+              <Route path="/catalog/" exact component={CatalogPage}/>
+              <Route path="/catalog/:id/" component={ProductPage}/>
+              {/*<Route exact path="cabinet" component={Home}/>*/}
+              <Route path="/cart/" exact component={CartPage}/>
+              <Route path="/cart_old/" exact component={CartPageOld}/>
 
-          <Route path="/reviews/" exact component={ReviewsPage}/>
+              <Route path="/about/" exact component={AboutPage}/>
+              <Route path="/contacts/" exact component={ContactsPage}/>
+              <Route path="/delivery/" exact component={DeliveryPage}/>
+              <Route path="/voprosy-i-otvety/" exact component={QuestionsPage}/>
+              <Route path="/instrukciya-svezhesti/" exact component={RecomendationsPage}/>
 
-          {/*CMS*/}
-          <Route path="/Cmslite/" exact component={CmsProductsListPage}/>
-          <Route path="/Cmslite/products/" exact component={CmsProductsListPage}/>
-          <Route path="/Cmslite/products/:id" component={CmsProductFormPage}/>
-          <Route path="/Cmslite/products-add" exact>
-              <CmsProductFormPage isNew={true}/>
-          </Route>
+              <Route path="/reviews/" exact component={ReviewsPage}/>
 
-          <Route path="/Cmslite/team" exact component={CmsTeamPage}/>
-          <Route path="/Cmslite/team/:id" component={CmsTeamPersonFormPage}/>
-          <Route path="/Cmslite/team-add" exact>
-              <CmsTeamPersonFormPage isNew={true}/>
-          </Route>
+              {/*CMS*/}
+              <Route path="/Cmslite/" exact component={CmsProductsListPage}/>
+              <Route path="/Cmslite/products/" exact component={CmsProductsListPage}/>
+              <Route path="/Cmslite/products/:id" component={CmsProductFormPage}/>
+              <Route path="/Cmslite/products-add" exact>
+                  <CmsProductFormPage isNew={true}/>
+              </Route>
 
-          <Route path="/Cmslite/banners" exact component={CmsBannersPage}/>
-          <Route path="/Cmslite/banners/:id" component={CmsBannerFormPage}/>
-          <Route path="/Cmslite/banners-add" exact>
-              <CmsBannerFormPage isNew={true}/>
-          </Route>
+              <Route path="/Cmslite/team" exact component={CmsTeamPage}/>
+              <Route path="/Cmslite/team/:id" component={CmsTeamPersonFormPage}/>
+              <Route path="/Cmslite/team-add" exact>
+                  <CmsTeamPersonFormPage isNew={true}/>
+              </Route>
 
-          <Route path="/Cmslite/entities" exact component={CmsEntitiesPage}/>
-          <Route path="/Cmslite/entities/:id" component={CmsEntitieFormPage}/>
-          <Route path="/Cmslite/entities-add" exact>
-              <CmsEntitieFormPage isNew={true}/>
-          </Route>
+              <Route path="/Cmslite/banners" exact component={CmsBannersPage}/>
+              <Route path="/Cmslite/banners/:id" component={CmsBannerFormPage}/>
+              <Route path="/Cmslite/banners-add" exact>
+                  <CmsBannerFormPage isNew={true}/>
+              </Route>
 
-          <Route path="/Cmslite/content" exact component={CmsContentPage}/>
-          <Route path="/Cmslite/content/:id" component={CmsContentFormPage}/>
-          <Route path="/Cmslite/content-add" exact>
-              <CmsContentFormPage isNew={true}/>
-          </Route>
+              <Route path="/Cmslite/entities" exact component={CmsEntitiesPage}/>
+              <Route path="/Cmslite/entities/:id" component={CmsEntitieFormPage}/>
+              <Route path="/Cmslite/entities-add" exact>
+                  <CmsEntitieFormPage isNew={true}/>
+              </Route>
 
-          <Route path="/Cmslite/reviews" exact component={CmsReviewsPage}/>
-          <Route path="/Cmslite/reviews/:id" component={CmsReviewFormPage}/>
-          <Route path="/Cmslite/reviews-add" exact>
-              <CmsReviewFormPage isNew={true}/>
-          </Route>
+              <Route path="/Cmslite/content" exact component={CmsContentPage}/>
+              <Route path="/Cmslite/content/:id" component={CmsContentFormPage}/>
+              <Route path="/Cmslite/content-add" exact>
+                  <CmsContentFormPage isNew={true}/>
+              </Route>
 
-          <Route path="/Cmslite/additives" exact component={CmsAdditivesPage}/>
-          <Route path="/Cmslite/additives/:id" component={CmsAdditiveFormPage}/>
-          <Route path="/Cmslite/additives-add" exact>
-              <CmsAdditiveFormPage isNew={true}/>
-          </Route>
+              <Route path="/Cmslite/reviews" exact component={CmsReviewsPage}/>
+              <Route path="/Cmslite/reviews/:id" component={CmsReviewFormPage}/>
+              <Route path="/Cmslite/reviews-add" exact>
+                  <CmsReviewFormPage isNew={true}/>
+              </Route>
 
-          {/*<Route path="/Cmslite/orders" exact component={CmsOrdersPage}/>*/}
-          {/*<Route path="/Cmslite/orders/:id" component={CmsLitePage}/>*/}
+              <Route path="/Cmslite/additives" exact component={CmsAdditivesPage}/>
+              <Route path="/Cmslite/additives/:id" component={CmsAdditiveFormPage}/>
+              <Route path="/Cmslite/additives-add" exact>
+                  <CmsAdditiveFormPage isNew={true}/>
+              </Route>
 
-          <Route path="*" component={Page404}/>
-      </Switch>
-  </ConnectedRouter>
-)
+              {/*<Route path="/Cmslite/orders" exact component={CmsOrdersPage}/>*/}
+              {/*<Route path="/Cmslite/orders/:id" component={CmsLitePage}/>*/}
+
+              <Route path="/404" component={Page404}/>
+              <Route path="*" component={Page404}/>
+          </Switch>
+      </ConnectedRouter>
+    )
+}
+//
+// const mapDispatchToProps = {
+//     fetchProducts
+// }
+//
+// export default connect(
+//   null,
+//   mapDispatchToProps
+// )(App)
 
 export default App

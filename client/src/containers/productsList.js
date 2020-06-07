@@ -12,6 +12,7 @@ import {
 import Product from "components/Product"
 import { Row } from "components/Bootstrap"
 import Preloader from "components/Preloader"
+import withApiService from "components/hoc/withApiService"
 // import CollectionsButtons from "components/Filter/CollectionsButtons"
 // import { date_25 } from "containers/TIME_date"
 
@@ -66,7 +67,8 @@ class ProductsListContainer extends Component {
             products,
             isActiveSizesFilter,
             isActivePriceFilter,
-            selectedFilters
+            selectedFilters,
+            getThumbImage
         } = this.props
 
         const preparedProducts = compose(
@@ -114,6 +116,7 @@ class ProductsListContainer extends Component {
                 <Product
                   key={product.id}
                   showPriceAllSizes={true}
+                  getThumbImage={getThumbImage}
                   {...product}
                 />
               ))}
@@ -121,6 +124,13 @@ class ProductsListContainer extends Component {
         )
     }
 }
+
+
+
+const mapApiMethodsToProps = (apiService) => ({
+    getThumbImage: apiService.getThumbImage
+})
+
 
 const mapStateToProps = state => ({
     products: getFilteredProducts(state),
@@ -136,4 +146,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ProductsListContainer)
+)(withApiService(mapApiMethodsToProps)(ProductsListContainer))

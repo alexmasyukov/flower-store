@@ -25,7 +25,8 @@ const getProduct = apiServiceInstance.getProduct
 export const fetchProducts = async (date) => {
     return getProducts(true, false, false)
       .then(products => {
-          return products.map(apiServiceInstance._transformProduct)
+          return products
+          // .map(apiServiceInstance._transformProduct)
       })
       .catch((error) => {
           console.log(error)
@@ -59,29 +60,24 @@ export const fetchProducts = async (date) => {
     // })
 }
 
-const _transformProduct = ({ sizes, florist, ...base }) => ({
-    ...base,
-    florist: {
-        ...florist,
-        photo: apiServiceInstance.getImage(florist.photo)
-    },
-    sizes: sizes.map(({ images, ...sizeBase }) => ({
-        images: images.map(img => apiServiceInstance.getImage(img)),
-        ...sizeBase
-    }))
-})
+// const _transformProduct = ({ sizes, florist, ...base }) => ({
+//     ...base,
+//     florist: {
+//         ...florist,
+//         photo: apiServiceInstance.getImage(florist.photo)
+//     },
+//     sizes: sizes.map(({ images, ...sizeBase }) => ({
+//         images: images.map(img => apiServiceInstance.getImage(img)),
+//         ...sizeBase
+//     }))
+// })
 
 export const fetchProduct = async (id) => {
     console.log('api fetchProduct (id)', id)
     console.log(getProduct(id))
     return getProduct(id, true, false, false)()
-      .then(product => {
-          console.log(product)
-          return _transformProduct(product)
-      })
-      .catch((error) => {
-          console.log(error)
-      })
+      .then(product => product)
+      .catch((error) => console.log(error))
 }
 
 export const fetchAdditionalProducts = async () => {

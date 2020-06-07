@@ -1,4 +1,10 @@
 // import { createSelector } from "reselect"
+export const productSelector = (state, productId) => {
+    // console.log(productId)
+    // console.log(state.entities.products.byId[productId])
+    return state.entities.products.byId[productId]
+}
+
 
 export const activeProductSelector = (state) =>
   state.ui.activeProduct

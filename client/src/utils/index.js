@@ -15,6 +15,10 @@ export function getNameById(id, names) {
     return item.name || ''
 }
 
+export function isNumber(value) {
+    return typeof value === 'number' && isFinite(value);
+}
+
 export function classes() {
     const [...args] = arguments
     return args.reduce((total, arg) => arg ? total + ' ' + arg : total)

@@ -6,26 +6,29 @@ import { Link } from "react-router-dom"
 import LastReviews from "components/LastReviews"
 import Review from "components/Review"
 
-const ProductPage = () => (
-  <PageLayout>
-      <div className="container">
-          <ProductDetailsContainer/>
+const ProductPage = ({ match }) => {
+    console.log(match.params.id)
+    return (
+      <PageLayout>
+          <div className="container">
+              <ProductDetailsContainer id={match.params.id}/>
 
-          <section>
-              <h1 className="mb-4 mt-5">Отзывы</h1>
-              <Row>
-                  <LastReviews count={3}>
-                      {(reviews =>
-                        reviews.map(review => (
-                          <Review key={review.id} className={'col-md-4'} {...review}/>
-                        )))}
-                  </LastReviews>
-              </Row>
-              <br/>
-              <Link to='/reviews'>Все отзывы</Link>
-          </section>
-      </div>
-  </PageLayout>
-)
+              <section>
+                  <h1 className="mb-4 mt-5">Отзывы</h1>
+                  <Row>
+                      <LastReviews count={3}>
+                          {(reviews =>
+                            reviews.map(review => (
+                              <Review key={review.id} className={'col-md-4'} {...review}/>
+                            )))}
+                      </LastReviews>
+                  </Row>
+                  <br/>
+                  <Link to='/reviews'>Все отзывы</Link>
+              </section>
+          </div>
+      </PageLayout>
+    )
+}
 
 export default ProductPage

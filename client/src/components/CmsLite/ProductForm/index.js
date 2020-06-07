@@ -425,7 +425,7 @@ class ProductForm extends Component {
 
                                                                      uploadImages(event.currentTarget.files[0])
                                                                        .then(result => {
-                                                                           ahi.push(result.thumb[0])
+                                                                           ahi.push(result.lg[0])
                                                                            this.setState({
                                                                                imgIsLoading: false
                                                                            })

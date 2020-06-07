@@ -15,6 +15,9 @@ export default class ApiService {
     getImage = (name) =>
       `${this._imageBase}${name}`
 
+    getThumbImage = (name) => this.getImage(`thumb_${name}`)
+    getSmallImage = (name) => this.getImage(`sm_${name}`)
+
     getResource = async (url) => {
         console.log('getResource', url)
         const res = await fetch(`${this._apiBase}${url}`, {

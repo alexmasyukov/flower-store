@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
 import cn from 'classnames'
 import { Link } from "react-router-dom"
-
 import Available from "components/ProductDetails/Available"
 import Photo from "components/Product/Photo"
 import SizeTitle from "components/Product/SizeTitle"
@@ -45,18 +43,22 @@ const Product = ({
                      }],
 
                      showPriceAllSizes = false,
-                     firstActiveSizeIndex = 0
+                     firstActiveSizeIndex = 0,
+                     getThumbImage = () => {}
                  }) => {
     const [activeSizeIndex, setActiveSizeIndex] = useState(firstActiveSizeIndex)
     const [isDetails, setIsDetails] = useState(false)
+    const [linkParams, setLinkParams] = useState('')
 
     useEffect(() => {
         setActiveSizeIndex(firstActiveSizeIndex)
+        setLinkParams(`?activeSizeIndex=${firstActiveSizeIndex}`)
     }, [firstActiveSizeIndex])
 
     const currentSize = sizes[activeSizeIndex]
 
     const handleSizeClick = (index) => {
+        setLinkParams(`?activeSizeIndex=${index}`)
         setIsDetails(true)
         setActiveSizeIndex(index)
     }
@@ -77,8 +79,8 @@ const Product = ({
       <div key={id}
            className={cn(styles.product, 'col-6', 'col-md-4', 'mb-2', 'pl-1', 'pr-1')}
       >
-          <Link className={styles.image} to={`/catalog/${id}`}>
-              <Photo src={currentSize.images[0]}/>
+          <Link className={styles.image} to={`/catalog/${id}${linkParams}`}>
+              <Photo src={getThumbImage(currentSize.images[0])}/>
               <SizeInfo className={styles.size} diameter={currentSize.diameter}/>
           </Link>
 

@@ -221,7 +221,7 @@ module.exports = {
               .from('product_sizes')
               .where(whereOfSizes)
               .whereIn('product_id', productsIds)
-              .orderBy('order')
+              .orderBy('title')
 
             const entitiesToValues = (entities) => {
                 if (convertEntities === 'false') {
@@ -296,6 +296,7 @@ module.exports = {
               .from('product_sizes')
               .where(whereOfSizes)
               .where('product_id', product.id)
+              .orderBy('title')
 
             if (!productSizes.length) {
                 return next(utils.error(404, 'NOT FOUND', 'product sizes not found'))

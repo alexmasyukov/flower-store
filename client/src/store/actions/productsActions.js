@@ -70,12 +70,11 @@ export const fetchProduct = (id) => async dispatch => {
     //   .then((data) => dispatch(booksLoaded(data)))
     //   .catch((err) => dispatch(booksError(err)));
 
-    console.log('fetchProduct action', id)
+    // console.log('fetchProduct action', id)
 
     dispatch(requestProduct())
     try {
         const response = await fetchProductApi(id)
-        console.log(response)
         dispatch(
           successProduct(response)
         )
