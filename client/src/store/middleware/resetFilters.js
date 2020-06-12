@@ -3,7 +3,7 @@ import {
     SELECTED_FILTERS_SET_PRICE_RANGE
 } from "store/actionTypes"
 import { resetFilter } from "store/actions/selectedFiltersActions"
-import { fitlerButtonsGroupsSettings } from "constants/filters"
+import { FILTER_KEY_NAMES, fitlerButtonsGroupsSettings } from "constants/filters"
 
 /**
  * UI
@@ -19,7 +19,14 @@ const resetFilters = store => next => action => {
     switch (action.type) {
         case SELECTED_FILTERS_UPDATE_SELECTED:
             // При использовании фильтра выбора цены сбрасывает фильтр размера (bySizes)
-            if (filterKey === 'bySizes') next(resetFilter('bySizesPrice', value))
+            if (filterKey === FILTER_KEY_NAMES.bySizes)
+                next(resetFilter(FILTER_KEY_NAMES.bySizesPrice, value))
+
+            if (filterKey === FILTER_KEY_NAMES.byAvailability)
+                next(resetFilter(FILTER_KEY_NAMES.bySizes, value))
+
+            if (filterKey === FILTER_KEY_NAMES.bySizes)
+                next(resetFilter(FILTER_KEY_NAMES.byAvailability, value))
 
             // Если у фильтра свойство multiply = false, нужно отключить возможность
             // множественного выборsа (например: одновременно выбранные кнопки - Ожидание и Готовые букеты)

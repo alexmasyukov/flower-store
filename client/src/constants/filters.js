@@ -5,48 +5,58 @@ export const FILTER_COMPONENTS_TYPES = {
     AVAILABLE_BUTTONS: 'AVAILABLE_BUTTONS'
 }
 
+export const FILTER_KEY_NAMES = {
+    bySizesPrice: 'bySizesPrice',
+    bySizes: 'bySizes',
+    byPacking: 'byPacking',
+    byAvailability: 'byAvailability',
+    byBouquetType: 'byBouquetType',
+    byFlowers: 'byFlowers',
+    byShades: 'byShades',
+    byColors: 'byColors',
+    byStability: 'byStability'
+}
+
 export const fitlerButtonsGroupsSettings = {
-    bySizesPrice: {
+    [FILTER_KEY_NAMES.bySizesPrice]: {
         type: FILTER_COMPONENTS_TYPES.RANGE,
         title: 'Цена'
     },
-    bySizes: {
+    [FILTER_KEY_NAMES.bySizes]: {
         title: 'Размер',
         type: FILTER_COMPONENTS_TYPES.ITEMS
     },
-    byPacking: {
+    [FILTER_KEY_NAMES.byPacking]: {
         title: 'Оформление',
         type: FILTER_COMPONENTS_TYPES.ITEMS
     },
-    byAvailability: {
+    [FILTER_KEY_NAMES.byAvailability]: {
         title: 'Наличие',
-        type: FILTER_COMPONENTS_TYPES.AVAILABLE_BUTTONS,
-        multiplyTEST: false
+        type: FILTER_COMPONENTS_TYPES.AVAILABLE_BUTTONS
     },
-    byBouquetType: {
+    [FILTER_KEY_NAMES.byBouquetType]: {
         title: 'Вид букета',
         type: FILTER_COMPONENTS_TYPES.ITEMS,
-        // multiply: false,
         openedDefault: true
     },
-    byFlowers: {
+    [FILTER_KEY_NAMES.byFlowers]: {
         title: 'Состав',
         type: FILTER_COMPONENTS_TYPES.ITEMS,
         openedDefault: false
     },
-    byShades: {
+    [FILTER_KEY_NAMES.byShades]: {
         title: 'Гамма',
         type: FILTER_COMPONENTS_TYPES.ITEMS,
         openedDefault: false
     },
-    byColors: {
+    [FILTER_KEY_NAMES.byColors]: {
         title: 'Цвет',
         // todo восстанорвить тип, когда сделаешь кнопки цветов с extra параметром
         // type: FILTER_COMPONENTS_TYPES.COLORS_BUTTONS,
         type: FILTER_COMPONENTS_TYPES.ITEMS,
         openedDefault: false
     },
-    byStability: {
+    [FILTER_KEY_NAMES.byStability]: {
         title: 'Стойкость',
         type: FILTER_COMPONENTS_TYPES.ITEMS,
         openedDefault: false

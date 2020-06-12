@@ -1,5 +1,6 @@
 import { FETCH_PRODUCTS_SUCCESS } from "store/actionTypes"
 import { AVAILABLE_TYPES } from "constants/common"
+import { FILTER_KEY_NAMES } from "constants/filters"
 
 // todo Пока не используем, нужно сделать кнопки цвета с extra
 // todo это невозмножно получить в таком виде с сервера,
@@ -7,7 +8,7 @@ import { AVAILABLE_TYPES } from "constants/common"
 //  или вычислять и отправлять в ключе api/products?date=
 //  (как даты недоступности)
 const filters_colors = {
-    byColors: [
+    [FILTER_KEY_NAMES.byColors]: [
         {
             title: 'Разноцветный',
             color: 'miltiply'
@@ -25,8 +26,8 @@ const filters_colors = {
 
 
 const initialState = {
-    bySizesPrice: [0, 0],
-    byAvailability: [{
+    [FILTER_KEY_NAMES.bySizesPrice]: [0, 0],
+    [FILTER_KEY_NAMES.byAvailability]: [{
         title: 'Готовые букеты',
         extra: {
             type: AVAILABLE_TYPES.FAST,
@@ -37,15 +38,15 @@ const initialState = {
             type: AVAILABLE_TYPES.BASE,
         }
     }],
-    bySizes: [],
-    byFlowers: [],
-    byStability: [],
-    byShades: [],
-    byPacking: [],
-    byColors: [],
-    byBouquetType: [],
-    // НЕ ИСПОЛЬЗУЕТСЯ пока
-    // byCollections: [],//['23 февраля', '8 марта', 'Новый год'],
+    [FILTER_KEY_NAMES.bySizes]: [],
+    [FILTER_KEY_NAMES.byFlowers]: [],
+    [FILTER_KEY_NAMES.byStability]: [],
+    [FILTER_KEY_NAMES.byShades]: [],
+    [FILTER_KEY_NAMES.byPacking]: [],
+    [FILTER_KEY_NAMES.byColors]: [],
+    [FILTER_KEY_NAMES.byBouquetType]: [],
+    // НЕ ИСПОЛЬЗУЕТСЯ
+    // [FILTER_KEY_NAMES.byCollections]: [],//['23 февраля', '8 марта', 'Новый год'],
 }
 
 

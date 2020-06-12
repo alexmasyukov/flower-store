@@ -7,12 +7,15 @@ import {
     getFilteredProducts,
     getStatusSizesFilter,
     getStatusPriceFilter,
-    getSizesAndPriceSelectedFilters
+    getSizesAndPriceSelectedFilters,
+    getTypeAvailabilityFilter, getStatusAvailabilityFilter
 } from "store/selectors/products"
 import Product from "components/Product"
 import { Row } from "components/Bootstrap"
 import Preloader from "components/Preloader"
 import withApiService from "components/hoc/withApiService"
+import { AVAILABLE_TYPES } from "constants/common"
+import { when } from "utils"
 // import CollectionsButtons from "components/Filter/CollectionsButtons"
 // import { date_25 } from "containers/TIME_date"
 
@@ -27,6 +30,7 @@ class ProductsListContainer extends Component {
     }
 
     setActiveFirstSizeInProduct = (products) => {
+        console.warn('call setActiveFirstSizeInProduct', products)
         return products.map(({ sizes, ...base }) => ({
             ...base,
             sizes: sizes.map((size, i) => ({
@@ -37,24 +41,85 @@ class ProductsListContainer extends Component {
     }
 
     setActiveSizesInProducts = (products, selected, checkCallback) => {
+        console.warn('call setActiveSizesInProducts', products)
         return products.map(product => {
-            let firstActiveSizeIndex = false
+            // let firstActiveSizeIndex = false
             const sizes = product.sizes.map((size, i) => {
                 size.active = checkCallback(size, selected)
 
-                if (size.active && firstActiveSizeIndex === false)
-                    firstActiveSizeIndex = i
+                // if (size.active && firstActiveSizeIndex === false)
+                //     firstActiveSizeIndex = i
 
                 return size
             })
 
             return {
                 ...product,
-                sizes,
-                firstActiveSizeIndex // ключ для быстрого получения индекса размера
+                sizes
+                // firstActiveSizeIndex // ключ для быстрого получения индекса размера
                 // для отображения фото
             }
         })
+    }
+
+    filterProductsSizesByAvailableType(type) {
+        return function(products) {
+            console.warn('typeOfAvailabilityFilter', type, products)
+
+            const filterFunctions = {
+                [AVAILABLE_TYPES.BASE]: (size) => size.fast === false,
+                [AVAILABLE_TYPES.FAST]: (size) => size.fast === true
+            }
+            return products.map(({ sizes, ...base }) => ({
+                ...base,
+                sizes: sizes.filter(filterFunctions[type])
+            }))
+        }
+    }
+
+    prepareProducts = (products) => {
+        const {
+            isActiveSizesFilter,
+            isActivePriceFilter,
+            isActiveAvailabilityFilter,
+            typeOfAvailabilityFilter,
+            selectedFilters
+        } = this.props
+
+        return compose(
+          (products) => {
+              console.warn('4 result', products)
+              return products
+          },
+          (products) => {
+              console.warn('3 isActiveSizesFilter || setActiveFirstSizeInProduct', products)
+              if (isActiveSizesFilter) {
+                  return this.setActiveSizesInProducts(
+                    products,
+                    selectedFilters.bySizes,
+                    (size, selected) => selected.includes(size.title)
+                  )
+              }
+              // return this.setActiveFirstSizeInProduct(products)
+              return products
+          },
+          (products) => {
+              console.warn('2 isActivePriceFilter', products)
+              if (isActivePriceFilter) {
+                  return this.setActiveSizesInProducts(
+                    products,
+                    selectedFilters.bySizesPrice,
+                    (size, selected) => {
+                        const [min, max] = selected
+                        console.log(size.price, min, max, size.price >= min, size.price <= max)
+                        return size.price >= min && size.price <= max
+                    })
+              }
+              return products
+          },
+          when(isActiveAvailabilityFilter, this.filterProductsSizesByAvailableType(typeOfAvailabilityFilter)),
+          this.setActiveFirstSizeInProduct
+        )(products)
     }
 
     componentDidMount() {
@@ -67,45 +132,23 @@ class ProductsListContainer extends Component {
             products,
             isActiveSizesFilter,
             isActivePriceFilter,
+            typeOfAvailabilityFilter,
             selectedFilters,
             getThumbImage
         } = this.props
 
-        const preparedProducts = compose(
-          (products) => isActiveSizesFilter ?
-            this.setActiveSizesInProducts(
-              products,
-              selectedFilters.bySizes,
-              (size, selected) => selected.includes(size.title)
-            ) : this.setActiveFirstSizeInProduct(
-              products
-            ),
+        if (!products.length) return <h1>Ничего не найдено</h1>
 
-          (products) => isActivePriceFilter ?
-            this.setActiveSizesInProducts(
-              products,
-              selectedFilters.bySizesPrice,
-              (size, selected) => {
-                  const [min, max] = selected
-                  return size.price >= min && size.price <= max
-              }
-            ) : products
-        )(products)
+        // todo products должны приходить из redux УЖЕ ЗАГРУЖЕННЫЕ
+        //  этот компонент должен отвечать только за отображение
+        const preparedProducts = this.prepareProducts(products)
 
-        // todo это должно приходить из redux,
-        //  это должно быть отдельным экшеном начала загрузки
-        //  (понять где это располагать в сторе)
-        // сделать ui loading в redux
-        // todo МАЙ делать это на экшен Request, в этот компонент
-        //  приходят только товары и даже не пустой массив!
-        if (!preparedProducts.length) return <Preloader/>
-
-        //todo МАЙ - Удалить???? замени это после встречи
-        // const collections = [
-        //     { title: '23 февраля' },
-        //     { title: '8 мая' },
-        //     { title: 'Новый год' }
-        // ]
+        console.log(isActiveSizesFilter)
+        console.log(isActivePriceFilter)
+        console.log(typeOfAvailabilityFilter)
+        console.log(selectedFilters)
+        console.log('products', products)
+        console.log('preparedProducts', preparedProducts)
 
         return (
           <Row>
@@ -115,8 +158,8 @@ class ProductsListContainer extends Component {
               {preparedProducts.map(product => (
                 <Product
                   key={product.id}
-                  showPriceAllSizes={true}
                   getThumbImage={getThumbImage}
+                  firstActiveSizeIndex={product.sizes.findIndex(size => size.active === true)}
                   {...product}
                 />
               ))}
@@ -124,7 +167,6 @@ class ProductsListContainer extends Component {
         )
     }
 }
-
 
 
 const mapApiMethodsToProps = (apiService) => ({
@@ -136,6 +178,8 @@ const mapStateToProps = state => ({
     products: getFilteredProducts(state),
     isActiveSizesFilter: getStatusSizesFilter(state),
     isActivePriceFilter: getStatusPriceFilter(state),
+    isActiveAvailabilityFilter: getStatusAvailabilityFilter(state),
+    typeOfAvailabilityFilter: getTypeAvailabilityFilter(state),
     selectedFilters: getSizesAndPriceSelectedFilters(state)
 })
 

@@ -5,8 +5,13 @@ export function getDisplayName(WrappedComponent) {
     return WrappedComponent.displayName || WrappedComponent.name || 'Component'
 }
 
-export const compose = (...funcs) => component =>
-  funcs.reduceRight((prevResult, f) => f(prevResult), component)
+export const compose = (...funcs) => x => funcs.reduceRight((r, f) => f(r), x)
+export const when = (cond, f) => x => {
+    if (typeof cond === 'boolean') {
+        return cond ? f(x) : x;
+    }
+    return cond(x) ? f(x) : x;
+}
 
 export const formatDateDMY = (date) => format(date, 'dd.MM.yyyy')
 

@@ -4,7 +4,7 @@ import {
     SELECTED_FILTERS_RESET_ALL,
     SELECTED_FILTERS_RESET, SELECTED_FILTERS_SET_MANY
 } from "store/actionTypes"
-import { fitlerButtonsGroupsSettings } from "constants/filters"
+import { FILTER_KEY_NAMES } from "constants/filters"
 import { getObjectWithoutKeys } from "utils"
 
 const initialState = {}
@@ -35,20 +35,16 @@ const selectedFiltersReducer = (state = initialState, action) => {
             //  Новый объект или ссылку?
             const { [filterKey]: selected = [] } = state
 
-            console.log('action SELECTED_FILTERS_UPDATE_SELECTED', action)
-            console.log('filters state', state)
-            console.log('selected', selected)
-
-            // todo Разберись с этим, страшно выглядит push
-            // todo Если ссылку переписывай это на filter и ...rest
-
+            // console.log('action SELECTED_FILTERS_UPDATE_SELECTED', action)
+            // console.log('filters state', state)
+            // console.log('selected', selected)
             // const filterSettings = fitlerButtonsGroupsSettings[filterKey]
 
-            console.log('filters state', state)
+            // console.log('filters state', state)
 
             switch (filterKey) {
-                case 'byAvailability':
-                case 'byBouquetType':
+                case FILTER_KEY_NAMES.byAvailability:
+                case FILTER_KEY_NAMES.byBouquetType:
                     // 1. Ищем кнопку
                     // Кнопка найдена
                     //      удаляем кнопку из массива
@@ -65,12 +61,11 @@ const selectedFiltersReducer = (state = initialState, action) => {
                     }
 
                     const findButtonsFunctions = {
-                        byAvailability: ({ extra: { type } }) => type === value.extra.type,
-                        byBouquetType: (title) => title === value
+                        [FILTER_KEY_NAMES.byAvailability]: ({ extra: { type } }) => type === value.extra.type,
+                        [FILTER_KEY_NAMES.byBouquetType]: (title) => title === value
                     }
 
-                    const ff = findButtonsFunctions[filterKey]
-                    const foundButton = selected.find(ff)
+                    const foundButton = selected.find(findButtonsFunctions[filterKey])
 
                     return foundButton ? getObjectWithoutKeys(state, [filterKey]) : {
                         ...state,

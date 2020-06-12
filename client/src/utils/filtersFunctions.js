@@ -1,4 +1,5 @@
 import { AVAILABLE_TYPES } from "constants/common"
+import { compose, when } from 'utils'
 
 export const byColors = (products, selected = []) =>
   products.filter(product => selected.includes(product.color))
@@ -46,15 +47,24 @@ export const byStability = (products, selected = []) =>
 export const byAvailability = (products, [button]) => {
     const availableType = button.extra.type
 
-    switch (availableType) {
-        case AVAILABLE_TYPES.FAST:
-            return products.filter(product =>
-              product.sizes.some(({ fast }) => fast === true))
+    const filterFastProducts = (products) => products
+      .filter(product => product.sizes.some(({ fast }) => fast === true))
+      // .map(({ sizes, ...base }) => ({
+      //     ...base,
+      //     sizes: sizes.filter(({ fast }) => fast === true)
+      // }))
 
-        case AVAILABLE_TYPES.BASE:
-            // все товары кроме тех, у кого КАЖДЫЙ размер "Готовый букет"
-            return products.filter(product =>
-              !product.sizes.every(({ fast }) => fast === true))
-    }
+    // все товары кроме тех, у кого КАЖДЫЙ размер "Готовый букет"
+    const filterBaseProducts = (products) => products
+      .filter(product => !product.sizes.every(({ fast }) => fast === true))
+      // .map(({ sizes, ...base }) => ({
+      //     ...base,
+      //     sizes: sizes.filter(({ fast }) => fast === false)
+      // }))
+
+    return compose(
+      when(availableType === AVAILABLE_TYPES.FAST, filterFastProducts),
+      when(availableType === AVAILABLE_TYPES.BASE, filterBaseProducts)
+    )(products)
 }
 

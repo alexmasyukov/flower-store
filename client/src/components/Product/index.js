@@ -34,6 +34,7 @@ const Product = ({
                      additionalProducts = [],
                      sizes = [{
                          title: '[sizeTitle]',
+                         active: false,
                          fast: false,
                          diameter: 0,
                          flowers: [],
@@ -41,26 +42,27 @@ const Product = ({
                          price: 0,
                          images: []
                      }],
-
-                     showPriceAllSizes = false,
                      firstActiveSizeIndex = 0,
-                     getThumbImage = () => {}
+                     getThumbImage = () => {
+                     }
                  }) => {
-    const [activeSizeIndex, setActiveSizeIndex] = useState(firstActiveSizeIndex)
+
+    const [selectSizeIndex, setSelectSizeIndex] = useState(false)
     const [isDetails, setIsDetails] = useState(false)
     const [linkParams, setLinkParams] = useState('')
 
     useEffect(() => {
-        setActiveSizeIndex(firstActiveSizeIndex)
+        setSelectSizeIndex(false)
         setLinkParams(`?activeSizeIndex=${firstActiveSizeIndex}`)
-    }, [firstActiveSizeIndex])
+    }, [sizes])
 
-    const currentSize = sizes[activeSizeIndex]
+    const currentSize = sizes[firstActiveSizeIndex]
+    // console.warn(title, 'firstActiveSizeIndex', firstActiveSizeIndex)
 
     const handleSizeClick = (index) => {
         setLinkParams(`?activeSizeIndex=${index}`)
         setIsDetails(true)
-        setActiveSizeIndex(index)
+        setSelectSizeIndex(index)
     }
 
     // const onMouseEnter = (e) => {
@@ -95,16 +97,25 @@ const Product = ({
           </Link>
 
           <div className={styles.sizes}>
-              {sizes.map(({ id, fast, title, price, active }, i) => (
-                <SizeTitle
-                  key={id}
-                  title={title}
-                  price={price}
-                  fast={fast}
-                  active={activeSizeIndex === i}
-                  onClick={() => handleSizeClick(i)}
-                />
-              ))}
+              {sizes.map(({ id, fast, title, price, active }, i) => {
+                  let isActive = active
+
+                  if (selectSizeIndex || selectSizeIndex === 0) {
+                      isActive = (selectSizeIndex === i)
+                  }
+                  // console.log(title, selectSizeIndex, selectSizeIndex === i, isActive)
+
+                  return (
+                    <SizeTitle
+                      key={id}
+                      title={title}
+                      price={price}
+                      fast={fast}
+                      active={isActive}
+                      onClick={() => handleSizeClick(i)}
+                    />
+                  )
+              })}
           </div>
           <hr/>
       </div>
