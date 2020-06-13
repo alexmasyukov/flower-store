@@ -11,6 +11,7 @@ const CmsMenu = ({ className }) => {
           <Link to="/cmslite/banners">Баннеры</Link>
           <Link to="/cmslite/team">Команда</Link>
           <Link to="/cmslite/content">Контент</Link>
+          <Link to="/cmslite/bot-viber">Бот Viber</Link>
           {/*<Link to="/cmslite/settings">Настройки</Link>*/}
           {/*<Link to="/cmslite/clients">Клиенты</Link>*/}
           {/*<Link to="/cmslite/orders">Заказы</Link>*/}

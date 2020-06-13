@@ -11,62 +11,93 @@ services:
     volumes:
       - './client:/app'
       - '/app/node_modules'
-#    ports:
-#      - 3000:3000
+    #    ports:
+    #      - 3000:3000
     environment:
       - NODE_ENV=development
       - PUBLIC_URL=/
-#      - CHOKIDAR_USEPOLLING=true
-#    env_file:
-#      - ./common.env
-#      - ./apps/web.env
-#      - /opt/runtime_opts.env
-#    logging:
-#      driver: syslog
-#      options:
-#        syslog-address: "tcp://192.168.0.42:123"
-#        max-size: "200k"
-#        max-file: "10"
-#      logging:
-#        driver: "json-file"
-#        options:
-#          max-size: "200k"
-#          max-file: "10"
+  #      - CHOKIDAR_USEPOLLING=true
+  #    env_file:
+  #      - ./common.env
+  #      - ./apps/web.env
+  #      - /opt/runtime_opts.env
+  #    logging:
+  #      driver: syslog
+  #      options:
+  #        syslog-address: "tcp://192.168.0.42:123"
+  #        max-size: "200k"
+  #        max-file: "10"
+  #      logging:
+  #        driver: "json-file"
+  #        options:
+  #          max-size: "200k"
+  #          max-file: "10"
 
-#  cms-dev:
-#    container_name: cms-dev
+  #  cms-dev:
+  #    container_name: cms-dev
+  #    networks:
+  #      - db
+  #      - front
+  #    build:
+  #      context: ./cmslite
+  #      dockerfile: Dockerfile.prod
+  #    #  dockerfile: Dockerfile.dev
+  #    #    image: alexmasyukov/klumba_cms:latest
+  #    volumes:
+  #      - './cmslite:/app'
+  #      - '/app/node_modules'
+  #    environment:
+  #      - NODE_ENV=development
+  ##      - PORT=3006
+  ##      - PUBLIC_URL=/
+  ##      - NODE_ENV=production
+  ##      - PUBLIC_URL=/test
+
+
+  #  cms-lite-dev:
+  #    container_name: cms-lite-dev
+  #    build:
+  #      context: ./cmslite
+  #      dockerfile: Dockerfile.dev
+  #    volumes:
+  #      - './cmslite:/cmslite'
+  ##      - '/cmslite/node_modules'
+  #    ports:
+  #      - 3000:3000
+  ##    environment:
+  ##      - NODE_ENV=development
+  ##      - PORT=3000
+
+#  smtp-dev:
+#    image: namshi/smtp:latest
+#    container_name: smtp-dev
+#    environment:
+#      PORT: 25
+#    expose:
+#      - 25
 #    networks:
 #      - db
-#      - front
-#    build:
-#      context: ./cmslite
-#      dockerfile: Dockerfile.prod
-#    #  dockerfile: Dockerfile.dev
-#    #    image: alexmasyukov/klumba_cms:latest
-#    volumes:
-#      - './cmslite:/app'
-#      - '/app/node_modules'
-#    environment:
-#      - NODE_ENV=development
-##      - PORT=3006
-##      - PUBLIC_URL=/
-##      - NODE_ENV=production
-##      - PUBLIC_URL=/test
+#    restart: always
 
 
-#  cms-lite-dev:
-#    container_name: cms-lite-dev
-#    build:
-#      context: ./cmslite
-#      dockerfile: Dockerfile.dev
-#    volumes:
-#      - './cmslite:/cmslite'
-##      - '/cmslite/node_modules'
-#    ports:
-#      - 3000:3000
-##    environment:
-##      - NODE_ENV=development
-##      - PORT=3000
+  bot-viber-dev:
+    container_name: bot-viber-dev
+    networks:
+      - db
+      - front
+    env_file:
+      - ./bot-viber/dev.env
+    build:
+      context: ./bot-viber
+      dockerfile: Dockerfile.dev
+    volumes:
+      - './bot-viber:/app'
+      - '/app/node_modules'
+    ports:
+      - 9999:9999
+    depends_on:
+      - postgres-dev
+    restart: always
 
 
   api-dev:
@@ -81,7 +112,7 @@ services:
       - '/app/node_modules'
     environment:
       - NODE_ENV=development
-#      - CHOKIDAR_USEPOLLING=true
+    #      - CHOKIDAR_USEPOLLING=true
     restart: always
 
 
@@ -111,9 +142,10 @@ services:
       - db
     depends_on:
       - postgres-dev
+      - bot-viber-dev
       - api-dev
       - app-dev
-#      - cms-dev
+    #      - cms-dev
     volumes:
       - ./settings/nginx_dev:/etc/nginx/conf.d
     ports:

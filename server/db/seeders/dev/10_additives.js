@@ -9,6 +9,7 @@ exports.seed = function(knex) {
                   order: 0,
                   public: true,
                   title: 'Добавить зелени?',
+                  cart_title: 'Зелень',
                   data: JSON.stringify([
                       {
                           order: 0,
@@ -36,6 +37,7 @@ exports.seed = function(knex) {
                   order: 1,
                   public: true,
                   title: 'Коробка для букета',
+                  cart_title: 'Коробка',
                   data: JSON.stringify([
                       {
                           order: 0,

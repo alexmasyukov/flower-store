@@ -84,10 +84,14 @@ module.exports = {
         }
     },
 
-    updateOne(table) {
+    updateOne(table, stringifyFilelds = []) {
         return async function(req, res, next) {
             try {
                 const { id } = req.params
+
+                if (!Number.isInteger(Number(id))) {
+                    return next(utils.error(500, 'ERROR', 'id should be Integer'))
+                }
 
                 // todo FIX all as this
                 const found = await knex
@@ -98,8 +102,16 @@ module.exports = {
                 if (!found.length)
                     return next(utils.error(404, 'NOT FOUND', 'ID not found'))
 
+                const data = R.compose(
+                  utils.when(Boolean(stringifyFilelds.length), (data) =>
+                    stringifyFilelds.reduce((res, field) => ({
+                        ...res,
+                        [field]: JSON.stringify(res[field])
+                    }), data))
+                )(req.body)
+
                 const updateId = await knex(table)
-                  .update(req.body)
+                  .update(data)
                   .where('id', '=', id)
                   .returning('id')
 

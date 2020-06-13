@@ -5,5 +5,7 @@ dockerfile
 dockerfile.prod
 dockerfile.dev
 .firebase
-yarn.lock
 yarn-error.log
+.idea_OLD
+.idea
+*.sql

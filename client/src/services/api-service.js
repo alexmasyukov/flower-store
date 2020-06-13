@@ -163,6 +163,13 @@ export default class ApiService {
       await this.postResource(`/additives`, additive)
     deleteAdditive = async (id) => await this.deleteResource(`/additives/${id}`)
 
+    // BotViber
+    getBotViber = (id) => async () => await this.getResource(`/bot-viber/${id}`)
+    updateBotViber = async (data) => await this.putResource(`/bot-viber/${data.id}`, data, {
+        responseType: 'json'
+    })
+    testBotViber = async () => await this.getResource(`/bot-viber/test`)
+
 
     // Team
     getAllFlorists = async () => await this.getResource(`/team?isFlorist=true`)

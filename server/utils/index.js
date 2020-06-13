@@ -53,10 +53,19 @@ function normalize(object, fromKey) {
 
 const isBoolean = val => 'boolean' === typeof val
 
+
+const when = (cond, f) => x => {
+    if (typeof cond === 'boolean') {
+        return cond ? f(x) : x;
+    }
+    return cond(x) ? f(x) : x;
+}
+
 module.exports = {
     error,
     extractFileExt,
     convertEntitie,
     normalize,
-    isBoolean
+    isBoolean,
+    when
 }

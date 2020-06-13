@@ -23,6 +23,8 @@ router.route('/confirmation')
     ordersController.confirmation
   )
 
+router.route('/notify')
+  .get(ordersController.nofity)
 
 
 router.route('/:id')

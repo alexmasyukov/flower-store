@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ErrorMessage, FastField, Field, FieldArray, Form, Formik } from 'formik'
+import { ErrorMessage, Field, FieldArray, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import { additiveModel } from "models/additive"
 import { Row } from "components/Bootstrap"
@@ -16,6 +16,7 @@ const yup_string_required = Yup
 
 const additiveSchema = Yup.object({
     title: yup_string_required,
+    cart_title: yup_string_required,
     data: Yup.array()
       .of(
         Yup.object().shape({
@@ -68,13 +69,23 @@ class AdditiveForm extends Component {
 
                         <Row className="align-items-center">
                             <div className="col-md-4">
-                                <span className={styles.btitle}>Вопрос (например: Добавить зелени?):</span>
+                                <span className={styles.btitle}>Вопрос (пример: Добавить зелени?):</span>
                                 <Field name="title" style={{ width: '100%' }}/>
                             </div>
                             <div className="col-md-3">
                                 <Field name={`public`} title="Опубликовано" type="checkbox"
                                        component={Checkbox}/>
                             </div>
+                        </Row>
+                        <Row>
+                            <div className="col-md-12 mt-3">
+                                <span className={styles.btitle}>Надпись в корзине, под товаром (пример: Коробка, Зелень и т.п.):</span>
+                            </div>
+                            <div className="col-md-4">
+                                <Field name="cart_title" style={{ width: '100%' }}/>
+                            </div>
+                        </Row>
+                        <Row>
                             <div className="col-md-12 mt-4">
                                 <h2>Кнопки</h2>
                                 <br/>

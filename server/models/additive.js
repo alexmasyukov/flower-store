@@ -11,6 +11,7 @@ class Additive {
                 'order',
                 'public',
                 'title',
+                'cart_title',
                 'data'
             ],
             properties: {
@@ -19,6 +20,7 @@ class Additive {
                 order: { type: 'integer' },
                 public: { type: 'boolean' },
                 title: { type: 'string' },
+                cart_title: { type: 'string' },
                 data: {
                     type: "array",
                     items: {

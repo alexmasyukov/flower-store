@@ -1,10 +1,8 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 // import 'mdn-polyfills/Object.assign' // Это не нужно, у нас webpack
 import { ConnectedRouter } from 'connected-react-router'
 import { Route, Switch } from 'react-router-dom'
 import loadable from "@loadable/component"
-import { connect } from "react-redux"
-
 import CatalogPage from "pages/Catalog"
 import ProductPage from "pages/Product"
 import Page404 from "pages/404"
@@ -50,6 +48,7 @@ const CmsReviewsPage = loadable(() => import('pages/CmsReviewsPage'), () => <div
 const CmsReviewFormPage = loadable(() => import('pages/CmsReviewFormPage'), () => <div>Loading...</div>)
 const CmsAdditivesPage = loadable(() => import('pages/CmsAdditivesPage'), () => <div>Loading...</div>)
 const CmsAdditiveFormPage = loadable(() => import('pages/CmsAdditiveFormPage'), () => <div>Loading...</div>)
+const CmsBotViberFormPage = loadable(() => import('pages/CmsBotViberFormPage'), () => <div>Loading...</div>)
 
 const ReviewsPage = loadable(() => import('pages/Reviews'), () => <div>Loading...</div>)
 
@@ -118,6 +117,11 @@ const App = ({ history }) => {
               <Route path="/Cmslite/additives-add" exact>
                   <CmsAdditiveFormPage isNew={true}/>
               </Route>
+
+              <Route path="/Cmslite/bot-viber/" exact>
+                  <CmsBotViberFormPage botId={1}/>
+              </Route>
+
 
               {/*<Route path="/Cmslite/orders" exact component={CmsOrdersPage}/>*/}
               {/*<Route path="/Cmslite/orders/:id" component={CmsLitePage}/>*/}
