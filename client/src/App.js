@@ -42,6 +42,7 @@ const CmsBannerFormPage = loadable(() => import('pages/CmsBannerFormPage'), () =
 const CmsEntitiesPage = loadable(() => import('pages/CmsEntitiesPage'), () => <div>Loading...</div>)
 const CmsEntitieFormPage = loadable(() => import('pages/CmsEntitieFormPage'), () => <div>Loading...</div>)
 const CmsOrdersPage = loadable(() => import('pages/CmsOrdersPage'), () => <div>Loading...</div>)
+const CmsOrderFormPage = loadable(() => import('pages/CmsOrderFormPage'), () => <div>Loading...</div>)
 const CmsContentPage = loadable(() => import('pages/CmsContentPage'), () => <div>Loading...</div>)
 const CmsContentFormPage = loadable(() => import('pages/CmsContentFormPage'), () => <div>Loading...</div>)
 const CmsReviewsPage = loadable(() => import('pages/CmsReviewsPage'), () => <div>Loading...</div>)
@@ -49,6 +50,7 @@ const CmsReviewFormPage = loadable(() => import('pages/CmsReviewFormPage'), () =
 const CmsAdditivesPage = loadable(() => import('pages/CmsAdditivesPage'), () => <div>Loading...</div>)
 const CmsAdditiveFormPage = loadable(() => import('pages/CmsAdditiveFormPage'), () => <div>Loading...</div>)
 const CmsBotViberFormPage = loadable(() => import('pages/CmsBotViberFormPage'), () => <div>Loading...</div>)
+const CmsCustomersPage = loadable(() => import('pages/CmsCustomersPage'), () => <div>Loading...</div>)
 
 const ReviewsPage = loadable(() => import('pages/Reviews'), () => <div>Loading...</div>)
 
@@ -122,8 +124,10 @@ const App = ({ history }) => {
                   <CmsBotViberFormPage botId={1}/>
               </Route>
 
+              <Route path="/cmslite/customers" exact component={CmsCustomersPage}/>
+              <Route path="/Cmslite/orders" exact component={CmsOrdersPage}/>
+              <Route path="/Cmslite/orders/:id" component={CmsOrderFormPage}/>
 
-              {/*<Route path="/Cmslite/orders" exact component={CmsOrdersPage}/>*/}
               {/*<Route path="/Cmslite/orders/:id" component={CmsLitePage}/>*/}
 
               <Route path="/404" component={Page404}/>

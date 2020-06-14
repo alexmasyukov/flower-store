@@ -8,19 +8,17 @@ class ContentList extends Component {
     render() {
         const { content } = this.props
 
-        const contentRender = content.map(({ id, public: pub, title }) => (
-          <div key={id} className={cn(!pub && styles.unpublic, 'col-md-12')}>
-              <Link to={`/cmslite/content/${id}`}>
-                  {title}</Link>
-              <span className={styles.listLabel}><b>ID:</b> {id}</span>
-              <hr/>
-          </div>
-        ))
-
         return (
-          <Row>
-              {contentRender}
-          </Row>
+          <table cellPadding="0" border="0" className={styles.table}>
+              {content.map(({ id, public: pub, title }) => (
+                <tr key={id}>
+                    <td><b>ID:</b> {id}</td>
+                    <td className={cn(!pub && styles.unpublic)}>
+                        <Link to={`/cmslite/content/${id}`}>{title}</Link>
+                    </td>
+                </tr>
+              ))}
+          </table>
         )
     }
 }

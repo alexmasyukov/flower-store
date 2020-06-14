@@ -5,18 +5,16 @@ import { compose } from "utils"
 import withApiService from "components/hoc/withApiService"
 import withData from "components/hoc/withData"
 import withRouterParams from "components/hoc/withRouterParams"
-import { Link } from "react-router-dom"
-import styles from "layouts/Cms/cmsLayout.module.sass"
 
 const fallback = () => (
   <div>Загрузка модуля...</div>
 )
-const List = loadable(() => import('components/CmsLite/OrdersList'), {
+const List = loadable(() => import('components/CmsLite/CustomersList'), {
     fallback: fallback()
 })
 
 const mapMethodsToProps = (apiService) => ({
-    getAll: apiService.getAllOrders
+    getAll: apiService.getAllCustomers
 })
 
 
@@ -30,11 +28,11 @@ const ListContainer = compose(
   })
 )(List)
 
-const CmsOrdersPage = () => (
+const CmsCustomersPage = () => (
   <CmsLayout>
-      <h1>Заказы</h1>
+      <h1>Клиенты</h1>
       <ListContainer/>
   </CmsLayout>
 )
 
-export default CmsOrdersPage
+export default CmsCustomersPage

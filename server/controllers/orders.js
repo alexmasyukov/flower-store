@@ -11,6 +11,52 @@ module.exports = {
         })
     },
 
+    async getOne(req, res, next) {
+        try {
+            // const { withUnpublic } = req.query
+            const { id } = req.params
+
+            if (!Number.isInteger(Number(id))) {
+                return next(utils.error(500, 'ERROR', 'id should be Integer'))
+            }
+
+            // const where = R.compose(
+            //   modificators.removeParamOfQuery(withUnpublic, 'public')
+            // )({
+            //     ...initialFields,
+            //     id
+            // })
+
+            const order = await knex
+              .select()
+              .from('orders')
+              .where('id', id)
+              .first()
+
+            if (!order)
+                return next(utils.error(404, 'NOT FOUND', `Order not found`))
+
+            const customer = await knex
+              .select()
+              .from('customers')
+              .where('id', order.customer_id)
+              .first()
+
+            const { phone, name, points } = customer
+
+            res.json({
+                ...order,
+                customer: {
+                    phone,
+                    name,
+                    points
+                }
+            })
+        } catch (e) {
+            next(utils.error(500, 'ERROR', e.message))
+        }
+    },
+
     async nofity(req, res, next) {
         // async..await is not allowed in global scope, must use a wrapper
         async function main() {
@@ -56,8 +102,8 @@ module.exports = {
               })
           })
           .catch((e) => {
-            next(utils.error(500, 'ERROR', e.message))
-        })
+              next(utils.error(500, 'ERROR', e.message))
+          })
 
 
     }

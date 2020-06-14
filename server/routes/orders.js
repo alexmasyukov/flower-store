@@ -30,7 +30,7 @@ router.route('/notify')
 router.route('/:id')
   .get(
     cacheControl({ MaxAge: 10 }),
-    commonController.getOne(OrderModel.table, {})
+    ordersController.getOne
   )
   .put(
     validateSchema(OrderModel.jsonSchema),

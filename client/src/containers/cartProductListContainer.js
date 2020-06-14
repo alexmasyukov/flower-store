@@ -14,16 +14,18 @@ import {
 } from "store/actions/cart/additionalProductsActions"
 import { cartProductOptionDelete } from "store/actions/cart/optionsAction"
 import loadable from "@loadable/component"
-import pMinDelay from "p-min-delay"
 import { additionalProductsEntitiesSelector } from "store/selectors/additionalProducts"
 import { deliveryDateSelector } from "store/selectors/ui"
+
+// import pMinDelay from "p-min-delay"
+// pMinDelay(import('containers/additionalProductsContainer'), 100)
 
 const fallback = () => (
    <div>Loading...</div>
 )
 
 const AdditionalProducts = loadable(() =>
-   pMinDelay(import('containers/additionalProductsContainer'), 100), {
+   import('containers/additionalProductsContainer'), {
    fallback: fallback()
 })
 

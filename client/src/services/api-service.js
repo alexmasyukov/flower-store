@@ -171,6 +171,15 @@ export default class ApiService {
     testBotViber = async () => await this.getResource(`/bot-viber/test`)
 
 
+    // Customers
+    getAllCustomers = async () => await this.getResource(`/customers`)
+
+
+    // Orders
+    getAllOrders = async () => await this.getResource(`/orders`)
+    getOrder = (id) => async () => await this.getResource(`/orders/${id}`)
+
+
     // Team
     getAllFlorists = async () => await this.getResource(`/team?isFlorist=true`)
     getTeam = async () => await this.getResource(`/team?withUnpublic=true`)

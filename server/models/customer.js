@@ -22,6 +22,22 @@ class Customer {
             }
         }
     }
+
+
+    static get confimJsonSchema() {
+        return {
+            type: 'object',
+            required: [
+                'phone',
+                'name',
+            ],
+            properties: {
+                phone: { type: 'integer' },
+                name: { type: 'string' },
+                sms_code: { type: 'integer' },
+            }
+        }
+    }
 }
 
 module.exports = {

@@ -2,6 +2,7 @@ const express = require('express')
 const cacheControl = require('express-cache-controller')
 const router = express.Router()
 const commonController = require("../controllers/common")
+const customersController = require("../controllers/customers")
 const { Customer } = require('../models/customer')
 const { validateSchema } = require('../middlewares/jsonSchemaValidator')
 
@@ -13,6 +14,12 @@ router.route('/')
   .post(
     validateSchema(Customer.jsonSchema),
     commonController.createOne('customers')
+  )
+
+router.route('/confim')
+  .get(
+    validateSchema(Customer.confimJsonSchema),
+    customersController.confim
   )
 
 router.route('/:id')

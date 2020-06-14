@@ -9,6 +9,7 @@ const error = (status, code, message) => {
     return error
 }
 
+const checkInteger = (number) => Number.isInteger(Number(number))
 
 /**
  * Convert entitie id (or array ids) to entitie value from
@@ -67,5 +68,6 @@ module.exports = {
     convertEntitie,
     normalize,
     isBoolean,
-    when
+    when,
+    checkInteger
 }

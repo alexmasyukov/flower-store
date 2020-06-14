@@ -51,8 +51,11 @@ class BotViberForm extends Component {
           <>
               <br/>
               <button onClick={() => this.handleBotTest()}>Тестировать бота</button>
-              <br/>
-              {JSON.stringify(test)}
+              {test && (
+                <div className='mt-3 mb-3'>
+                    {JSON.stringify(test, null, 2)}
+                </div>
+              )}
               <br/><br/>
               <Formik
                 initialValues={{
@@ -78,7 +81,10 @@ class BotViberForm extends Component {
 
                             <Row className="align-items-center">
                                 <div className="col-md-7">
-                                    <span className={styles.btitle}>Токен:</span>
+                                    Указывайте данные согласно <a
+                                  href="https://partners.viber.com/">partners.viber.com</a>
+                                    <br/><br/>
+                                    <span className={styles.btitle}>token:</span>
                                     <Field name="token" style={{ width: '100%' }}/>
                                     <ErrorMessage name={`token`} component={ErrorTitle}/>
                                 </div>
@@ -90,22 +96,19 @@ class BotViberForm extends Component {
                                     <ErrorMessage name={`subscribe_password`} component={ErrorTitle}/>
                                 </div>
                                 <div className="col-md-12 mt-3">
-                                    Указывайте данные согласно <a
-                                  href="https://partners.viber.com/">partners.viber.com</a>
-                                    <br/>
-                                    Для получения права на уведомления для менеджеров (о заказах и т.п.), в чате с ботом
-                                    введите по порядку:
-                                    <ul>
-                                        <li>/notify</li>
-                                        <li>ПАРОЛЬ</li>
-                                    </ul>
+                                    <h2>Команды бота</h2>
+                                    <b>/notify</b> - подписаться на уведомления для менеджеров
+                                    (о заказах и т.п.)
                                 </div>
                             </Row>
 
                             <Row>
                                 <div className="col-md-12 mt-4">
-                                    <h2>Пользователи с правами уведомлений от магазина</h2>
-
+                                    <h2>Пользователи подписавшиеся на уведомления от магазина</h2>
+                                    <p><b className={styles.red}>Внимание!</b> Если вы сменили <b>token</b> бота, все подписки этих пользователей становятся не актуальны и в новом боте работать не будут! При смене токена, нужно снова подписаться на уведомления.
+                                    Если вы вернете старый токен бота, подписки вновь станут актуальны и заработают</p>
+                                    <p><b className={styles.red}>Причина:</b> На каждый token Viber генерирует новый id пользователя</p>
+                                    <br/>
                                     <FieldArray
                                       name={`notify_subscribers`}
                                       render={ahi =>
