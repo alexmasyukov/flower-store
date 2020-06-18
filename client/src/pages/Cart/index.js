@@ -1,12 +1,20 @@
 import React from "react"
 import PageLayout from "layouts/Page"
-import CartContainer from "containers/cartContainer"
+import CartStepsContainer from "containers/cartStepsContainer"
+import CartProductListContainer from "containers/cartProductListContainer"
+import { Row } from "components/Bootstrap"
 
 const CartPage = () => (
   <PageLayout>
     <div className="container">
-        ываыаы ыва ыа
-      <CartContainer/>
+      <Row>
+        <div className="col-4">
+          <CartStepsContainer />
+        </div>
+        <div className="col-8">
+          <CartProductListContainer />
+        </div>
+      </Row>
     </div>
   </PageLayout>
 )

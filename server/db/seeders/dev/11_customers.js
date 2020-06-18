@@ -18,7 +18,16 @@ exports.seed = function(knex) {
                   name: 'Юрий',
                   points: 0,
                   extra: {}
-              }
+              },
+              {
+                id: 3,
+                city_id: 1,
+                phone: '79141401311',
+                name: 'Тестовый',
+                points: 0,
+                last_sms_code: '5566',
+                extra: {}
+            }
           ])
       })
 }

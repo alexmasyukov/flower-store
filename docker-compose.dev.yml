@@ -33,25 +33,27 @@ services:
   #          max-size: "200k"
   #          max-file: "10"
 
-  #  cms-dev:
-  #    container_name: cms-dev
-  #    networks:
-  #      - db
-  #      - front
-  #    build:
-  #      context: ./cmslite
-  #      dockerfile: Dockerfile.prod
-  #    #  dockerfile: Dockerfile.dev
-  #    #    image: alexmasyukov/klumba_cms:latest
-  #    volumes:
-  #      - './cmslite:/app'
-  #      - '/app/node_modules'
-  #    environment:
-  #      - NODE_ENV=development
-  ##      - PORT=3006
-  ##      - PUBLIC_URL=/
-  ##      - NODE_ENV=production
-  ##      - PUBLIC_URL=/test
+  cms-dev:
+    container_name: cms-dev
+    stdin_open: true
+#    tty: true
+    networks:
+      - db
+    build:
+      context: ./cmslite
+#        dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
+    #    image: alexmasyukov/klumba_cms:latest
+    volumes:
+      - './cmslite:/cms'
+      - '/cms/node_modules'
+    environment:
+      - NODE_ENV=development
+      - PUBLIC_URL=/
+#        - PORT=3006
+#      - PUBLIC_URL=/ыва
+#      - NODE_ENV=production
+#      - PUBLIC_URL=/test
 
 
   #  cms-lite-dev:
@@ -141,16 +143,17 @@ services:
     networks:
       - db
     depends_on:
-      - postgres-dev
-      - bot-viber-dev
+#      - postgres-dev
+#      - bot-viber-dev
       - api-dev
       - app-dev
-    #      - cms-dev
+      - cms-dev
     volumes:
       - ./settings/nginx_dev:/etc/nginx/conf.d
     ports:
       - 80:80
-    restart: unless-stopped
+      - 5000:5000
+    restart: always
 
 
 networks:

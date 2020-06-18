@@ -1,85 +1,91 @@
 const knex = require('../db/knex')
 const utils = require('../utils')
 
+
+const STATUS = {
+    CODE_SENT: 'CODE_SENT',
+    CONFIM_DONE: 'CONFIM_DONE',
+    INCORRECT_CODE: 'INCORRECT_CODE',
+    SEND_SMS_ERROR: 'SEND_SMS_ERROR'
+}
+
+const table = 'customers'
+
+async function sendSmsCode(code) {
+    return await new Promise((resolve, reject) => {
+        setTimeout(() => {
+            Math.random() > 0.5 ? resolve('ok') : reject('fuck')
+        }, 1000)
+    })
+}
+
+
+async function getCustomerByPhone(phone) {
+    const customer = await knex
+        .select('id', 'points', 'last_sms_code', 'points')
+        .from(table)
+        .where('phone', phone)
+        .first()
+
+    return customer
+}
+
+async function insertCustomer(customer) {
+    const newCustomer = await knex(table)
+        .insert(customer)
+        .returning(['id', 'phone', 'last_sms_code', 'points'])
+
+    return newCustomer[0]
+}
+
+async function updateLastSmsCodeInCustomer(customerId, code) {
+    const id = await knex(table)
+        .update({
+            last_sms_code: code
+        })
+        .where('id', customerId)
+        .returning('id')
+
+    return id
+}
+
 module.exports = {
     async confim(req, res, next) {
-        try {
-            const { phone, name, sms_code } = req.body
+        const { phone, name, sms_code } = req.body
 
-            let customer = await knex
-              .select('id', 'points')
-              .from('customers')
-              .where('phone', phone)
-              .first()
+        const customer = await getCustomerByPhone(phone) ||
+            await insertCustomer({ phone, name })
 
-            if (!customer) {
-                const insertCustomer = await knex('customers')
-                  .insert({
-                      phone,
-                      name
-                  })
-                  .returning(['id', 'phone'])
+        if (!sms_code) {
+            const code = Math.random().toString().substr(2, 4)
 
-                customer = insertCustomer[0]
+            try {
+                await sendSmsCode(code)
+            } catch (e) {
+                // next(utils.error(500, 'ERROR', e))
+                return res.status(500).json({
+                    status: STATUS.SEND_SMS_ERROR,
+                    result: e
+                })
             }
 
-            const sendSmsCode = (code) => new Promise((resolve, reject) => {
-                setTimeout(() => resolve('ok'), 1000)
+            await updateLastSmsCodeInCustomer(customer.id, code)
+            return res.json({
+                status: STATUS.CODE_SENT,
+                result: {}
             })
-
-            if (!sms_code) {
-                sendSmsCode(Math.random().toString().substr(2, 4))
-                  .then(status => {
-                      res.json({
-                          status: 'code_sent',
-                          result: status
-                      })
-                  })
-            }
-
-
-
-
-            // const code =
-
-
-            // if (!utils.checkInteger(phone)) {
-            //     return next(utils.error(500, 'ERROR', 'phone should be Integer'))
-            // }
-            //
-            // // const where = R.compose(
-            // //   modificators.removeParamOfQuery(withUnpublic, 'public')
-            // // )({
-            // //     ...initialFields,
-            // //     id
-            // // })
-            //
-            // const order = await knex
-            //   .select()
-            //   .from('orders')
-            //   .where('id', id)
-            //   .first()
-            //
-            // if (!order)
-            //     return next(utils.error(404, 'NOT FOUND', `Order not found`))
-            //
-            // const customer = await knex
-            //   .select()
-            //   .from('customers')
-            //   .where('id', order.customer_id)
-            //   .first()
-
-
-            // res.json({
-            //     ...order,
-            //     customer: {
-            //         phone,
-            //         name,
-            //         points
-            //     }
-            // })
-        } catch (e) {
-            next(utils.error(500, 'ERROR', e.message))
         }
+
+        if (Number(sms_code) === Number(customer.last_sms_code)) {
+            return res.json({
+                status: STATUS.CONFIM_DONE, //STATUS.SEND_SMS_ERROR
+                result: { points : customer.points }
+            })
+        }
+
+        res.json({
+            status: STATUS.INCORRECT_CODE, //STATUS.SEND_SMS_ERROR
+            result: {}
+        })
     }
 }

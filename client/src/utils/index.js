@@ -1,5 +1,12 @@
-import { normalize, schema } from "normalizr"
 import { format } from "date-fns"
+// import { normalize, schema } from "normalizr"
+
+// export const normalizeObjects = (entitiesName, items) => {
+//     const entitiesSchema = new schema.Entity(entitiesName)
+//     const listSchema = [entitiesSchema]
+//     return normalize(items, listSchema)
+// }
+
 
 export function getDisplayName(WrappedComponent) {
     return WrappedComponent.displayName || WrappedComponent.name || 'Component'
@@ -29,11 +36,6 @@ export function classes() {
     return args.reduce((total, arg) => arg ? total + ' ' + arg : total)
 }
 
-export const normalizeObjects = (entitiesName, items) => {
-    const entitiesSchema = new schema.Entity(entitiesName)
-    const listSchema = [entitiesSchema]
-    return normalize(items, listSchema)
-}
 
 
 export function getAvailableDate(date, year = false) {
@@ -52,3 +54,5 @@ export const getObjectWithoutKeys = (object, keysToRemove) => {
           { ...results, [key]: value }
     }, {})
 }
+
+export const uuid = () => Math.random().toString(32).substr(2, 12)

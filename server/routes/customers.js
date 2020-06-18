@@ -17,7 +17,7 @@ router.route('/')
   )
 
 router.route('/confim')
-  .get(
+  .post(
     validateSchema(Customer.confimJsonSchema),
     customersController.confim
   )

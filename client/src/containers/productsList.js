@@ -17,7 +17,6 @@ import withApiService from "components/hoc/withApiService"
 import { AVAILABLE_TYPES } from "constants/common"
 import { when } from "utils"
 // import CollectionsButtons from "components/Filter/CollectionsButtons"
-// import { date_25 } from "containers/TIME_date"
 
 
 class ProductsListContainer extends Component {

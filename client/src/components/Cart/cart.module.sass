@@ -9,11 +9,22 @@
 .panel
   text-align: right
 
+button
+  background: #fff
+  color: #222
+  border: 1px solid #ccc
+  border-radius: 10px
+  padding: 2px 6px
+
 .remove
   padding: 0
   font-size: 12px
   border: 0
-  color: #888888
+  color: #aaa
+  text-decoration: underline
+  background: 0
+  margin-top: 20px
+
 
 .unavailable
   //opacity: 0.5
@@ -29,6 +40,24 @@ p.unavailable
   margin: 0
   font-size: 13px
   padding-bottom: 10px
+
+.sizeLabel
+  color: #777
+  font-size: 12px !important
+  font-style: italic
+
+// .flowersList
+//   color: #777
+//   list-style: none
+//   margin: 10px 0 0 0
+//   padding: 0  
+//   font-size: 12px
+
+.flowers
+  color: #777
+  display: block
+  margin-top: 10px
+  font-size: 13px
 
 
 .itog
@@ -176,15 +205,16 @@ p.unavailable
     font-size: 16px
     padding: 0px 0 8px 0
 
-  .counter
-    button
-      padding: 3px 4px
+.counter
+  button
+    padding: 3px 7px
+    border-radius: 4px
 
-      &:first-of-type
-        margin-right: 10px
+    &:first-of-type
+      margin-right: 10px
 
-      &:nth-of-type(2n)
-        margin-left: 10px
+    &:nth-of-type(2n)
+      margin-left: 10px
 
 .hr
   display: block
@@ -193,7 +223,7 @@ p.unavailable
   border-bottom: 1px solid #f1f2f5
 
 .title
-  font-size: 14px
+  font-size: 16px
   p
     margin: 0
   &>span
@@ -213,9 +243,12 @@ p.unavailable
   margin-top: 7px
   color: #007aff !important
   font-style: italic
-  font-size: 12px
+  font-size: 14px
+  div
+    margin-bottom: 4px
   button
     margin-left: 5px
+    padding: 1px 4px
 
 .h1Title
   margin-bottom: 30px

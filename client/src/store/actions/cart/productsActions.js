@@ -15,7 +15,7 @@ export const cartProductDecrease = id => ({
   id
 })
 
-export const cartProductRemove = (id) => ({
+export const cartProductDelete = (id) => ({
   type: CART_PRODUCT_REMOVE,
   id
 })

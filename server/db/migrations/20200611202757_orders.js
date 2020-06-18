@@ -9,7 +9,6 @@ exports.up = function(knex) {
           t.integer('customer_id').unsigned()
           t.foreign('customer_id')
             .references('customers.id')
-            .onDelete('CASCADE')
           t.boolean('complete')
           t.timestamp('created_at').defaultTo(knex.fn.now())
           t.json('data')

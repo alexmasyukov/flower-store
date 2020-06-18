@@ -1,81 +1,90 @@
-import React from 'react';
+import React from 'react'
+import loadable from "@loadable/component"
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link
-} from "react-router-dom";
-import logo from './logo.svg';
-import './App.css';
+  Route
+} from "react-router-dom"
+import Page404 from "pages/404"
+const CmsProductsListPage = loadable(() => import('pages/ProductsListPage'), () => <div>Loading...</div>)
+const CmsProductFormPage = loadable(() => import('pages/ProductFormPage'), () => <div>Loading...</div>)
+const CmsTeamPage = loadable(() => import('pages/TeamPage'), () => <div>Loading...</div>)
+const CmsTeamPersonFormPage = loadable(() => import('pages/TeamPersonFormPage'), () => <div>Loading...</div>)
+const CmsBannersPage = loadable(() => import('pages/BannersPage'), () => <div>Loading...</div>)
+const CmsBannerFormPage = loadable(() => import('pages/BannerFormPage'), () => <div>Loading...</div>)
+const CmsEntitiesPage = loadable(() => import('pages/EntitiesPage'), () => <div>Loading...</div>)
+const CmsEntitieFormPage = loadable(() => import('pages/EntitieFormPage'), () => <div>Loading...</div>)
+const CmsOrdersPage = loadable(() => import('pages/OrdersPage'), () => <div>Loading...</div>)
+const CmsOrderFormPage = loadable(() => import('pages/OrderFormPage'), () => <div>Loading...</div>)
+const CmsContentPage = loadable(() => import('pages/ContentPage'), () => <div>Loading...</div>)
+const CmsContentFormPage = loadable(() => import('pages/ContentFormPage'), () => <div>Loading...</div>)
+const CmsReviewsPage = loadable(() => import('pages/ReviewsPage'), () => <div>Loading...</div>)
+const CmsReviewFormPage = loadable(() => import('pages/ReviewFormPage'), () => <div>Loading...</div>)
+const CmsAdditivesPage = loadable(() => import('pages/AdditivesPage'), () => <div>Loading...</div>)
+const CmsAdditiveFormPage = loadable(() => import('pages/AdditiveFormPage'), () => <div>Loading...</div>)
+const CmsBotViberFormPage = loadable(() => import('pages/BotViberFormPage'), () => <div>Loading...</div>)
+const CmsCustomersPage = loadable(() => import('pages/CustomersPage'), () => <div>Loading...</div>)
 
-function App() {
-  return (
-    <Router history={}>
-      <div>
-        <img src={logo} className="App-logo" alt="logo" />
 
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/about">About</Link>
-          </li>
-          <li>
-            <Link to="/dashboard">Dashboard</Link>
-          </li>
-        </ul>
+const App = () => (
+  <Router>
+    <Switch>
+      <Route path="/" exact component={CmsProductsListPage}/>
+      <Route path="/products/" exact component={CmsProductsListPage}/>
+      <Route path="/products/:id" component={CmsProductFormPage}/>
+      <Route path="/products-add" exact>
+        <CmsProductFormPage isNew={true}/>
+      </Route>
 
-        <hr />
+      <Route path="/team" exact component={CmsTeamPage}/>
+      <Route path="/team/:id" component={CmsTeamPersonFormPage}/>
+      <Route path="/team-add" exact>
+        <CmsTeamPersonFormPage isNew={true}/>
+      </Route>
 
-        {/*
-          A <Switch> looks through all its children <Route>
-          elements and renders the first one whose path
-          matches the current URL. Use a <Switch> any time
-          you have multiple routes, but you want only one
-          of them to render at a time
-        */}
-        <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route path="/about">
-            <About />
-          </Route>
-          <Route path="/dashboard">
-            <Dashboard />
-          </Route>
-        </Switch>
-      </div>
-    </Router>
-  );
-}
+      <Route path="/banners" exact component={CmsBannersPage}/>
+      <Route path="/banners/:id" component={CmsBannerFormPage}/>
+      <Route path="/banners-add" exact>
+        <CmsBannerFormPage isNew={true}/>
+      </Route>
 
-// You can think of these components as "pages"
-// in your app.
+      <Route path="/entities" exact component={CmsEntitiesPage}/>
+      <Route path="/entities/:id" component={CmsEntitieFormPage}/>
+      <Route path="/entities-add" exact>
+        <CmsEntitieFormPage isNew={true}/>
+      </Route>
 
-function Home() {
-  return (
-    <div>
-      <h2>Home</h2>
-    </div>
-  );
-}
+      <Route path="/content" exact component={CmsContentPage}/>
+      <Route path="/content/:id" component={CmsContentFormPage}/>
+      <Route path="/content-add" exact>
+        <CmsContentFormPage isNew={true}/>
+      </Route>
 
-function About() {
-  return (
-    <div>
-      <h2>About</h2>
-    </div>
-  );
-}
+      <Route path="/reviews" exact component={CmsReviewsPage}/>
+      <Route path="/reviews/:id" component={CmsReviewFormPage}/>
+      <Route path="/reviews-add" exact>
+        <CmsReviewFormPage isNew={true}/>
+      </Route>
 
-function Dashboard() {
-  return (
-    <div>
-      <h2>Dashboard</h2>
-    </div>
-  );
-}
+      <Route path="/additives" exact component={CmsAdditivesPage}/>
+      <Route path="/additives/:id" component={CmsAdditiveFormPage}/>
+      <Route path="/additives-add" exact>
+        <CmsAdditiveFormPage isNew={true}/>
+      </Route>
 
-export default App;
+      <Route path="/bot-viber/" exact>
+        <CmsBotViberFormPage botId={1}/>
+      </Route>
+
+      <Route path="/customers" exact component={CmsCustomersPage}/>
+      <Route path="/orders" exact component={CmsOrdersPage}/>
+      <Route path="/orders/:id" component={CmsOrderFormPage}/>
+
+      <Route path="/404" component={Page404}/>
+      <Route path="*" component={Page404}/>
+    </Switch>
+  </Router>
+)
+
+export default App
+

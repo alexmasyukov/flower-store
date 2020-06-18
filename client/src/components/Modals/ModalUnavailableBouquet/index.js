@@ -5,7 +5,6 @@ import Backdrop from "components/Modals/Backdrop"
 import { connect } from "react-redux"
 import { deliveryDateSelector, deliveryModalCartQuestionSelector } from "store/selectors/ui"
 import { hideCartQuestionModal, setDeliveryDate } from "store/actions/uiActions"
-import { date_25 } from "containers/TIME_date"
 
 const ModalUnavailableBouquet = ({
                                     setDeliveryDate, deliveryDate,
@@ -29,7 +28,7 @@ const ModalUnavailableBouquet = ({
                      </div>
                      <div className="col pl-1">
                         <button className={styles.but} onClick={() => {
-                           setDeliveryDate(date_25)
+                           setDeliveryDate('')
                            hideCartQuestionModal()
                         }}>Не менять дату</button>
                      </div>

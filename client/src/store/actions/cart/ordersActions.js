@@ -1,29 +1,29 @@
 import {
-   FETCH_ORDER_CONFIRMATION_REQUEST,
-   FETCH_ORDER_CONFIRMATION_SUCCESS,
-   FETCH_ORDER_CONFIRMATION_FAILURE
+   FETCH_CONFIM_REQUEST,
+   FETCH_CONFIM_SUCCESS,
+   FETCH_CONFIM_FAILURE
 } from "store/actionTypes"
-import { fetchOrderConfirmation as fetchOrderConfirmationApi } from 'api'
+import { fetchConfim as fetchConfimApi } from 'api'
 
 
-export const requestOrderConfirmation = () => ({
-   type: FETCH_ORDER_CONFIRMATION_REQUEST
+export const requestConfim = () => ({
+   type: FETCH_CONFIM_REQUEST
 })
 
 
-export const successOrderConfirmation = ({code}) => ({
-   type: FETCH_ORDER_CONFIRMATION_SUCCESS,
-   code
+export const successConfim = (response) => ({
+   type: FETCH_CONFIM_SUCCESS,
+   data: response.data
 })
 
 
-export const failureOrderConfirmation = error => ({
-   type: FETCH_ORDER_CONFIRMATION_FAILURE,
-   error
+export const failureConfim = error => ({
+   type: FETCH_CONFIM_FAILURE,
+   error: error.response.data
 })
 
 
-export const fetchOrderConfirmation = () => async (dispatch, getState) => {
+export const fetchConfim = (customer) => async (dispatch, getState) => {
    // так можно проверить кешированные данные
    // const { posts } = getState()
    // if (posts[userId]) {
@@ -31,12 +31,12 @@ export const fetchOrderConfirmation = () => async (dispatch, getState) => {
    //    return
    // }
 
-   console.log('action fetchOrderConfirmation')
-   dispatch(requestOrderConfirmation())
+   console.log('action fetchOrderConfirmation', customer)
+   dispatch(requestConfim())
    try {
-      const response = await fetchOrderConfirmationApi()
-      dispatch(successOrderConfirmation(response))
+      const response = await fetchConfimApi(customer)
+      dispatch(successConfim(response))
    } catch (e) {
-      dispatch(failureOrderConfirmation(e))
+      dispatch(failureConfim(e))
    }
 }

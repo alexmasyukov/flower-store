@@ -7,6 +7,7 @@ exports.up = function(knex) {
           table.string('phone', 100).notNullable()
           table.string('name', 200).notNullable()
           table.integer('points').defaultTo(0)
+          table.string('last_sms_code')
           table.json('extra')
       })
 }

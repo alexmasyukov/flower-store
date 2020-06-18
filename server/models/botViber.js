@@ -31,7 +31,7 @@ class BotViber {
                         }
                     }
                 },
-                extra: { type: 'object' }
+                extra: { type: ['object', 'null'] }
             }
         }
     }
