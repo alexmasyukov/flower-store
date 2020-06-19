@@ -4,4 +4,5 @@ COPY package.json /cms/package.json
 COPY yarn.lock /cms/yarn.lock
 ENV PATH /cms/node_modules/.bin:$PATH
 RUN yarn
+EXPOSE 5000
 CMD ["yarn", "start"]

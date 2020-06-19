@@ -1,6 +1,8 @@
 const ViberBot = require('viber-bot').Bot,
   BotEvents = require('viber-bot').Events,
   TextMessage = require('viber-bot').Message.Text,
+  KeyboardMessage = require('viber-bot').Message.Keyboard,
+  RichMediaMessage = require('viber-bot').Message.RichMedia,
   express = require('express'),
   bodyParser = require('body-parser')
 const knex = require('./db/knex')
@@ -8,6 +10,23 @@ const app = express()
 
 const COMMANDS = {
   SUBSCRIBE_ME: '/listen'
+}
+const SAMPLE_RICH_MEDIA = {
+  "Type": "rich_media",
+  "ButtonsGroupColumns": 6,
+  "ButtonsGroupRows": 1,
+  "BgColor": "#293237",
+  "Buttons": []
+}
+const BUTTON = {
+  Columns: 2,
+  Rows: 1,
+  ActionType: "open-url",
+  ActionBody: 'body',
+  Text: `<font>[Text]</font>`,
+  TextSize: "small",
+  TextVAlign: "middle",
+  TextHAlign: "middle",
 }
 const usersCommands = {}
 
@@ -50,8 +69,11 @@ getBotConfig()
   .then((config) => {
     const {
       token, subscribe_password, notify_subscribers,
-      expose_url = process.env.EXPOSE_URL
+      expose_url: expurl_prod, expose_url_dev: expurl_dev
     } = config
+
+    const expose_url = process.env.NODE_ENV === 'development' ?
+      expurl_dev : expurl_prod
 
     let bot = new ViberBot({
       authToken: token,
@@ -64,9 +86,9 @@ getBotConfig()
     bot.setWebhook(`${expose_url}/viber/webhook`)
       .then(() => {
         console.log('ОК')
-        sendMessages(bot, notify_subscribers, [
-          new TextMessage('✋ Привет, я бот! Меня перезагрузили 🚀')
-        ])
+        // sendMessages(bot, notify_subscribers, [
+        //   new TextMessage('✋ Привет, я бот! Меня перезагрузили 🚀')
+        // ])
       })
       .catch(error => {
         console.log(`Can not set webhook //${expose_url}// on following server. Is it running?`)
@@ -75,10 +97,10 @@ getBotConfig()
       })
 
 
-    bot.on(BotEvents.SUBSCRIBED, response => {
-      sendMessage(bot, response.userProfile.id, '✋ Привет, я бот!')
-      // response.senddd(ndew TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}! Feel free to ask me anything.`))
-    })
+    // bot.on(BotEvents.SUBSCRIBED, response => {
+    //   sendMessage(bot, response.userProfile.id, '✋ Привет, я бот!')
+    //   // response.senddd(ndew TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}! Feel free to ask me anything.`))
+    // })
 
     bot.on(BotEvents.MESSAGE_RECEIVED, async (message, response) => {
       const { id, name } = response.userProfile
@@ -106,6 +128,7 @@ getBotConfig()
               delete usersCommands[id]
               response.send(new TextMessage('👍 Вы подписались на уведомления от магазина'))
             })
+            .catch(e => e)
           break
 
         default:
@@ -121,19 +144,31 @@ getBotConfig()
       bodyParser.urlencoded({ extended: false }),
       bodyParser.json({ limit: '100kb' }),
       async (req, res) => {
-        const { msg } = req.body
+        const { messages, buttons = [] } = req.body
 
-        if (!msg) res.json({
+        if (!messages) return res.json({
           status: 'error',
-          result: 'not msg filend'
+          result: 'not msg'
         })
 
         try {
           const subscribers = await getSubscribers()
 
-          sendMessages(bot, subscribers, [
-            new TextMessage(msg)
-          ])
+          let msgs = messages.map(msg => new TextMessage(msg))
+
+          if (buttons.length > 0) {
+            SAMPLE_RICH_MEDIA.Buttons = buttons.map(({ title, link }) => ({
+              ...BUTTON,
+              ActionBody: `${link}`,
+              Text: `<font>${title}</font>`
+            }))
+
+            SAMPLE_RICH_MEDIA.ButtonsGroupColumns = 2
+
+            msgs = [...msgs, new RichMediaMessage(SAMPLE_RICH_MEDIA)]
+          }
+
+          sendMessages(bot, subscribers, msgs)
 
           return res.json({
             status: 'done',
@@ -146,7 +181,6 @@ getBotConfig()
           })
         }
 
-
       }
     )
 
@@ -154,6 +188,7 @@ getBotConfig()
       process.exit(1)
     })
   })
+  .catch(e => e)
 
 
 const port = process.env.PORT || 9999

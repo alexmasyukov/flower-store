@@ -10,6 +10,9 @@ const table = BotViber.table
 router.route('/test')
   .get(botViberController.test)
 
+router.route('/send')
+  .post(botViberController.send)
+
 router.route('/:id')
   .get(commonController.getOne(table, {}))
   .put(

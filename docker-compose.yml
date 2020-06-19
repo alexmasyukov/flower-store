@@ -10,34 +10,52 @@ services:
       - 80
     restart: always
 
-#  cms:
-#    image: alexmasyukov/klumba_cms:latest
-#    container_name: cms
-#    networks:
-#      - proxy.front-network
-##    expose:
-##      - 4000
-#    ports:
-#      - 4000:4000
-#    restart: always
-  tbot:
-    container_name: tbot
-    image: alexmasyukov/klumba_tbot:latest
+  cms:
+    image: alexmasyukov/klumba_cms:latest
+    container_name: cms
     networks:
       - proxy.front-network
       - db
-    volumes:
-      - './telegram-bot:/app'
-      - '/app/node_modules'
-    environment:
-      - NODE_ENV=development
-    ports:
-      - 5000:3500
     restart: always
+
+
+  viber-bot:
+    image: alexmasyukov/klumba_viber_bot:latest
+    container_name: viber-bot
+    env_file:
+      - ./bot-viber/.env
+    networks:
+      - proxy.front-network
+      - db
+    environment:
+      - NODE_ENV=production
+    expose:
+      - 9999
+    depends_on:
+      - postgres
+    restart: always
+
+
+#  tbot:
+#    container_name: tbot
+#    image: alexmasyukov/klumba_tbot:latest
+#    networks:
+#      - proxy.front-network
+#      - db
+#    volumes:
+#      - './telegram-bot:/app'
+#      - '/app/node_modules'
+#    environment:
+#      - NODE_ENV=development
+#    ports:
+#      - 5000:3500
+#    restart: always
 
   api:
     image: alexmasyukov/klumba_api:latest
     container_name: api
+#    env_file:
+#      - ./server/.env
     networks:
       - proxy.front-network
       - db
@@ -89,6 +107,7 @@ services:
       - postgres
       - api
       - app
+      - cms
     volumes:
       - ./settings/nginx:/etc/nginx/conf.d
       - ./data/certbot/www:/var/www/certbot
@@ -96,6 +115,7 @@ services:
     ports:
       - 80:80
       - 443:443
+      - 5000:5000
     restart: unless-stopped
     command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
     # Перезапустит nginx контейнер каждые 6 часов и подгрузит новые сертификаты, если есть
@@ -108,21 +128,6 @@ networks:
   proxy.front-network:
     driver: bridge
 
-
-
-
-
-  #  sslnginx:
-  #    image: nginx:1.17.9-alpine
-  #    container_name: sslnginx
-  #    networks:
-  #      - front
-  #    ports:
-  #      - 7000:80
-  #    volumes:
-  #      - ./settings/sslnginx:/etc/nginx/conf.d
-  #      - ./data/certbot/www:/usr/share/nginx/html
-  #    restart: unless-stopped
 
 
 #  docker-compose -f docker-compose.prod.yml up --build

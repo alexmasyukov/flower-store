@@ -1,20 +1,25 @@
 #!/bin/bash
 
-services=(app api)
-images=(alexmasyukov/klumba_app:latest alexmasyukov/klumba_api:latest)
+services=(app api cms viber-bot)
+images=(
+    alexmasyukov/klumba_app:latest
+    alexmasyukov/klumba_api:latest
+    alexmasyukov/klumba_cms:latest
+    alexmasyukov/klumba_viber_bot:latest
+)
 
-echo "### Remove images..."
-for img in ${images[@]}; do
-    ff=$(docker images ${img} -q)
-    docker rmi -f $ff
-    # for f in $ff
-    #     do
-    #         echo "### Remove '${img}'"
-    #         echo "${f}"
-    #
-    #     done
-done
-echo "### Done ###";echo
+# echo "### Remove images..."
+# for img in ${images[@]}; do
+#     ff=$(docker images ${img} -q)
+#     docker rmi -f $ff
+#     # for f in $ff
+#     #     do
+#     #         echo "### Remove '${img}'"
+#     #         echo "${f}"
+#     #
+#     #     done
+# done
+# echo "### Done ###";echo
 
 
 echo "### Build new images..."

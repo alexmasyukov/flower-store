@@ -9,35 +9,22 @@ services:
     image: alexmasyukov/klumba_app:latest
     environment:
       - PUBLIC_URL=/
+    restart: always
 
-#  cms:
-#    container_name: cms
-#    build:
-#      context: ./cmslite
-#      dockerfile: Dockerfile.prod
-##    image: alexmasyukov/klumba_cms:latest
-#    volumes:
-#      - './cmslite:/app'
-#      - '/app/node_modules'
-#    ports:
-#      - 4000:4000
-#    environment:
-#      - NODE_ENV=production
-#      - PUBLIC_URL=/
-
-#  cms-test:
-#    container_name: cms-test
-#    image: alexmasyukov/klumba_cms:latest
-#    networks:
-#      - front
-#    environment:
-#      - NODE_ENV=production
-#      - PUBLIC_URL=/
-#    expose:
-#      - 4000
-#    ports:
-#      - 4000:4000
-#    restart: always
+  cms:
+    container_name: cms
+    build:
+      context: ./cmslite
+      dockerfile: Dockerfile.prod
+    image: alexmasyukov/klumba_cms:latest
+    volumes:
+      - './cmslite:/cms'
+      - '/cms/node_modules'
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - PUBLIC_URL=/
+    restart: always
 
   api:
     container_name: api
@@ -45,34 +32,55 @@ services:
       context: ./server
       dockerfile: Dockerfile.prod
     image: alexmasyukov/klumba_api:latest
+    env_file:
+      - ./server/.env
     environment:
       - NODE_ENV=production
-
-
-  tbot:
-    container_name: tbot
-    image: alexmasyukov/klumba_tbot:latest
-    build:
-      context: ./telegram-bot
-      dockerfile: Dockerfile.dev
-    volumes:
-      - './telegram-bot:/app'
-      - '/app/node_modules'
-    environment:
-      - NODE_ENV=development
-    #      - CHOKIDAR_USEPOLLING=true
     restart: always
 
-  api-test:
-    image: klumba_api:latest
-    container_name: api
+  viber-bot:
+    container_name: viber-bot
+    build:
+      context: ./bot-viber
+      dockerfile: Dockerfile.prod
+    image: alexmasyukov/klumba_viber_bot:latest
+    environment:
+      - NODE_ENV=production
+    restart: always
+
+  vbt:
+    image: alexmasyukov/klumba_viber_bot:latest
+    container_name: vbt
     networks:
       - front
     environment:
       - NODE_ENV=production
-    ports:
-      - 3500:3500
     restart: always
+
+#  tbot:
+#    container_name: tbot
+#    image: alexmasyukov/klumba_tbot:latest
+#    build:
+#      context: ./telegram-bot
+#      dockerfile: Dockerfile.dev
+#    volumes:
+#      - './telegram-bot:/app'
+#      - '/app/node_modules'
+#    environment:
+#      - NODE_ENV=development
+#    #      - CHOKIDAR_USEPOLLING=true
+#    restart: always
+
+#  api-test:
+#    image: klumba_api:latest
+#    container_name: api
+#    networks:
+#      - front
+#    environment:
+#      - NODE_ENV=production
+#    ports:
+#      - 3500:3500
+#    restart: always
 
 
 networks:

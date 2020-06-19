@@ -5,10 +5,6 @@ export default class ApiService {
     'https://flower-cms.ru/api/v1' :
     'http://localhost/api/v1'
 
-  _uploadImagesBase = process.env.NODE_ENV === 'production' ?
-    'https://flower-cms.ru/api/upload/' :
-    'http://localhost/api/upload/'
-
   _imageBase = '/api/static/'
 
   getImage = (name) => `${this._imageBase}${name}`
@@ -81,6 +77,15 @@ export default class ApiService {
   getAllReviews = async () => await this.getResource(`/reviews?withUnpublic=true`)
   getLastReviews = (count = 1) => async () => await this.getResource(`/reviews?count=${count}`)
 
+  sendOrder = async (data) =>
+    await axios.post(`${this._apiBase}/orders`, data, {
+      responseType: 'json'
+    })
+
+  sendNotify = async (data) =>
+    await axios.post(`${this._apiBase}/bot-viber/send`, data, {
+      responseType: 'json'
+    })
 
   _apiErrHandler = (error) => {
     alert('Ошибка в запросе')

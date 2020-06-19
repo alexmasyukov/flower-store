@@ -10,136 +10,145 @@ const yup_string_required = Yup
   .required('Заполните')
 
 const schema = Yup.object({
-    token: yup_string_required,
-    subscribe_password: yup_string_required
+  token: yup_string_required,
+  subscribe_password: yup_string_required
 })
 
 class BotViberForm extends Component {
-    state = {
-        test: false
-    }
+  state = {
+    test: false
+  }
 
-    save(data) {
-        this.props.save(data)
-          .then(res => {
-              if (res && 'status' in res && res.status === 'done') {
-                  return res
-              } else {
-                  alert('Ошибка при сохранении. Подробности в консоли')
-              }
-          })
-    }
+  save(data) {
+    this.props.save(data)
+      .then(res => {
+        if (res && 'status' in res && res.status === 'done') {
+          return res
+        } else {
+          alert('Ошибка при сохранении. Подробности в консоли')
+        }
+      })
+  }
 
-    handleSave(data) {
-        this.save(data)
-          .then(res => this.props.history.push('/products'))
-    }
+  handleSave(data) {
+    this.save(data)
+      .then(res => this.props.history.push('/products'))
+  }
 
-    handleBotTest() {
-        this.props.testBot()
-          .then(res => this.setState({
-              test: res
-          }))
-    }
+  handleBotTest() {
+    this.props.testBot()
+      .then(res => this.setState({
+        test: res
+      }))
+  }
 
 
-    render() {
-        const { bot } = this.props
-        const { test } = this.state
+  render() {
+    const { bot } = this.props
+    const { test } = this.state
 
-        return (
-          <>
-              <br/>
-              <button onClick={() => this.handleBotTest()}>Тестировать бота</button>
-              {test && (
-                <div className='mt-3 mb-3'>
-                    {JSON.stringify(test, null, 2)}
-                </div>
-              )}
-              <br/><br/>
-              <Formik
-                initialValues={{
-                    ...bot
-                }}
-                validationSchema={schema}
-                onSubmit={(values, { setSubmitting }) => {
-                    setSubmitting(false)
-                    this.handleSave(values)
-                }}
-              >
-                  {({ values }) => {
-                      return (
-                        <Form>
-                            <Row className="mb-4">
-                                <div className="col-md-1">
-                                    <b>ID:</b> {values.id}
-                                </div>
-                                <div className="col-md-7">
-                                    <b>city_id:</b> {values.city_id}
-                                </div>
-                            </Row>
+    return (
+      <>
+        <br/>
+        <button onClick={() => this.handleBotTest()}>Тестировать бота</button>
+        {test && (
+          <div className='mt-3 mb-3'>
+            {JSON.stringify(test, null, 2)}
+          </div>
+        )}
+        <br/><br/>
+        <Formik
+          initialValues={{
+            ...bot
+          }}
+          validationSchema={schema}
+          onSubmit={(values, { setSubmitting }) => {
+            setSubmitting(false)
+            this.handleSave(values)
+          }}
+        >
+          {({ values }) => {
+            return (
+              <Form>
+                <Row className="mb-4">
+                  <div className="col-md-1">
+                    <b>ID:</b> {values.id}
+                  </div>
+                  <div className="col-md-7">
+                    <b>city_id:</b> {values.city_id}
+                  </div>
+                </Row>
 
-                            <Row className="align-items-center">
-                                <div className="col-md-7">
-                                    Указывайте данные согласно <a
-                                  href="https://partners.viber.com/">partners.viber.com</a>
-                                    <br/><br/>
-                                    <span className={styles.btitle}>token:</span>
-                                    <Field name="token" style={{ width: '100%' }}/>
-                                    <ErrorMessage name={`token`} component={ErrorTitle}/>
-                                </div>
-                                <div className="w-100"/>
-                                <div className="col-md-12 mt-3">
+                <Row className="align-items-center">
+                  <div className="col-md-7">
+                    <span className={styles.btitle}>token:</span>
+                    <Field name="token" style={{ width: '100%', marginBottom: 10 }}/>
+                    Указывайте данные согласно <a
+                    href="https://partners.viber.com/">partners.viber.com</a>
+                    <br/><br/>
+                    <ErrorMessage name={`token`} component={ErrorTitle}/>
+                  </div>
+                  <div className="w-100"/>
+                  <div className="col-md-7 mt-3">
+                    <span className={styles.btitle}>
+                      expose url
+                    </span>
+                    <Field name="expose_url" style={{ width: '100%' }}/>
+                    <ErrorMessage name={`expose_url`} component={ErrorTitle}/>
+                  </div>
+                  <div className="col-md-12 mt-3">
                                 <span
                                   className={styles.btitle}>Пароль на право получения уведомлений для менеджеров:</span>
-                                    <Field name="subscribe_password"/>
-                                    <ErrorMessage name={`subscribe_password`} component={ErrorTitle}/>
-                                </div>
-                                <div className="col-md-12 mt-3">
-                                    <h2>Команды бота</h2>
-                                    <b>/notify</b> - подписаться на уведомления для менеджеров
-                                    (о заказах и т.п.)
-                                </div>
-                            </Row>
+                    <Field name="subscribe_password"/>
+                    <ErrorMessage name={`subscribe_password`} component={ErrorTitle}/>
+                  </div>
+                  <div className="col-md-12 mt-3">
+                    <h2>Команды бота</h2>
+                    <b>/notify</b> - подписаться на уведомления для менеджеров
+                    (о заказах и т.п.)
+                  </div>
+                </Row>
 
-                            <Row>
-                                <div className="col-md-12 mt-4">
-                                    <h2>Пользователи подписавшиеся на уведомления от магазина</h2>
-                                    <p><b className={styles.red}>Внимание!</b> Если вы сменили <b>token</b> бота, все подписки этих пользователей становятся не актуальны и в новом боте работать не будут! При смене токена, нужно снова подписаться на уведомления.
-                                    Если вы вернете старый токен бота, подписки вновь станут актуальны и заработают</p>
-                                    <p><b className={styles.red}>Причина:</b> На каждый token Viber генерирует новый id пользователя</p>
-                                    <br/>
-                                    <FieldArray
-                                      name={`notify_subscribers`}
-                                      render={ahi =>
-                                        values.notify_subscribers && values.notify_subscribers.length > 0 &&
-                                        values.notify_subscribers.map(({ id, name }, index) => (
-                                          <div className='mt-2' key={index}>
-                                              <b>{name}</b> (id: {id})
-                                              {`  `}
-                                              <button
-                                                type="button"
-                                                onClick={() => ahi.remove(index)}>
-                                                  Удалить
-                                              </button>
-                                          </div>
-                                        ))}
-                                    />
-                                </div>
-                            </Row>
-
+                <Row>
+                  <div className="col-md-12 mt-4">
+                    <h2>Пользователи подписавшиеся на уведомления от магазина</h2>
+                    <p><b className={styles.red}>Внимание!</b> Если вы сменили <b>token</b> бота, все подписки этих
+                      пользователей становятся не актуальны и в новом боте работать не будут! При смене токена, нужно
+                      снова подписаться на уведомления.
+                      Если вы вернете старый токен бота, подписки вновь станут актуальны и заработают</p>
+                    <p><b className={styles.red}>Причина:</b> На каждый token Viber генерирует новый id пользователя</p>
+                    <br/>
+                    <FieldArray
+                      name={`notify_subscribers`}
+                      render={ahi =>
+                        values.notify_subscribers && values.notify_subscribers.length > 0 &&
+                        values.notify_subscribers.map(({ id, name }, index) => (
+                          <div className='mt-2' key={index}>
+                            <b>{name}</b> (id: {id})
+                            {`  `}
                             <button
-                              type="submit"
-                              className={styles.saveBtn}>
-                                Сохранить
+                              type="button"
+                              onClick={() => ahi.remove(index)}>
+                              Удалить
                             </button>
-                        </Form>
-                      )
-                  }}
-              </Formik>
-          </>
-        )
-    }
+                          </div>
+                        ))}
+                    />
+                  </div>
+                </Row>
+
+                <button
+                  type="submit"
+                  className={styles.saveBtn}>
+                  Сохранить
+                </button>
+              </Form>
+            )
+          }}
+        </Formik>
+      </>
+    )
+  }
 }
 
 export default BotViberForm

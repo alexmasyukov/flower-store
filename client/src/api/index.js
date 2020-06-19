@@ -4,6 +4,8 @@ const apiServiceInstance = new ApiService()
 const getProducts = apiServiceInstance.getAllProducts(true)
 const getProduct = apiServiceInstance.getProduct
 const confimCustomer = apiServiceInstance.confimCustomer
+const sendOrderApi = apiServiceInstance.sendOrder
+const sendNotifyApi = apiServiceInstance.sendNotify
 
 
 // todo Посмотри как объединить api, ведь путь одинаков
@@ -76,6 +78,16 @@ export const fetchConfim = async (data) => {
     return confimCustomer(data)
     //   .then(result => result)
     //   .catch((error) => error)
+}
+
+export const sendOrder = async (data) => {
+    console.log('api sendOrder (data)', data)
+    return sendOrderApi(data)
+}
+
+export const sendNotify = async (data) => {
+    console.log('api sendNotify (data)', data)
+    await sendNotifyApi(data)
 }
 
 

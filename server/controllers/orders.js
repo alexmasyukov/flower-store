@@ -1,6 +1,7 @@
 const knex = require('../db/knex')
 const utils = require('../utils')
 const nodemailer = require('nodemailer')
+const axios = require('axios')
 
 module.exports = {
     async confirmation(req, res, next) {

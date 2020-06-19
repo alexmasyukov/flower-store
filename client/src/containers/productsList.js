@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import propTypes from 'prop-types'
+// import propTypes from 'prop-types'
 import { connect } from "react-redux"
 import { compose } from "redux"
 import { fetchProducts } from "store/actions/productsActions"
@@ -20,9 +20,9 @@ import { when } from "utils"
 
 
 class ProductsListContainer extends Component {
-    static propTypes = {
-        products: propTypes.array.isRequired
-    }
+    // static propTypes = {
+    //     products: propTypes.array.isRequired
+    // }
 
     static defaultProps = {
         products: []

@@ -21,7 +21,7 @@ const entitieSchema = Yup.object({
 })
 
 
-const entitieForm = ({ save, entitie, entities }) => {
+const EntitieForm = ({ save, entitie, entities }) => {
   let history = useHistory()
   const sortedEntities = sortEntities(entities)
   const types = excludeSameEntities(sortedEntities)
@@ -102,4 +102,4 @@ const entitieForm = ({ save, entitie, entities }) => {
   )
 }
 
-export default entitieForm
+export default EntitieForm

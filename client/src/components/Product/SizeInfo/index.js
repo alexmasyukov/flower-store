@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 
 const SizeInfo = ({diameter, className}) => {
   return (
@@ -8,9 +8,9 @@ const SizeInfo = ({diameter, className}) => {
     </span>
   )
 }
-
-SizeInfo.propTypes = {
-  diameter: PropTypes.number.isRequired,
-}
+//
+// SizeInfo.propTypes = {
+//   diameter: PropTypes.number.isRequired,
+// }
 
 export default SizeInfo

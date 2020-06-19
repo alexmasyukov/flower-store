@@ -1,9 +1,15 @@
 #!/bin/bash
 
-services=(app api nginx tbot)
-images=(alexmasyukov/klumba_app:latest alexmasyukov/klumba_api:latest
-alexmasyukov/klumba_tbot:latest)
+# tbot
+services=(app api cms nginx viber_bot)
+images=(
+    alexmasyukov/klumba_app:latest
+    alexmasyukov/klumba_api:latest
+    alexmasyukov/klumba_cms:latest
+    alexmasyukov/klumba_viber_bot:latest
+)
 # alexmasyukov/klumba_cms:latest
+# alexmasyukov/klumba_tbot:latest
 
 echo
 echo "### Stop services ..."

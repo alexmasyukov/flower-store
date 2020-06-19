@@ -52,6 +52,13 @@ export const confimSelector = createSelector(
   (confim) => confim
 )
 
+const getOrder = (state) => state.ui.cart.order
+export const orderSelector = createSelector(
+  getOrder,
+  (order) => order
+)
+
+
 
 
 // todo: так делать нормально? (2 вниз)
