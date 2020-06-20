@@ -29,19 +29,19 @@ module.exports = {
             // })
 
             const order = await knex
-              .select()
-              .from('orders')
-              .where('id', id)
-              .first()
+                .select()
+                .from('orders')
+                .where('id', id)
+                .first()
 
             if (!order)
                 return next(utils.error(404, 'NOT FOUND', `Order not found`))
 
             const customer = await knex
-              .select()
-              .from('customers')
-              .where('id', order.customer_id)
-              .first()
+                .select()
+                .from('customers')
+                .where('id', order.customer_id)
+                .first()
 
             const { phone, name, points } = customer
 
@@ -96,16 +96,75 @@ module.exports = {
         }
 
         main()
-          .then(r => {
-              res.json({
-                  status: 'done',
-                  result: r
-              })
-          })
-          .catch((e) => {
-              next(utils.error(500, 'ERROR', e.message))
-          })
+            .then(r => {
+                res.json({
+                    status: 'done',
+                    result: r
+                })
+            })
+            .catch((e) => {
+                next(utils.error(500, 'ERROR', e.message))
+            })
 
 
+    },
+
+    async orderToMessage(req, res, next) {
+        const { lastId } = req
+        const { products } = req.body
+        const { options = [] } = products
+
+        const messages = products.map(p => {
+            const options = p.options.map(o =>
+                `+ ${o.cart_title}: ${o.button} (${o.price} руб.)`)
+                .join('\n')
+
+            const optionsPrice = p.optionsCost && ` + ${p.optionsCost} = ${p.size.price + p.optionsCost}`
+
+            return `${p.title}, ${p.size.title}, ${p.size.price}${optionsPrice ? optionsPrice : ''} руб. (id: ${p.productId})`
+                + `${options && `\n${options}`}`
+        }).join('\n\n')
+
+        const cost = products.reduce((total, p) => total + Number(p.size.price) + Number(p.optionsCost), 0)
+
+        const order = `🔔 Новый заказ №${lastId} \n\n`
+            + `${messages}\n`
+            + `${options && options}\n\n`
+            + `Итого: ${cost} руб.`.trim()
+
+        req.body.messages = [order]
+        req.body.buttons = [{
+            "title": "Выполнен",
+            "body": `/order-complete=${lastId}`
+        }, {
+            "title": "Отменен",
+            "body": `/order-uncomplete=${lastId}`
+        }]
+
+        next()
+    },
+
+    async updateComplete(req, res, next) {
+        try {
+            const { id, complete } = req.body
+            const update = await knex
+                .from('orders')
+                .where('id', id)
+                .update({
+                    complete
+                })
+
+                if (update === 0) {
+                    return next(utils.error(404, 'NOT FOUND', 'not found'))
+                }
+                
+
+            res.json({
+                status: 'done',
+                result: update
+            })
+        } catch (e) {
+            next(utils.error(500, 'ERROR', e.message))
+        }
     }
 }

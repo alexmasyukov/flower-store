@@ -1,30 +1,38 @@
 const ViberBot = require('viber-bot').Bot,
   BotEvents = require('viber-bot').Events,
   TextMessage = require('viber-bot').Message.Text,
-  KeyboardMessage = require('viber-bot').Message.Keyboard,
   RichMediaMessage = require('viber-bot').Message.RichMedia,
   express = require('express'),
   bodyParser = require('body-parser')
 const knex = require('./db/knex')
+const axios = require('axios')
+const md5 = require('md5')
+const { response } = require('express')
 const app = express()
 
 const COMMANDS = {
-  SUBSCRIBE_ME: '/listen'
+  SHOW_ALL_COMMANDS: '/all',
+  SUBSCRIBE_ME: '/listen',
+  SMS_BALANCE: '/sms-balance',
+  ORDER_COMPLETE: '/order-complete',
+  ORDER_UNCOMPLETE: '/order-uncomplete'
 }
+
 const SAMPLE_RICH_MEDIA = {
   "Type": "rich_media",
   "ButtonsGroupColumns": 6,
   "ButtonsGroupRows": 1,
-  "BgColor": "#293237",
+  "BgColor": "#76879a",
   "Buttons": []
 }
+
 const BUTTON = {
-  Columns: 2,
+  Columns: 3,
   Rows: 1,
-  ActionType: "open-url",
-  ActionBody: 'body',
+  ActionType: "reply",
+  // ActionBody: 'body',
   Text: `<font>[Text]</font>`,
-  TextSize: "small",
+  TextSize: "medium",
   TextVAlign: "middle",
   TextHAlign: "middle",
 }
@@ -39,6 +47,37 @@ async function getSubscribers() {
 
   return data.notify_subscribers
 }
+function ksort(obj) {
+  var keys = Object.keys(obj).sort()
+    , sortedObj = {};
+
+  for (var i in keys) {
+    sortedObj[keys[i]] = obj[keys[i]];
+  }
+
+  return sortedObj;
+}
+
+async function getSmsBalance() {
+  const version = process.env.SMS_API_VERSION
+  const key = process.env.SMS_PUBLIC_KEY
+  const privateKey = process.env.SMS_PRIVATE_KEY
+  const action = 'getUserBalance'
+  const currency = 'RUB'
+  const controlSum = md5(action + currency + key + version + privateKey)
+
+  try {
+    const balance = await axios({
+      method: 'post',
+      url: `http://api.atompark.com/api/sms/3.0/${action}?key=${key}&sum=${controlSum}&currency=RUB`,
+    })
+    return balance.data.result.balance_currency
+
+  } catch (e) {
+    return false
+  }
+}
+
 
 
 async function getBotConfig() {
@@ -68,7 +107,7 @@ async function subscribe(notify_subscribers, user) {
 getBotConfig()
   .then((config) => {
     const {
-      token, subscribe_password, notify_subscribers,
+      token, subscribe_password,
       expose_url: expurl_prod, expose_url_dev: expurl_dev
     } = config
 
@@ -77,7 +116,7 @@ getBotConfig()
 
     let bot = new ViberBot({
       authToken: token,
-      name: 'Клубма | менеджер',
+      name: 'Клумба | менеджер',
       avatar: ""
     })
 
@@ -108,10 +147,46 @@ getBotConfig()
 
       const subscribers = await getSubscribers()
 
+      if (message.text.trim().includes(COMMANDS.ORDER_COMPLETE) ||
+        message.text.trim().includes(COMMANDS.ORDER_UNCOMPLETE)
+      ) {
+        const [command, orderId] = message.text.split('=')
+        const complete = command === COMMANDS.ORDER_COMPLETE
+
+        await axios({
+          method: 'put',
+          url: `http://api-dev:3500/v1/orders/complete`,
+          data: {
+            id: Number(orderId),
+            complete
+          }
+        })
+          .then(() =>
+            sendMessages(bot, subscribers, [
+              new TextMessage(`Заказ № ${orderId} ${complete ? 'выполнен 👍' : 'отменен ❌'}`)])
+          )
+          .catch(error => {
+            console.log(error.response.data)
+          response.send(new TextMessage('Ошибка ❌, это техническая команда'))
+
+          })
+      }
+
+
       switch (message.text.trim()) {
         case COMMANDS.SUBSCRIBE_ME:
           usersCommands[id] = { id, status: '', prevMessage: COMMANDS.SUBSCRIBE_ME }
           response.send(new TextMessage('🤚 Чтобы получать уведомления, введите пароль'))
+          break
+
+
+        case COMMANDS.SMS_BALANCE:
+          const balance = await getSmsBalance()
+          response.send(new TextMessage(`Баланс - ${balance} руб. (https://atomic.center/sms)`))
+          break
+
+        case COMMANDS.SHOW_ALL_COMMANDS:
+          response.send(new TextMessage(Object.values(COMMANDS).join('\n')))
           break
 
         case subscribe_password:
@@ -157,13 +232,11 @@ getBotConfig()
           let msgs = messages.map(msg => new TextMessage(msg))
 
           if (buttons.length > 0) {
-            SAMPLE_RICH_MEDIA.Buttons = buttons.map(({ title, link }) => ({
+            SAMPLE_RICH_MEDIA.Buttons = buttons.map(({ title, body }) => ({
               ...BUTTON,
-              ActionBody: `${link}`,
-              Text: `<font>${title}</font>`
+              ActionBody: body,
+              Text: `<font color=#FFFFFF>${title}</font>`
             }))
-
-            SAMPLE_RICH_MEDIA.ButtonsGroupColumns = 2
 
             msgs = [...msgs, new RichMediaMessage(SAMPLE_RICH_MEDIA)]
           }

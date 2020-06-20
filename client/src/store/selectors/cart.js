@@ -1,22 +1,16 @@
 import { createSelector } from "reselect"
 
-const getCostProductOptions = (options) => 
+const getCostProductOptions = (options) =>
   options.reduce((total, { price }) => total + price, 0)
 
 const getCartProducts = state => state.ui.cart.products
 
 export const cartProductsSelector = createSelector(
-  // [getProductsAllIds, getCartProducts],
-  [getCartProducts],
-  // (items) => allIds.map(id => {
-  (products) => {
-    console.log(products)
-    // const product = items[id]
-    return products.map(product => ({
-      ...product,
-      optionsCost: getCostProductOptions(product.options)
-    }))
-  })
+  getCartProducts,
+  (products) => products.map(product => ({
+    ...product,
+    optionsCost: getCostProductOptions(product.options)
+  })))
 
 const productsOptionsCostSelector = createSelector(
   cartProductsSelector,

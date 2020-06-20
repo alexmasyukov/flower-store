@@ -9,19 +9,42 @@ class OrderModel {
             required: [
                 'city_id',
                 'customer_id',
-                'data',
+                'steps',
+                'products'
             ],
             properties: {
                 id: { type: 'integer' },
                 city_id: { type: 'integer' },
                 customer_id: { type: 'integer' },
-                data: { type: "object" },
                 complete: { type: 'boolean' },
+                steps: { type: "object" },
+                products: { type: "array" },
+            }
+        }
+    }
+}
+
+class OrderCompleteModel {
+    static get table() {
+        return 'orders'
+    }
+
+    static get jsonSchema() {
+        return {
+            type: 'object',
+            required: [
+                'id',
+                'complete'
+            ],
+            properties: {
+                id: { type: 'integer' },
+                complete: { type: 'boolean' }
             }
         }
     }
 }
 
 module.exports = {
+    OrderCompleteModel,
     OrderModel
 }

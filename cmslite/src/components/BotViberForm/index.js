@@ -49,14 +49,14 @@ class BotViberForm extends Component {
 
     return (
       <>
-        <br/>
+        <br />
         <button onClick={() => this.handleBotTest()}>Тестировать бота</button>
         {test && (
           <div className='mt-3 mb-3'>
             {JSON.stringify(test, null, 2)}
           </div>
         )}
-        <br/><br/>
+        <br /><br />
         <Formik
           initialValues={{
             ...bot
@@ -82,30 +82,38 @@ class BotViberForm extends Component {
                 <Row className="align-items-center">
                   <div className="col-md-7">
                     <span className={styles.btitle}>token:</span>
-                    <Field name="token" style={{ width: '100%', marginBottom: 10 }}/>
+                    <Field name="token" style={{ width: '100%', marginBottom: 10 }} />
                     Указывайте данные согласно <a
-                    href="https://partners.viber.com/">partners.viber.com</a>
-                    <br/><br/>
-                    <ErrorMessage name={`token`} component={ErrorTitle}/>
+                      href="https://partners.viber.com/">partners.viber.com</a>
+                    <br /><br />
+                    <ErrorMessage name={`token`} component={ErrorTitle} />
                   </div>
-                  <div className="w-100"/>
+                  <div className="w-100" />
                   <div className="col-md-7 mt-3">
                     <span className={styles.btitle}>
                       expose url
                     </span>
-                    <Field name="expose_url" style={{ width: '100%' }}/>
-                    <ErrorMessage name={`expose_url`} component={ErrorTitle}/>
+                    <Field name="expose_url" style={{ width: '100%' }} />
+                    <ErrorMessage name={`expose_url`} component={ErrorTitle} />
                   </div>
                   <div className="col-md-12 mt-3">
-                                <span
-                                  className={styles.btitle}>Пароль на право получения уведомлений для менеджеров:</span>
-                    <Field name="subscribe_password"/>
-                    <ErrorMessage name={`subscribe_password`} component={ErrorTitle}/>
+                    <span
+                      className={styles.btitle}>Пароль на право получения уведомлений для менеджеров:</span>
+                    <Field name="subscribe_password" />
+                    <ErrorMessage name={`subscribe_password`} component={ErrorTitle} />
                   </div>
                   <div className="col-md-12 mt-3">
                     <h2>Команды бота</h2>
+                    <b>/all</b> - Показать все команды
+                    <br/>
                     <b>/notify</b> - подписаться на уведомления для менеджеров
                     (о заказах и т.п.)
+                    <br/>
+                    <b>/sms-balance</b> - Баланс денег на смс
+                    <br/>
+                    <b>/order-complete</b> - Техническая
+                    <br/>
+                    <b>/order-uncomplete</b> - Техническая
                   </div>
                 </Row>
 
@@ -117,7 +125,7 @@ class BotViberForm extends Component {
                       снова подписаться на уведомления.
                       Если вы вернете старый токен бота, подписки вновь станут актуальны и заработают</p>
                     <p><b className={styles.red}>Причина:</b> На каждый token Viber генерирует новый id пользователя</p>
-                    <br/>
+                    <br />
                     <FieldArray
                       name={`notify_subscribers`}
                       render={ahi =>

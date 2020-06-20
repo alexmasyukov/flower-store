@@ -3,7 +3,8 @@ const cacheControl = require('express-cache-controller')
 const router = express.Router()
 const commonController = require("../controllers/common")
 const ordersController = require('../controllers/orders')
-const { OrderModel } = require('../models/order')
+const viberBotController = require('../controllers/botViber')
+const { OrderModel, OrderCompleteModel } = require('../models/order')
 const { validateSchema } = require('../middlewares/jsonSchemaValidator')
 
 router.route('/')
@@ -13,7 +14,9 @@ router.route('/')
   )
   .post(
     validateSchema(OrderModel.jsonSchema),
-    commonController.createOne(OrderModel.table)
+    commonController.createOne(OrderModel.table, ['products'], true),
+    ordersController.orderToMessage,
+    viberBotController.sendMessage
   )
 
 
@@ -23,8 +26,15 @@ router.route('/confirmation')
     ordersController.confirmation
   )
 
-router.route('/notify')
-  .get(ordersController.nofity)
+// router.route('/notify')
+//   .get(ordersController.nofity)
+
+
+router.route('/complete')
+  .put(
+    validateSchema(OrderCompleteModel.jsonSchema),
+    ordersController.updateComplete
+  )
 
 
 router.route('/:id')
@@ -36,6 +46,5 @@ router.route('/:id')
     validateSchema(OrderModel.jsonSchema),
     commonController.updateOne(OrderModel.table)
   )
-
 
 module.exports = router

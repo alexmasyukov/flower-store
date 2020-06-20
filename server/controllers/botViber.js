@@ -16,13 +16,13 @@ module.exports = {
         || 'http://bot-viber-dev:9999'
 
       await axios.post(`${baseUrl}/test`)
-        .then(function(response) {
+        .then(function (response) {
           res.json({
             status: 'done',
             result: response
           })
         })
-        .catch(function(error) {
+        .catch(function (error) {
           res.json({
             status: 'error c',
             result: error
@@ -37,11 +37,11 @@ module.exports = {
     }
   },
 
-  async send(req, res, next) {
+  async sendMessage(req, res, next) {
     try {
-      const { msg } = req.body
+      const { messages, buttons = [] } = req.body
 
-      if (!msg)
+      if (!messages)
         return next(utils.error(500, 'msg', 'msg is empty'))
 
       // const config = await knex
@@ -52,23 +52,24 @@ module.exports = {
       //
       // const { expose_url } = config
 
-      const baseUrl = process.env.VIBER_BOT_CONTAINER_URL
-        || 'http://bot-viber-dev:9999'
+      const baseUrl = //process.env.VIBER_BOT_CONTAINER_URL
+        'http://bot-viber-dev:9999' //urlBotContainer
 
       axios({
         method: 'post',
         url: `${baseUrl}/send`,
         data: {
-          msg
+          messages,
+          buttons
         }
       })
-        .then(function(response) {
+        .then(function (response) {
           res.json({
             status: 'done',
             result: response
           })
         })
-        .catch(function(error) {
+        .catch(function (error) {
           res.json({
             status: 'error send',
             result: error

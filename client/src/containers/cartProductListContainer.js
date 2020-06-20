@@ -25,50 +25,7 @@ import FlowersList from 'components/Common/FlowersList'
 //    cartAdditionalProductIncrease,
 //    cartAdditionalProductRemove
 // } from "store/actions/cart/additionalProductsActions"
-
 import styles from 'components/Cart/cart.module.sass'
-
-// import pMinDelay from "p-min-delay"
-// pMinDelay(import('containers/additionalProductsContainer'), 100)
-
-// const fallback = () => (
-//    <div>Loading...</div>
-// )
-
-// const AdditionalProducts = loadable(() =>
-//    import('containers/additionalProductsContainer'), {
-//    fallback: fallback()
-// })
-
-
-const DeleteBtn = ({ onClick }) => (
-   <button onClick={onClick}>x</button>
-)
-
-// const Options = ({ id, box, grass, onDelete }) => (
-//    <div className={styles.options}>
-//       {box && (
-//          <div>
-//             {box.title} коробка (+{box.price} <RoubleSymbol/>)
-//             <ButtonDeleteOption
-//                onClick={() => onDelete(id, 'box')}/>
-//          </div>
-//       )}
-//       {grass && (
-//          <div>
-//             {grass.title} зелени (+{grass.price} <RoubleSymbol/>)
-//             <ButtonDeleteOption
-//                onClick={() => onDelete(id, 'grass')}/>
-//          </div>
-//       )}
-//    </div>
-// )
-
-// state = {
-//    pay: 'Наличными при получении'
-// }
-
-
 
 class CartProductList extends Component {
    handleProductDelete = (id) => () => this.props.onProductDelete(id)
@@ -78,7 +35,6 @@ class CartProductList extends Component {
    handleChange = (key, value) => this.setState({ [key]: value })
 
    // handleRemoveAdditionalItem = id => this.props.onRemoveAdditionalItem(id)
-
    // getAdditionalProductsIds = () => this.props.additionalProducts.map((item) => item.id)
 
    // handleAdditionalProductIncrease = id => {
@@ -89,7 +45,6 @@ class CartProductList extends Component {
    //    this.props.onDecreaseAdditionalItem(id)
    // }
 
-
    // handleAdditionalProductClick = ({ id }) => {
    //    // todo Fix it
    //    const product = this.props.additionalProductsEntities.byId[id]
@@ -99,14 +54,12 @@ class CartProductList extends Component {
    //    })
    // }
 
-
    // renderAdditionalProductsInCart = (...arg) =>
    //    this.renderProductsInCart(this.props.deliveryDate, ...arg)
 
 
    renderProducts = () => {
       const { products } = this.props
-      console.log(products)
 
       return products.length > 0 && products.map(({
          id = 0,
@@ -221,10 +174,8 @@ const mapStateToProps = state => ({
    deliveryCost: getDeliveryCost(state),
    deliveryDate: getDeliveryDate(state),
    totalPrice: totalPriceSelector(state)
-
    // additionalProducts: getAdditionalItemsSelector(state),
    // additionalProductsEntities: additionalProductsEntitiesSelector(state),
-
 })
 
 

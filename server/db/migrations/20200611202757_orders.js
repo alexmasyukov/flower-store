@@ -11,7 +11,8 @@ exports.up = function(knex) {
             .references('customers.id')
           t.boolean('complete')
           t.timestamp('created_at').defaultTo(knex.fn.now())
-          t.json('data')
+          t.json('steps')
+          t.json('products')
       })
 }
 

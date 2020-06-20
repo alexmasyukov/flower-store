@@ -11,7 +11,7 @@ router.route('/test')
   .get(botViberController.test)
 
 router.route('/send')
-  .post(botViberController.send)
+  .post(botViberController.sendMessage)
 
 router.route('/:id')
   .get(commonController.getOne(table, {}))

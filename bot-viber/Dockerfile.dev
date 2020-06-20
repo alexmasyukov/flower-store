@@ -5,4 +5,4 @@ COPY yarn.lock /app/yarn.lock
 ENV PATH /app/node_modules/.bin:$PATH
 RUN yarn
 EXPOSE 9999
-CMD [ "nodemon", "index.js" ]
+CMD [ "nodemon", "--unhandled-rejections=none", "index.js"]
