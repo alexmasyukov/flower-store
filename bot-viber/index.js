@@ -6,8 +6,7 @@ const ViberBot = require('viber-bot').Bot,
   bodyParser = require('body-parser')
 const knex = require('./db/knex')
 const axios = require('axios')
-const md5 = require('md5')
-const { response } = require('express')
+// const { response } = require('express')
 const app = express()
 
 const COMMANDS = {
@@ -47,34 +46,17 @@ async function getSubscribers() {
 
   return data.notify_subscribers
 }
-function ksort(obj) {
-  var keys = Object.keys(obj).sort()
-    , sortedObj = {};
-
-  for (var i in keys) {
-    sortedObj[keys[i]] = obj[keys[i]];
-  }
-
-  return sortedObj;
-}
 
 async function getSmsBalance() {
-  const version = process.env.SMS_API_VERSION
-  const key = process.env.SMS_PUBLIC_KEY
-  const privateKey = process.env.SMS_PRIVATE_KEY
-  const action = 'getUserBalance'
-  const currency = 'RUB'
-  const controlSum = md5(action + currency + key + version + privateKey)
-
   try {
     const balance = await axios({
-      method: 'post',
-      url: `http://api.atompark.com/api/sms/3.0/${action}?key=${key}&sum=${controlSum}&currency=RUB`,
+      method: 'get',
+      url: `http://api-dev:3500/v1/sms/balance`,
     })
-    return balance.data.result.balance_currency
 
+    return balance.data.result
   } catch (e) {
-    return false
+    return 'ERROR'
   }
 }
 
@@ -167,7 +149,7 @@ getBotConfig()
           )
           .catch(error => {
             console.log(error.response.data)
-          response.send(new TextMessage('Ошибка ❌, это техническая команда'))
+            response.send(new TextMessage('Ошибка ❌, это техническая команда'))
 
           })
       }

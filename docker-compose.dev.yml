@@ -87,6 +87,8 @@ services:
     container_name: api-dev
     networks:
       - db
+    env_file:
+      - ./server/dev.env
     build:
       context: ./server
       dockerfile: Dockerfile.dev
