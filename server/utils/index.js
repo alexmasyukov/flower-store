@@ -1,12 +1,12 @@
 function extractFileExt(filename) {
-    return filename.split('.').pop()
+  return filename.split('.').pop()
 }
 
 const error = (status, code, message) => {
-    const error = new Error(message)
-    error.status = status
-    error.code = code
-    return error
+  const error = new Error(message)
+  error.status = status
+  error.code = code
+  return error
 }
 
 const checkInteger = (number) => Number.isInteger(Number(number))
@@ -28,46 +28,46 @@ const checkInteger = (number) => Number.isInteger(Number(number))
  * @returns {Object} - product object
  */
 const convertEntitie = (key, entities) => baseObject => {
-    const getValue = (id, entities) =>
-       entities[id] ? entities[id].value : id
+  const getValue = (id, entities) =>
+    entities[id] ? entities[id].value : id
 
-    const { [key]: etitieId, ...basic} = baseObject
+  const { [key]: etitieId, ...basic } = baseObject
 
-    let value
-    if (Array.isArray(etitieId)) {
-        value = etitieId.map(id => getValue(id, entities))
-    } else {
-        value = getValue(etitieId, entities)
-    }
+  let value
+  if (Array.isArray(etitieId)) {
+    value = etitieId.map(id => getValue(id, entities))
+  } else {
+    value = getValue(etitieId, entities)
+  }
 
-    return {
-        ...basic,
-        [key]: value
-    }
+  return {
+    ...basic,
+    [key]: value
+  }
 }
 
 function normalize(object, fromKey) {
-    const res = {}
-    object.forEach(item => res[item[fromKey]] = { ...item })
-    return res
+  const res = {}
+  object.forEach(item => res[item[fromKey]] = { ...item })
+  return res
 }
 
 const isBoolean = val => 'boolean' === typeof val
 
 
 const when = (cond, f) => x => {
-    if (typeof cond === 'boolean') {
-        return cond ? f(x) : x;
-    }
-    return cond(x) ? f(x) : x;
+  if (typeof cond === 'boolean') {
+    return cond ? f(x) : x
+  }
+  return cond(x) ? f(x) : x
 }
 
 module.exports = {
-    error,
-    extractFileExt,
-    convertEntitie,
-    normalize,
-    isBoolean,
-    when,
-    checkInteger
+  error,
+  extractFileExt,
+  convertEntitie,
+  normalize,
+  isBoolean,
+  when,
+  checkInteger
 }

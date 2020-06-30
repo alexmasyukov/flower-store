@@ -18,7 +18,7 @@ module.exports = {
               .select()
               .from('banners')
               .where(where)
-              .orderBy('order')
+              .orderBy('id')
 
             res.json(banners)
         } catch (e) {

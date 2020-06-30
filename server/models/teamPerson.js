@@ -1,34 +1,60 @@
 class TeamPerson {
-    static get tableName() {
-        return 'team'
-    }
+  static get table() {
+    return 'team'
+  }
 
-    static get jsonSchema() {
-        return {
-            type: 'object',
-            required: [
-                'city_id',
-                'isFlorist',
-                'rule',
-                'name',
-                'photo',
-            ],
-            properties: {
-                id: { type: 'integer' },
-                city_id: { type: 'integer' },
-                public: { type: 'boolean' },
-                order: { type: 'integer' },
-                isFlorist: { type: 'boolean' },
-                rule: { type: 'string' },
-                name: { type: 'string' },
-                photo: { type: 'string' },
-                instagram: { type: 'string' },
-                extra: { type: ['object', 'null'] }
-            }
-        }
+  static get bodySchema() {
+    return {
+      type: 'object',
+      required: [
+        'city_id',
+        'is_florist',
+        'rule',
+        'name',
+        'photo'
+      ],
+      properties: {
+        city_id: { type: 'integer' },
+        public: { type: 'boolean' },
+        order: { type: 'integer' },
+        is_florist: { type: 'boolean' },
+        rule: { type: 'string' },
+        name: { type: 'string' },
+        photo: { type: 'string' },
+        instagram: { type: 'string' },
+        extra: { type: ['object', 'null'] }
+      }
     }
+  }
+
+  static get paramsSchema() {
+    return {
+      type: 'object',
+      required: [
+        'id'
+      ],
+      properties: {
+        id: { type: 'integer' }
+      }
+    }
+  }
+
+  static get querySchema() {
+    const {
+      type,
+      properties: {
+        extra: _,
+        ...properties
+      }
+    } = this.bodySchema
+
+    return {
+      type,
+      properties
+    }
+  }
 }
 
 module.exports = {
-    TeamPerson
+  TeamPerson
 }

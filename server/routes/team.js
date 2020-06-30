@@ -1,24 +1,38 @@
 const express = require('express')
 const router = express.Router()
-const teamController = require("../controllers/team")
 const commonController = require("../controllers/common")
 const { TeamPerson } = require('../models/teamPerson')
-const { validateSchema } = require('../middlewares/jsonSchemaValidator')
+const {
+  validateQuery,
+  validateBody,
+  validateParams
+} = require('../middlewares/jsonSchemaValidator')
 
 
 router.route('/')
-  .get(teamController.getAll)
+  .get(
+    validateQuery(TeamPerson.querySchema),
+    commonController.getAll(TeamPerson.table)
+  )
   .post(
-    validateSchema(TeamPerson.jsonSchema),
-    teamController.createOne
+    validateBody(TeamPerson.bodySchema),
+    commonController.createOne(TeamPerson.table)
   )
 
 router.route('/:id')
-  .get(teamController.getOne)
-  .put(
-    validateSchema(TeamPerson.jsonSchema),
-    teamController.updateOne
+  .get(
+    validateParams(TeamPerson.paramsSchema),
+    validateQuery(TeamPerson.querySchema),
+    commonController.getOne(TeamPerson.table)
   )
-  .delete(commonController.deleteOne('team'))
+  .put(
+    validateParams(TeamPerson.paramsSchema),
+    validateBody(TeamPerson.bodySchema),
+    commonController.updateOne(TeamPerson.table)
+  )
+  .delete(
+    validateParams(TeamPerson.paramsSchema),
+    commonController.deleteOne('team')
+  )
 
 module.exports = router
