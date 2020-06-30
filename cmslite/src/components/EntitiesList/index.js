@@ -7,12 +7,11 @@ function useQuery() {
   return new URLSearchParams(useLocation().search)
 }
 
-const EntitiesList = (props) => {
+const EntitiesList = ({ entities, city }) => {
   let history = useHistory()
   let location = useLocation()
   let query = useQuery()
   const filter = query.get("filter") || ''
-  const { entities } = props
 
   function handleTypesChange(e) {
     history.push(`${location.pathname}?filter=${e.target.value}`)
@@ -29,7 +28,7 @@ const EntitiesList = (props) => {
     .map(({ id, eType, eTypeTitle, value }) => (
       <tr key={id}>
         <td>
-          <Link to={`/entities/${id}`}>{value}</Link>
+          <Link to={`/${city}/entities/${id}`}>{value}</Link>
         </td>
         <td>{eTypeTitle}</td>
         <td><b>Type:</b> {eType}</td>
@@ -43,10 +42,10 @@ const EntitiesList = (props) => {
         <option value="">Все сущности</option>
         {types.map(item => <option key={item.id} value={item.eTypeTitle}>{item.eTypeTitle}</option>)}
       </select>
-      <br/><br/>
+      <br /><br />
       <table className={styles.table}>
         <tbody>
-        {entitiesRender}
+          {entitiesRender}
         </tbody>
       </table>
     </div>

@@ -3,7 +3,7 @@ import styles from 'components/cmslite.module.sass'
 import { getAvailableDate } from "utils"
 import { Link } from "react-router-dom"
 
-const OrdersList = ({ items = [] }) => {
+const OrdersList = ({ items = [], city }) => {
   const [search, setSearch] = useState('')
 
   return (
@@ -29,12 +29,12 @@ const OrdersList = ({ items = [] }) => {
           .map(({ id, created_at, data }) => (
             <tr key={id}>
               <td>
-                <Link to={`/orders/${id}`}>
+                <Link to={`/${city}/orders/${id}`}>
                   {id}
                 </Link>
               </td>
               <td>
-                <Link to={`/orders/${id}`}>
+                <Link to={`/${city}/orders/${id}`}>
                   {getAvailableDate(created_at, true)}
                 </Link>
               </td>

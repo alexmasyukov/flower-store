@@ -6,7 +6,7 @@ import styles from 'components/cmslite.module.sass'
 
 class BannersList extends Component {
     render() {
-        const { banners, getImage } = this.props
+        const { banners, getImage, city } = this.props
 
         return banners.map(({ id, public: pub, title, images }) => (
           <Row key={id} className={cn(!pub && styles.unpublic)}>
@@ -16,7 +16,7 @@ class BannersList extends Component {
                        alt=""/>
               </div>
               <div className="col-md-10 pl-1">
-                  <Link to={`/banners/${id}`}>
+                  <Link to={`/${city}/banners/${id}`}>
                       {title}</Link>
                   <span className={styles.listLabel}><b>ID:</b> {id}</span>
               </div>

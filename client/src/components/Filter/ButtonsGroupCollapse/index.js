@@ -5,7 +5,7 @@ import Button from "components/Filter/Button"
 import { FILTER_COMPONENTS_TYPES } from "constants/filters"
 import styles from './ButtonsGroupCollapse.module.sass'
 import ColorButton from "components/Filter/ColorButton"
-import InputPriceRange from "components/Filter/InputPriceRange"
+// import InputPriceRange from "components/Filter/InputPriceRange"
 
 const ButtonsGroupCollapse = ({
                                   isOpened: isOpenedInit = true,
@@ -31,18 +31,18 @@ const ButtonsGroupCollapse = ({
 
     const renderFilterButtonGroupByType = (filterItems, filterSelectedItems) => {
         switch (filterType) {
-            case FILTER_COMPONENTS_TYPES.RANGE: {
-                const { bySizesPrice: [minInitial, maxInitial] } = filters
-                const { bySizesPrice: [minCurrent, maxCurrent] = [minInitial, maxInitial] } = selectedFilters
+            // case FILTER_COMPONENTS_TYPES.RANGE: {
+            //     const { bySizesPrice: [minInitial, maxInitial] } = filters
+            //     const { bySizesPrice: [minCurrent, maxCurrent] = [minInitial, maxInitial] } = selectedFilters
 
-                return (
-                  <InputPriceRange
-                    initial={{ min: minInitial, max: maxInitial }}
-                    current={{ min: minCurrent, max: maxCurrent }}
-                    onChangeComplete={({ min, max }) => setPriceRange(min, max)}
-                  />
-                )
-            }
+            //     return (
+            //       <InputPriceRange
+            //         initial={{ min: minInitial, max: maxInitial }}
+            //         current={{ min: minCurrent, max: maxCurrent }}
+            //         onChangeComplete={({ min, max }) => setPriceRange(min, max)}
+            //       />
+            //     )
+            // }
 
             case FILTER_COMPONENTS_TYPES.ITEMS:
                 return filterItems.map((title, i) => (

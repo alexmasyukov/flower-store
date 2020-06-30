@@ -6,7 +6,8 @@
     "baseUrl": "./src/",
     "paths": {
       "*": ["*"],
-      "components/*": ["components/*"]
+      "components/*": ["components/*"],
+      "constants/*": ["constants/*"]
     }
   },
   "exclude": ["node_modules", "**/node_modules/*"]

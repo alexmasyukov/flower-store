@@ -55,10 +55,14 @@ export const fetchProducts = (date) => async dispatch => {
     dispatch(requestProducts())
     try {
         const response = await fetchProductsApi(date)
+        console.log(response);
+        
         dispatch(
           successProducts(normalize(response, schema.items))
         )
     } catch (e) {
+        console.log(e);
+        
         dispatch(failureProducts(e))
     }
 }

@@ -65,6 +65,24 @@ read -p "Remove images? " yn
             done
         esac
 
+
+read -p "Build DEV images? " yn
+    case $yn in
+        [Yy]*)
+            for srv in ${services[@]}; do
+                 read -p "Build image - ${srv} ?" rsrv
+                    case $rsrv in
+                        [Yy]* )
+                            docker-compose --file=docker-compose.dev.yml stop ${srv};
+                            docker rmi -f klumba_${srv};
+                            docker-compose --file=docker-compose.dev.yml build --no-cache ${srv};
+                            docker-compose --file=docker-compose.dev.yml up -d ${srv};
+                            # break ;;
+                    esac
+            done
+        esac
+echo ' '
+
 echo ' '
 echo '### IMAGES ###'
 docker images

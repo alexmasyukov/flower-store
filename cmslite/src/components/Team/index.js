@@ -6,7 +6,7 @@ import cn from "classnames"
 
 class Team extends Component {
     render() {
-        const { team, getImage, delete: deletePerson } = this.props
+        const { team, getImage, delete: deletePerson, city } = this.props
 
         return team.map(({ id, name, public: pub, photo, isFlorist, rule }) => (
           <Row key={id} className={cn(!pub && styles.unpublic)}>
@@ -16,7 +16,7 @@ class Team extends Component {
                        alt=""/>
               </div>
               <div className="col-md-10 pl-1">
-                  <Link to={`/team/${id}`}>
+                  <Link to={`/${city}/team/${id}`}>
                       {name}</Link>
                   <span className={styles.listLabel}><b>ID:</b> {id}</span>
                   <span className={styles.listLabel}><b>Роль:</b> {rule}</span>

@@ -319,7 +319,7 @@ class CartSteps extends Component {
         <Step number={1} title="Ваши контакты" active={customer.isEdit}>
           {customer.isEdit ? (
             <CustomerForm {...customer} onInputChange={this.handleInputChange}>
-              <NextButton onClick={this.handleNextButton('customer', 'recipient')} />
+              <NextButton onClick={this.handleNextButton('customer', 'delivery')} />
             </CustomerForm>
           ) : (
               customer.isValid && (
@@ -340,10 +340,10 @@ class CartSteps extends Component {
                           onTimeEnd={this.handleTimeEnd} /> сек.</>
                       )}
 
-                      <NextButton title='Подтвердить' onClick={this.handleNextButton('customer', 'recipient')} />
+                      <NextButton title='Подтвердить' onClick={this.handleNextButton('customer', 'delivery')} />
                     </>)}
 
-                  {!order.done && <NextButton title='Оформить заказ' onClick={this.handleSendOrder} />}
+                  {/* {!order.done && <NextButton title='Оформить заказ' onClick={this.handleSendOrder} />} */}
 
 
                   {confim.isLoading && 'Отправка СМС...'}
@@ -368,7 +368,7 @@ class CartSteps extends Component {
         <Step number={2} title={'Доставка / самовывоз'} active={delivery.isEdit}>
           {delivery.isEdit ? (
             <DeliveryForm {...delivery} onInputChange={this.handleInputChange}>
-              <NextButton onClick={this.handleNextButton('delivery', 'deliveryDateTime')} />
+              <NextButton onClick={this.handleNextButton('delivery', 'recipient')} />
             </DeliveryForm>
           ) : (
               delivery.isValid && (
@@ -381,7 +381,7 @@ class CartSteps extends Component {
         <Step number={3} title="Получатель" active={recipient.isEdit}>
           {recipient.isEdit ? (
             <RecipientForm {...recipient} onInputChange={this.handleInputChange}>
-              <NextButton onClick={this.handleNextButton('recipient', 'delivery')} />
+              <NextButton onClick={this.handleNextButton('recipient', 'deliveryDateTime')} />
             </RecipientForm>
           ) : (
               recipient.isValid && (

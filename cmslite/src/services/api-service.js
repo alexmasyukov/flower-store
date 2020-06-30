@@ -80,13 +80,13 @@ export default class ApiService {
 
 
   // Products
-  saveProduct = async (product) =>
-    await this.postResource(`/products`, product)
-
+  saveProduct = async (product) => await this.postResource(`/products`, product)
   updateProduct = async (product) =>
     await this.putResource(`/products/${product.id}`, product, {
       responseType: 'json'
     })
+
+  deleteProduct = async (id) => await this.deleteResource(`/products/${id}`)
 
   getProduct = (
     id,
@@ -94,7 +94,6 @@ export default class ApiService {
     withUnpublic = false,
     withUnpublicSizes = false
   ) => async () => await this.getResource(`/products/${id}??withUnpublic=${withUnpublic}&withUnpublicSizes=${withUnpublicSizes}&convertEntities=${convertEntities}`)
-  deleteProduct = async (id) => await this.deleteResource(`/products/${id}`)
 
   getAllProducts = (
     convertEntities = false,
@@ -139,8 +138,7 @@ export default class ApiService {
   updateEntitie = async (entitie) => await this.putResource(`/entities/${entitie.id}`, entitie, {
     responseType: 'json'
   })
-  saveEntitie = async (entitie) =>
-    await this.postResource(`/entities`, entitie)
+  saveEntitie = async (entitie) => await this.postResource(`/entities`, entitie)
 
   // Reviews
   getAllReviews = async () => await this.getResource(`/reviews?withUnpublic=true`)
@@ -149,8 +147,7 @@ export default class ApiService {
   updateReview = async (review) => await this.putResource(`/reviews/${review.id}`, review, {
     responseType: 'json'
   })
-  saveReview = async (review) =>
-    await this.postResource(`/reviews`, review)
+  saveReview = async (review) => await this.postResource(`/reviews`, review)
   deleteReview = async (id) => await this.deleteResource(`/reviews/${id}`)
 
 
@@ -160,8 +157,7 @@ export default class ApiService {
   updateAdditive = async (additive) => await this.putResource(`/additives/${additive.id}`, additive, {
     responseType: 'json'
   })
-  saveAdditive = async (additive) =>
-    await this.postResource(`/additives`, additive)
+  saveAdditive = async (additive) => await this.postResource(`/additives`, additive)
   deleteAdditive = async (id) => await this.deleteResource(`/additives/${id}`)
 
   // BotViber

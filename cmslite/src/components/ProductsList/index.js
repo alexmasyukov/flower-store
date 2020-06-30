@@ -102,7 +102,7 @@ class ProductsList extends Component {
 
     render() {
         const { products } = this.state
-        const { getImage, deleteProduct } = this.props
+        const { getImage, deleteProduct, city } = this.props
 
         return products.map((product, i) => (
           <Row key={product.id} className={cn(!product.public && styles.unpublic)}>
@@ -112,7 +112,7 @@ class ProductsList extends Component {
                        alt=""/>
               </div>
               <div className="col-md-10 pl-1">
-                  <Link to={`/products/${product.id}`}>
+                  <Link to={`/${city}/products/${product.id}`}>
                       {product.title}</Link>
 
                   <div className=" mt-4">

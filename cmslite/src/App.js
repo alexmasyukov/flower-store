@@ -3,7 +3,8 @@ import loadable from "@loadable/component"
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  Redirect
 } from "react-router-dom"
 import Page404 from "pages/404"
 const CmsProductsListPage = loadable(() => import('pages/ProductsListPage'), () => <div>Loading...</div>)
@@ -24,66 +25,98 @@ const CmsAdditivesPage = loadable(() => import('pages/AdditivesPage'), () => <di
 const CmsAdditiveFormPage = loadable(() => import('pages/AdditiveFormPage'), () => <div>Loading...</div>)
 const CmsBotViberFormPage = loadable(() => import('pages/BotViberFormPage'), () => <div>Loading...</div>)
 const CmsCustomersPage = loadable(() => import('pages/CustomersPage'), () => <div>Loading...</div>)
+const CitySelectPage = loadable(() => import('pages/CitySelectPage'), () => <div>Loading...</div>)
+// const CheckCity = loadable(() => import('components/CheckCity'), () => <div>Loading...</div>)
+
+import withRouterParams from "components/hoc/withRouterParams"
+import { CITIES } from 'constants/common'
+
+
+const Check = ({ city }) => {
+  console.log(city);
+  
+  return (CITIES.CHITA.ENG !== city && CITIES.MOSCOW.ENG !== city) ?
+      (
+          <Redirect to="/" />
+      ) : (
+          <All/>
+      )
+}
+
+const CheckCity = withRouterParams(Check)
 
 
 const App = () => (
   <Router>
     <Switch>
-      <Route path="/" exact component={CmsProductsListPage}/>
-      <Route path="/products/" exact component={CmsProductsListPage}/>
-      <Route path="/products/:id" component={CmsProductFormPage}/>
-      <Route path="/products-add" exact>
-        <CmsProductFormPage isNew={true}/>
-      </Route>
+      <Route path="/" exact component={CitySelectPage} />
 
-      <Route path="/team" exact component={CmsTeamPage}/>
-      <Route path="/team/:id" component={CmsTeamPersonFormPage}/>
-      <Route path="/team-add" exact>
-        <CmsTeamPersonFormPage isNew={true}/>
-      </Route>
-
-      <Route path="/banners" exact component={CmsBannersPage}/>
-      <Route path="/banners/:id" component={CmsBannerFormPage}/>
-      <Route path="/banners-add" exact>
-        <CmsBannerFormPage isNew={true}/>
-      </Route>
-
-      <Route path="/entities" exact component={CmsEntitiesPage}/>
-      <Route path="/entities/:id" component={CmsEntitieFormPage}/>
-      <Route path="/entities-add" exact>
-        <CmsEntitieFormPage isNew={true}/>
-      </Route>
-
-      <Route path="/content" exact component={CmsContentPage}/>
-      <Route path="/content/:id" component={CmsContentFormPage}/>
-      <Route path="/content-add" exact>
-        <CmsContentFormPage isNew={true}/>
-      </Route>
-
-      <Route path="/reviews" exact component={CmsReviewsPage}/>
-      <Route path="/reviews/:id" component={CmsReviewFormPage}/>
-      <Route path="/reviews-add" exact>
-        <CmsReviewFormPage isNew={true}/>
-      </Route>
-
-      <Route path="/additives" exact component={CmsAdditivesPage}/>
-      <Route path="/additives/:id" component={CmsAdditiveFormPage}/>
-      <Route path="/additives-add" exact>
-        <CmsAdditiveFormPage isNew={true}/>
-      </Route>
-
-      <Route path="/bot-viber/" exact>
-        <CmsBotViberFormPage botId={1}/>
-      </Route>
-
-      <Route path="/customers" exact component={CmsCustomersPage}/>
-      <Route path="/orders" exact component={CmsOrdersPage}/>
-      <Route path="/orders/:id" component={CmsOrderFormPage}/>
-
-      <Route path="/404" component={Page404}/>
-      <Route path="*" component={Page404}/>
+      <Route path="/:city" component={CheckCity} />
     </Switch>
   </Router>
+)
+
+
+
+const All = () => (
+  <>
+     {/* <Switch> */}
+      <Route path="/:city" exact component={CmsProductsListPage} />
+      <Route path="/:city/products/" exact component={CmsProductsListPage} />
+      <Route path="/:city/products/:id" component={CmsProductFormPage} />
+      <Route path="/:city/products-add" exact>
+        <CmsProductFormPage isNew={true} />
+      </Route>
+
+      <Route path="/:city/team" exact component={CmsTeamPage} />
+      <Route path="/:city/team/:id" component={CmsTeamPersonFormPage} />
+      <Route path="/:city/team-add" exact>
+        <CmsTeamPersonFormPage isNew={true} />
+      </Route>
+
+      <Route path="/:city/banners" exact component={CmsBannersPage} />
+      <Route path="/:city/banners/:id" component={CmsBannerFormPage} />
+      <Route path="/:city/banners-add" exact>
+        <CmsBannerFormPage isNew={true} />
+      </Route>
+
+      <Route path="/:city/entities" exact component={CmsEntitiesPage} />
+      <Route path="/:city/entities/:id" component={CmsEntitieFormPage} />
+      <Route path="/:city/entities-add" exact>
+        <CmsEntitieFormPage isNew={true} />
+      </Route>
+
+      <Route path="/:city/content" exact component={CmsContentPage} />
+      <Route path="/:city/content/:id" component={CmsContentFormPage} />
+      <Route path="/:city/content-add" exact>
+        <CmsContentFormPage isNew={true} />
+      </Route>
+
+      <Route path="/:city/reviews" exact component={CmsReviewsPage} />
+      <Route path="/:city/reviews/:id" component={CmsReviewFormPage} />
+      <Route path="/:city/reviews-add" exact>
+        <CmsReviewFormPage isNew={true} />
+      </Route>
+
+      <Route path="/:city/additives" exact component={CmsAdditivesPage} />
+      <Route path="/:city/additives/:id" component={CmsAdditiveFormPage} />
+      <Route path="/:city/additives-add" exact>
+        <CmsAdditiveFormPage isNew={true} />
+      </Route>
+
+      <Route path="/:city/bot-viber/" exact>
+        <CmsBotViberFormPage botId={1} />
+      </Route>
+
+      <Route path="/:city/customers" exact component={CmsCustomersPage} />
+
+      <Route path="/:city/orders" exact component={CmsOrdersPage} />
+      <Route path="/:city/orders/:id" component={CmsOrderFormPage} />
+
+      <Route path="/404" exact component={Page404} />
+      <Route path="*" component={Page404} />
+    {/* </Switch> */}
+  </>
 )
 
 export default App

@@ -6,11 +6,11 @@ import styles from 'components/cmslite.module.sass'
 
 class ReviewsList extends Component {
     render() {
-        const { reviews, delete: deleteReview } = this.props
+        const { reviews, delete: deleteReview, city } = this.props
 
         const renderReviews = reviews.map(({ id, public: pub, created_at, name, instagram, telegram, text }) => (
           <div key={id} className={cn('col-md-12', !pub && styles.unpublic)}>
-              <Link to={`/reviews/${id}`}>
+              <Link to={`/${city}/reviews/${id}`}>
                   {name && `${name}  `}
                   {instagram && `(Instagram) ${instagram}  `}
                   {telegram && `(Telegram) ${telegram}  `}

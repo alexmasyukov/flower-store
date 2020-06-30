@@ -14,82 +14,82 @@ const yup_string_2_255_required = Yup.string()
 
 
 const bannerSchema = Yup.object({
-    title: yup_string_2_255_required,
-    images: Yup.array().of(Yup.string())
-      .required('Добавьте фото')
+  title: yup_string_2_255_required,
+  images: Yup.array().of(Yup.string())
+    .required('Добавьте фото')
 })
 
 
 class BannerForm extends Component {
-    handleSave(data) {
-        this.props.save(data)
-          .then(res => {
-              if (res && 'status' in res && res.status === 'done') {
-                  this.props.history.push('/banners')
-              } else {
-                  alert('Ошибка при сохранении. Подробности в консоли')
-              }
-          })
-    }
+  handleSave(data) {
+    this.props.save(data)
+      .then(res => {
+        if (res && 'status' in res && res.status === 'done') {
+          this.props.history.push(`/${this.props.city}/banners`)
+        } else {
+          alert('Ошибка при сохранении. Подробности в консоли')
+        }
+      })
+  }
 
-    render() {
-        const { banner, uploadImages, getImage } = this.props
+  render() {
+    const { banner, uploadImages, getImage } = this.props
 
-        return (
-          <Formik
-            initialValues={{
-                ...banner
-            }}
-            validationSchema={bannerSchema}
-            onSubmit={(values, { setSubmitting }) => {
-                setSubmitting(false)
-                this.handleSave(values)
-            }}
-          >
-              {({ values }) => (
-                <Form>
-                    <Row className="mb-4">
-                        <div className="col-md-1">
-                            <b>ID:</b> {values.id}
-                        </div>
-                        <div className="col-md-7">
-                            <b>city_id:</b> {values.city_id}
-                        </div>
-                    </Row>
+    return (
+      <Formik
+        initialValues={{
+          ...banner
+        }}
+        validationSchema={bannerSchema}
+        onSubmit={(values, { setSubmitting }) => {
+          setSubmitting(false)
+          this.handleSave(values)
+        }}
+      >
+        {({ values }) => (
+          <Form>
+            <Row className="mb-4">
+              <div className="col-md-1">
+                <b>ID:</b> {values.id}
+              </div>
+              <div className="col-md-7">
+                <b>city_id:</b> {values.city_id}
+              </div>
+            </Row>
 
-                    <Row className="align-items-center">
-                        <div className="col-md-4">
-                            <span className={styles.btitle}>Название (не отражается на сайте):</span>
-                            <Field name="title" style={{ width: '100%' }}/>
-                            <ErrorMessage name="title" component={ErrorTitle}/>
-                        </div>
-                        <div className="col-md-2">
-                            <Field name={`public`} title="Опубликовано" type="checkbox"
-                                   component={Checkbox}/>
-                        </div>
-                    </Row>
+            <Row className="align-items-center">
+              <div className="col-md-4">
+                <span className={styles.btitle}>Название (не отражается на сайте):</span>
+                <Field name="title" style={{ width: '100%' }}/>
+                <ErrorMessage name="title" component={ErrorTitle}/>
+              </div>
+              <div className="col-md-2">
+                <Field name={`public`} title="Опубликовано" type="checkbox"
+                       component={Checkbox}/>
+              </div>
+            </Row>
 
-                    <Row className="mb-4 mt-4">
-                        <div className="col-md-12">
-                            <span className={styles.btitle}>Изображение</span>
+            <Row className="mb-4 mt-4">
+              <div className="col-md-12">
+                <span className={styles.btitle}>Изображение</span>
 
-                            <Field
-                              name="images"
-                              component={PhotosAndUploader}
-                              getImage={getImage}
-                              uploadImages={uploadImages}
-                            />
+                <Field
+                  name="images"
+                  component={PhotosAndUploader}
+                  getImage={getImage}
+                  uploadImages={uploadImages}
+                />
 
-                            <ErrorMessage name="images" component={ErrorTitle}/>
-                        </div>
-                    </Row>
+                <ErrorMessage name="images" component={ErrorTitle}/>
+              </div>
+            </Row>
 
-                    <button type="submit">Сохранить</button>
-                </Form>
-              )}
-          </Formik>
-        )
-    }
+            <button type="submit">Сохранить</button>
+          </Form>
+        )}
+      </Formik>
+    )
+  }
 }
 
 export default BannerForm

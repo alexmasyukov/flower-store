@@ -49,6 +49,14 @@ const PayForm = ({
             checked={payType === PAY_TYPES.TO_CORPORATE_CARD}
             onChange={onInputChange('pay.payType')} />
 
+         <Input
+            label="Оплата онлайн"
+            type="radio"
+            name="pay"
+            value={PAY_TYPES.CARD_ONLINE}
+            checked={payType === PAY_TYPES.CARD_ONLINE}
+            onChange={onInputChange('pay.payType')} />      
+
          {/*todo: cardTypeEnabled?*/}
          {/*{!cardTypeEnabled && (*/}
          {/*<>*/}

@@ -63,24 +63,24 @@ services:
 #    restart: always
 
 
-  bot-viber-dev:
-    container_name: bot-viber-dev
-    networks:
-      - db
-      - front
-    env_file:
-      - ./bot-viber/dev.env
-    build:
-      context: ./bot-viber
-      dockerfile: Dockerfile.dev
-    volumes:
-      - './bot-viber:/app'
-      - '/app/node_modules'
-    ports:
-      - 9999:9999
-    depends_on:
-      - postgres-dev
-    # restart: always
+  # bot-viber-dev:
+  #   container_name: bot-viber-dev
+  #   networks:
+  #     - db
+  #     - front
+  #   env_file:
+  #     - ./bot-viber/dev.env
+  #   build:
+  #     context: ./bot-viber
+  #     dockerfile: Dockerfile.dev
+  #   volumes:
+  #     - './bot-viber:/app'
+  #     - '/app/node_modules'
+  #   ports:
+  #     - 9999:9999
+  #   depends_on:
+  #     - postgres-dev
+  #   restart: always
 
 
   api-dev:
@@ -129,7 +129,7 @@ services:
       - postgres-dev
 #      - bot-viber-dev
       - api-dev
-      - app-dev
+      # - app-dev
       - cms-dev
     volumes:
       - ./settings/nginx_dev:/etc/nginx/conf.d
@@ -146,4 +146,4 @@ networks:
     name: db
     driver: bridge
 
-# https://mherman.org/blog/dockerizing-a-react-app/
+# https://mherman.org/blog/dockerizing-a-react-ap/

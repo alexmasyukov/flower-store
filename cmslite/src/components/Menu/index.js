@@ -1,22 +1,23 @@
 import React from 'react'
 import { Link } from "react-router-dom"
+import withRouterParams from 'components/hoc/withRouterParams'
 
-const CmsMenu = ({ className }) => {
-    return (
-      <div className={className}>
-          <Link to="/products">Товары</Link>
-          <Link to="/reviews">Отзывы</Link>
-          <Link to="/entities">Справочник</Link>
-          <Link to="/additives">Добавки</Link>
-          <Link to="/banners">Баннеры</Link>
-          <Link to="/team">Команда</Link>
-          <Link to="/content">Контент</Link>
-          <Link to="/customers">Клиенты</Link>
-          <Link to="/orders">Заказы</Link>
-          <Link to="/bot-viber">Бот Viber</Link>
-          {/*<Link to="/settings">Настройки</Link>*/}
-      </div>
-    )
+const CmsMenu = ({ className, city }) => {
+  return (
+    <div className={className}>
+      <Link to={`/${city}/products`}>Товары</Link>
+      <Link to={`/${city}/reviews`}>Отзывы</Link>
+      <Link to={`/${city}/entities`}>Справочник</Link>
+      <Link to={`/${city}/additives`}>Добавки</Link>
+      <Link to={`/${city}/banners`}>Баннеры</Link>
+      <Link to={`/${city}/team`}>Команда</Link>
+      <Link to={`/${city}/content`}>Контент</Link>
+      <Link to={`/${city}/customers`}>Клиенты</Link>
+      <Link to={`/${city}/orders`}>Заказы</Link>
+      <Link to={`/${city}/bot-viber`}>Бот Viber</Link>
+      {/*<Link to="/settings">Настройки</Link>*/}
+    </div>
+  )
 }
 
-export default CmsMenu
+export default withRouterParams(CmsMenu)

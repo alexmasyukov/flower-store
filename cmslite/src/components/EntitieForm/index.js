@@ -21,7 +21,7 @@ const entitieSchema = Yup.object({
 })
 
 
-const EntitieForm = ({ save, entitie, entities }) => {
+const EntitieForm = ({ save, entitie, entities, city }) => {
   let history = useHistory()
   const sortedEntities = sortEntities(entities)
   const types = excludeSameEntities(sortedEntities)
@@ -32,7 +32,7 @@ const EntitieForm = ({ save, entitie, entities }) => {
     save(data)
       .then(res => {
         if (res && 'status' in res && res.status === 'done') {
-          history.push(`/entities?filter=${eTypeTitle}`)
+          history.push(`/${city}/entities?filter=${eTypeTitle}`)
         } else {
           alert('Ошибка при сохранении. Подробности в консоли')
         }
