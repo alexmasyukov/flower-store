@@ -1,30 +1,40 @@
 const express = require('express')
-const cacheControl = require('express-cache-controller')
+// const cacheControl = require('express-cache-controller')
 const router = express.Router()
-const additivesController = require("../controllers/additives")
 const commonController = require("../controllers/common")
 const { Additive } = require('../models/additive')
-const { validateSchema } = require('../middlewares/jsonSchemaValidator')
+const {
+  validateQuery,
+  validateBody,
+  validateParams
+} = require('../middlewares/jsonSchemaValidator')
+
+// cacheControl({ MaxAge: 10 }),
 
 router.route('/')
   .get(
-    // cacheControl({ MaxAge: 10 }),
-    commonController.getAll('additives', 'id', 'desc')
+    validateQuery(Additive.querySchema),
+    commonController.getAll(Additive.table)
   )
   .post(
-    validateSchema(Additive.jsonSchema),
-    additivesController.createOne
+    validateBody(Additive.bodySchema),
+    commonController.createOne(Additive.table, ['data'])
   )
 
 router.route('/:id')
   .get(
-    // cacheControl({ MaxAge: 10 }),
-    commonController.getOne('additives')
+    validateParams(Additive.paramsSchema),
+    validateQuery(Additive.querySchema),
+    commonController.getOne(Additive.table)
   )
   .put(
-    validateSchema(Additive.jsonSchema),
-    additivesController.updateOne
+    validateParams(Additive.paramsSchema),
+    validateBody(Additive.bodySchema),
+    commonController.updateOne(Additive.table, ['data'])
   )
-  .delete(commonController.deleteOne('additives'))
+  .delete(
+    validateParams(Additive.paramsSchema),
+    commonController.deleteOne(Additive.table)
+  )
 
 module.exports = router

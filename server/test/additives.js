@@ -15,7 +15,7 @@ const {
 
 const additive = {
   city_id: 1,
-  public: true,
+  public: false,
   order: 333,
   title: "Тестовое дополнение",
   data: [
@@ -55,6 +55,30 @@ const necessaryFields = (err, res) => {
   res.body.should.have.property('cart_title')
 }
 
+
+
+describe('/POST additives', () => {
+  step('Add new additive', (done) => {
+    requestPost('/additives', additive, (err, res) => {
+      success(err, res)
+      additiveId = res.body.result
+      done()
+    })
+  })
+
+  step('ERROR 500 - new additive', (done) => {
+    const newItem = {
+      ...additive,
+      cart_title: true,
+      data: "333"
+    }
+
+    requestPost('/additives', newItem, (err, res) => {
+      error500_schemaFailed(err, res)
+      done()
+    })
+  })
+})
 
 
 
@@ -135,35 +159,11 @@ describe('/GET additives/:id', () => {
 })
 
 
-describe('/POST additives', () => {
-  step('Add new additive', (done) => {
-    requestPost('/additives', additive, (err, res) => {
-      success(err, res)
-      additiveId = res.body.result
-      done()
-    })
-  })
-
-  step('ERROR 500 - new additive', (done) => {
-    const newItem = {
-      ...additive,
-      cart_title: true,
-      data: "333"
-    }
-
-    requestPost('/additives', newItem, (err, res) => {
-      error500_schemaFailed(err, res)
-      done()
-    })
-  })
-})
-
-
-
 describe('/PUT additives:id', () => {
   step('Update additive success', (done) => {
     const updateItem = {
       ...additive,
+      title: 'ОБНОВЛЕНО',
       cart_title: "Тест Обновление",
       data: []
     }

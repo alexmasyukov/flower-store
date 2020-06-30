@@ -1,9 +1,9 @@
 class Additive {
-    static get tableName() {
+    static get table() {
         return 'additives'
     }
 
-    static get jsonSchema() {
+    static get bodySchema() {
         return {
             type: 'object',
             required: [
@@ -15,7 +15,6 @@ class Additive {
                 'data'
             ],
             properties: {
-                id: { type: 'integer' },
                 city_id: { type: 'integer' },
                 order: { type: 'integer' },
                 public: { type: 'boolean' },
@@ -40,6 +39,34 @@ class Additive {
                     }
                 }
             }
+        }
+    }
+
+    static get paramsSchema() {
+        return {
+            type: 'object',
+            required: [
+                'id'
+            ],
+            properties: {
+                id: { type: 'integer' }
+            }
+        }
+    }
+
+    static get querySchema() {
+        const {
+            type,
+            properties: {
+                extra: _,
+                data: __,
+                ...properties
+            }
+        } = this.bodySchema
+
+        return {
+            type,
+            properties
         }
     }
 }
