@@ -8,7 +8,7 @@ const { validateSchema } = require('../middlewares/jsonSchemaValidator')
 
 router.route('/')
   .get(
-    cacheControl({ MaxAge: 10 }),
+    // cacheControl({ MaxAge: 10 }),
     commonController.getAll('additives', 'id', 'desc')
   )
   .post(
@@ -18,7 +18,7 @@ router.route('/')
 
 router.route('/:id')
   .get(
-    cacheControl({ MaxAge: 10 }),
+    // cacheControl({ MaxAge: 10 }),
     commonController.getOne('additives')
   )
   .put(

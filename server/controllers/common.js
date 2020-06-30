@@ -83,8 +83,8 @@ module.exports = {
         )(req.body)
 
         const id = await knex(table)
-          .returning('id')
           .insert(data)
+          .returning('id')
 
         res.json({
           status: 'done',

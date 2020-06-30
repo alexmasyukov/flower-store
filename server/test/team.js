@@ -1,128 +1,199 @@
-let chai = require('chai')
-let chaiHttp = require('chai-http')
-let ms = require('mocha-steps')
-// let server = require('../server');
-let should = chai.should()
-let expect = chai.expect
+const {
+  step,
+  expect,
+  error404,
+  error500_schemaFailed,
+  success,
+  successItem,
+  successArray,
+  request,
+  requestDelete,
+  requestPost,
+  requestPut
+} = require('./common')
 
-chai.use(chaiHttp)
 
-const url = 'http://localhost/api/v1'
-
-
-let personId = 0
 const person = {
   city_id: 1,
-  public: true,
-  order: 50,
-  isFlorist: true,
-  rule: "TEST RULE",
-  name: "TEST",
-  photo: "thumb_4b8b0e6d-cb63-4733-b4d0-6311c6ccb2a0.jpg",
-  instagram: "INSSTAgr",
-  extra: {}
+  public: false,
+  order: 22,
+  is_florist: false,
+  rule: "TEST",
+  name: "TEST 2",
+  photo: "TEST 3",
+  instagram: "TEST 4"
+}
+
+let personId = 0
+
+
+
+const necessaryFieldsInArray = (err, res) => {
+  res.body.should.all.have.property('city_id')
+  res.body.should.all.have.property('id')
+  res.body.should.all.have.property('public')
+}
+
+const necessaryFields = (err, res) => {
+  res.body.should.have.property('city_id')
+  res.body.should.have.property('id')
+  res.body.should.have.property('public')
 }
 
 
+
+
 describe('/GET team', () => {
-  it('it should GET all the persons', (done) => {
-    chai.request(url)
-      .get('/team')
-      .end((err, res) => {
-        should.not.exist(err)
-        should.exist(res)
-        // doc.should.be.an('object')
-        res.should.have.status(200)
-        res.body.should.be.a('array')
-        res.body.length.should.be.above(1, 'is least 1')
-        // res.body.to.include.something.that.has.property('id')
-        done()
-      })
+  it('all the persons, every has id, city_id, public', (done) => {
+    request('/team', (err, res) => {
+      successArray(err, res)
+      necessaryFieldsInArray(err, res)
+      done()
+    })
+  })
+
+  it('all the persons where public = false and city_id = 1', (done) => {
+    request('/team?public=false&city_id=1', (err, res) => {
+      successArray(err, res)
+      necessaryFieldsInArray(err, res)
+      expect(res.body.every(item => item.public === false && item.city_id === 1)).to.be.true
+      done()
+    })
+  })
+
+  it('only persons where is_florist=false', (done) => {
+    request('/team?is_florist=false', (err, res) => {
+      successArray(err, res)
+      necessaryFieldsInArray(err, res)
+      expect(res.body.every(item => item.is_florist === false)).to.be.true
+      done()
+    })
+  })
+
+  it('ERROR 404', (done) => {
+    request('/team?is_florist=true&rule=prod&public=false&city_id=555', (err, res) => {
+      error404(err, res)
+      done()
+    })
+  })
+
+  it('ERROR 500 - only persons where is_florist="123"', (done) => {
+    request('/team?is_florist=123', (err, res) => {
+      error500_schemaFailed(err, res)
+      done()
+    })
   })
 })
+
+describe('/GET team/:id', () => {
+  it('only person by id=1', (done) => {
+    request('/team/1', (err, res) => {
+      successItem(err, res)
+      necessaryFields(err, res)
+      res.body.should.have.property('id', 1)
+      done()
+    })
+  })
+
+  it('should get person without error of not exist field testField', (done) => {
+    request('/team/1?testField=1234', (err, res) => {
+      successItem(err, res)
+      necessaryFields(err, res)
+      res.body.should.have.property('id', 1)
+      done()
+    })
+  })
+
+  it('ERROR 404 - by id, but city_id not found', (done) => {
+    request('/team/1?city_id=3332', (err, res) => {
+      error404(err, res)
+      done()
+    })
+  })
+
+  it('ERROR 404 - id not found', (done) => {
+    request('/team/1234567890', (err, res) => {
+      error404(err, res)
+      done()
+    })
+  })
+})
+
 
 describe('/POST team', () => {
-  ms.step('Add new person', function(done) {
-    chai.request(url)
-      .post('/team')
-      .send(person)
-      .end((err, res) => {
-        res.should.have.status(200)
-        res.body.should.be.a('object')
-        res.body.should.have.property('status', 'done')
-        res.body.should.have.property('result')
-        // res.body.should.have.property('errors');
-        // res.body.errors.should.have.property('pages');
-        // res.body.errors.pages.should.have.property('kind').eql('required');
-        personId = res.body.result
-        done()
-      })
+  step('Add new person', (done) => {
+    requestPost('/team', person, (err, res) => {
+      success(err, res)
+      personId = res.body.result
+      done()
+    })
   })
 
-  function personError(person, errorHandler, done) {
-    chai.request(url)
-      .post('/team')
-      .send(person)
-      .end((err, res) => {
-        expect(err).to.be.null
-        res.should.have.status(500)
-        res.body.should.be.a('object')
-        res.body.should.have.property('status', 'error')
-        errorHandler(err, res)
-        // res.body.should.have.property('result')
-        // res.body.should.have.property('errors');
-        // res.body.errors.should.have.property('pages');
-        // res.body.errors.pages.should.have.property('kind').eql('required');
-        done()
-      })
-  }
-
-  ms.step('get error: NOT cityId field', function(done) {
-    const { cityId, ...broken } = person
-    const errorHandler = (err, res) => {
-      console.log('errorHandler', err, res)
+  step('ERROR 500 - new person', (done) => {
+    const newPerson = {
+      ...person,
+      isFlorist: "554",
+      public: "333"
     }
-    personError(broken, errorHandler, done)
-  })
 
-  ms.step('Delete new person', function(done) {
-    chai.request(url)
-      .delete(`/team/${personId}`)
-      .end((err, res) => {
-        res.should.have.status(200)
-        res.body.should.be.a('object')
-        res.body.should.have.property('status', 'done')
-        done()
-      })
-  })
-
-  ms.step('check my balance', function() {
-
-  })
-
-  ms.xstep('temporarily ignored', function() {
-
+    requestPost('/team', newPerson, (err, res) => {
+      error500_schemaFailed(err, res)
+      done()
+    })
   })
 })
-//
-// describe('/POST team', () => {
 
-//
-//   it('it should get Person by new id', (done) => {
-//     chai.request(url)
-//       .get('/team/' + personId)
-//       .end((err, res) => {
-//         res.should.have.status(200)
-//         res.body.should.be.a('object')
-//         console.log(res.body)
-//         // res.body.should.have.property('status', 'done')
-//         // res.body.should.have.property('result')
-//         // res.body.should.have.property('errors');
-//         // res.body.errors.should.have.property('pages');
-//         // res.body.errors.pages.should.have.property('kind').eql('required');
-//         personId = res.body.result
-//         console.log(res.body.result)
-//         done()
-//       })
-//   })
-// })
+
+
+describe('/PUT team:id', () => {
+  step('Update person success', (done) => {
+    const updatePerson = {
+      ...person,
+      rule: 'Update rule',
+      isFlorist: true,
+      public: true
+    }
+
+    requestPut(`/team/${personId}`, updatePerson, (err, res) => {
+      success(err, res)
+      done()
+    })
+  })
+
+  step('ERROR 500 - update person', (done) => {
+    const updatePerson = {
+      ...person,
+      isFlorist: "332",
+      public: "323"
+    }
+
+    requestPut(`/team/${personId}`, updatePerson, (err, res) => {
+      error500_schemaFailed(err, res)
+      done()
+    })
+  })
+
+  step('ERROR 404 - id not found', (done) => {
+    requestPut('/team/1234567890', person, (err, res) => {
+      error404(err, res)
+      done()
+    })
+  })
+})
+
+
+describe('/DELETE team/:id', () => {
+  step('should success delete', (done) => {
+    requestDelete(`/team/${personId}`, (err, res) => {
+      success(err, res)
+      done()
+    })
+  })
+
+  it('ERROR 404 - id not found', (done) => {
+    requestDelete('/team/779988777', (err, res) => {
+      error404(err, res)
+      done()
+    })
+  })
+})
