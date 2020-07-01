@@ -13,74 +13,62 @@ const {
 } = require('./common')
 
 
-const additive = {
+const banner = {
   city_id: 1,
   public: false,
-  order: 333,
-  title: "Тестовое дополнение",
-  data: [
-    {
-      order: 0,
-      button: "Да",
-      price: 888,
-      image: "image"
-    },
-    {
-      order: 1,
-      button: "Нет",
-      price: 99999,
-      image: "image 1"
-    }
-  ],
-  cart_title: "Тест"
+  order: 888,
+  title: "Тестовый",
+  images: [
+    "ТЕСТ ФОТО"
+  ]
 }
 
-let additiveId = 0
+let bannerId = 0
 
 
 
 const necessaryFieldsInArray = (err, res) => {
   res.body.should.all.have.property('id')
   res.body.should.all.have.property('city_id')
-  res.body.should.all.have.property('data')
-  res.body.should.all.have.property('public')
-  res.body.should.all.have.property('cart_title')
+  res.body.should.all.have.property('title')
+  res.body.should.all.have.property('images')
 }
 
 const necessaryFields = (err, res) => {
   res.body.should.have.property('id')
   res.body.should.have.property('city_id')
-  res.body.should.have.property('data')
-  res.body.should.have.property('public')
-  res.body.should.have.property('cart_title')
+  res.body.should.have.property('title')
+  res.body.should.have.property('images')
 }
 
 
 
-describe('/POST additives', () => {
-  step('Add new additive', (done) => {
-    requestPost('/additives', additive, (err, res) => {
+describe('/POST banners', () => {
+  step('Add new banner', (done) => {
+    requestPost('/banners', banner, (err, res) => {
       success(err, res)
-      additiveId = res.body.result
+      bannerId = res.body.result
       done()
     })
   })
 
   step('ERROR 500 - schema error, wrong types of fields', (done) => {
     const newItem = {
-      ...additive,
-      cart_title: true,
-      data: "333"
+      ...banner,
+      public: "df",
+      title: true,
+      images: {}
     }
 
-    requestPost('/additives', newItem, (err, res) => {
+    requestPost('/banners', newItem, (err, res) => {
       error500_schemaFailed(err, res)
       done()
     })
   })
 
+
   step('ERROR 500 - need minimun 1 properties in body', (done) => {
-    requestPost(`/additives`, {}, (err, res) => {
+    requestPost(`/banners`, {}, (err, res) => {
       error500_schemaFailed(err, res)
       done()
     })
@@ -89,17 +77,17 @@ describe('/POST additives', () => {
 
 
 
-describe('/GET additives', () => {
-  it('all the additives, every has id, city_id, public', (done) => {
-    request('/additives', (err, res) => {
+describe('/GET banners', () => {
+  it('all the banners, every has id, city_id, public', (done) => {
+    request('/banners', (err, res) => {
       successArray(err, res)
       necessaryFieldsInArray(err, res)
       done()
     })
   })
 
-  it('all the additives where public = false and city_id = 1', (done) => {
-    request('/additives?public=false&city_id=1', (err, res) => {
+  it('all the banners where public = false and city_id = 1', (done) => {
+    request('/banners?public=false&city_id=1', (err, res) => {
       successArray(err, res)
       necessaryFieldsInArray(err, res)
       expect(res.body.every(item => item.public === false && item.city_id === 1)).to.be.true
@@ -108,23 +96,23 @@ describe('/GET additives', () => {
   })
 
   it('ERROR 404', (done) => {
-    request('/additives?title=ertwtwd&public=false&city_id=555', (err, res) => {
+    request('/banners?title=ertwtwd&public=false&city_id=555', (err, res) => {
       error404(err, res)
       done()
     })
   })
 
-  it('ERROR 500 - only items where city_id=rew', (done) => {
-    request('/additives?city_id=rew', (err, res) => {
+  it('ERROR 500 - only item where city_id=rew', (done) => {
+    request('/banners?city_id=rew', (err, res) => {
       error500_schemaFailed(err, res)
       done()
     })
   })
 })
 
-describe('/GET additives/:id', () => {
-  it('only additive by id=1', (done) => {
-    request('/additives/1', (err, res) => {
+describe('/GET banners/:id', () => {
+  it('only banner by id=1', (done) => {
+    request('/banners/1', (err, res) => {
       successItem(err, res)
       necessaryFields(err, res)
       res.body.should.have.property('id', 1)
@@ -132,8 +120,8 @@ describe('/GET additives/:id', () => {
     })
   })
 
-  it('should get additive without error of not exist field testField', (done) => {
-    request('/additives/1?testField=1234', (err, res) => {
+  it('should get banner without error of not exist field testField', (done) => {
+    request('/banners/1?testField=1234', (err, res) => {
       successItem(err, res)
       necessaryFields(err, res)
       res.body.should.have.property('id', 1)
@@ -142,14 +130,14 @@ describe('/GET additives/:id', () => {
   })
 
   it('ERROR 404 - by id, but city_id not found', (done) => {
-    request('/additives/1?city_id=3332', (err, res) => {
+    request('/banners/1?city_id=3332', (err, res) => {
       error404(err, res)
       done()
     })
   })
 
   it('ERROR 404 - id not found', (done) => {
-    request('/additives/1234567890', (err, res) => {
+    request('/banners/1234567890', (err, res) => {
       error404(err, res)
       done()
     })
@@ -157,16 +145,18 @@ describe('/GET additives/:id', () => {
 })
 
 
-describe('/PUT additives:id', () => {
+describe('/PUT banners:id', () => {
   step('Update item success several filelds', (done) => {
     const updateItem = {
-      ...additive,
-      title: 'ОБНОВЛЕНО',
-      cart_title: "Тест Обновление",
-      data: []
+      ...banner,
+      city_id: 1,
+      public: false,
+      order: 999,
+      title: "ОБНОВЛЕНО",
+      images: ['test']
     }
 
-    requestPut(`/additives/${additiveId}`, updateItem, (err, res) => {
+    requestPut(`/banners/${bannerId}`, updateItem, (err, res) => {
       success(err, res)
       done()
     })
@@ -178,7 +168,7 @@ describe('/PUT additives:id', () => {
       public: false
     }
 
-    requestPut(`/additives/${additiveId}`, updateItem, (err, res) => {
+    requestPut(`/banners/${bannerId}`, updateItem, (err, res) => {
       success(err, res)
       done()
     })
@@ -186,7 +176,7 @@ describe('/PUT additives:id', () => {
 
 
   step('ERROR 500 - need minimun 1 properties in body', (done) => {
-    requestPut(`/additives/${additiveId}`, {}, (err, res) => {
+    requestPut(`/banners/${bannerId}`, {}, (err, res) => {
       error500_schemaFailed(err, res)
       done()
     })
@@ -195,19 +185,19 @@ describe('/PUT additives:id', () => {
 
   step('ERROR 500 - schema error, wrong types of fields', (done) => {
     const updatePerson = {
-      ...additive,
-      cart_title: true,
-      data: "333"
+      ...banner,
+      title: true,
+      images: "333"
     }
 
-    requestPut(`/additives/${additiveId}`, updatePerson, (err, res) => {
+    requestPut(`/banners/${bannerId}`, updatePerson, (err, res) => {
       error500_schemaFailed(err, res)
       done()
     })
   })
 
   step('ERROR 404 - id not found', (done) => {
-    requestPut('/additives/1234567890', additive, (err, res) => {
+    requestPut('/banners/1234567890', banner, (err, res) => {
       error404(err, res)
       done()
     })
@@ -215,16 +205,16 @@ describe('/PUT additives:id', () => {
 })
 
 
-describe('/DELETE additives/:id', () => {
+describe('/DELETE banners/:id', () => {
   step('should success delete', (done) => {
-    requestDelete(`/additives/${additiveId}`, (err, res) => {
+    requestDelete(`/banners/${bannerId}`, (err, res) => {
       success(err, res)
       done()
     })
   })
 
   it('ERROR 404 - id not found', (done) => {
-    requestDelete('/additives/779988777', (err, res) => {
+    requestDelete('/banners/779988777', (err, res) => {
       error404(err, res)
       done()
     })

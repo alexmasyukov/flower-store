@@ -27,12 +27,12 @@ router.route('/:id')
   )
   .put(
     validateParams(TeamPerson.paramsSchema),
-    validateBody(TeamPerson.bodySchema),
+    validateBody(TeamPerson.updateSchema),
     commonController.updateOne(TeamPerson.table)
   )
   .delete(
     validateParams(TeamPerson.paramsSchema),
-    commonController.deleteOne('team')
+    commonController.deleteOne(TeamPerson.table)
   )
 
 module.exports = router

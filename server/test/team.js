@@ -27,7 +27,6 @@ const person = {
 let personId = 0
 
 
-
 const necessaryFieldsInArray = (err, res) => {
   res.body.should.all.have.property('city_id')
   res.body.should.all.have.property('id')
@@ -41,7 +40,35 @@ const necessaryFields = (err, res) => {
 }
 
 
+describe('/POST team', () => {
+  step('Add new person', (done) => {
+    requestPost('/team', person, (err, res) => {
+      success(err, res)
+      personId = res.body.result
+      done()
+    })
+  })
 
+  step('ERROR 500 - schema error, wrong types of fields', (done) => {
+    const newPerson = {
+      ...person,
+      isFlorist: "554",
+      public: "333"
+    }
+
+    requestPost('/team', newPerson, (err, res) => {
+      error500_schemaFailed(err, res)
+      done()
+    })
+  })
+
+  step('ERROR 500 - need minimun 1 properties in body', (done) => {
+    requestPost(`/team`, {}, (err, res) => {
+      error500_schemaFailed(err, res)
+      done()
+    })
+  })
+})
 
 describe('/GET team', () => {
   it('all the persons, every has id, city_id, public', (done) => {
@@ -120,33 +147,8 @@ describe('/GET team/:id', () => {
 })
 
 
-describe('/POST team', () => {
-  step('Add new person', (done) => {
-    requestPost('/team', person, (err, res) => {
-      success(err, res)
-      personId = res.body.result
-      done()
-    })
-  })
-
-  step('ERROR 500 - new person', (done) => {
-    const newPerson = {
-      ...person,
-      isFlorist: "554",
-      public: "333"
-    }
-
-    requestPost('/team', newPerson, (err, res) => {
-      error500_schemaFailed(err, res)
-      done()
-    })
-  })
-})
-
-
-
 describe('/PUT team:id', () => {
-  step('Update person success', (done) => {
+  step('Update person success several filelds', (done) => {
     const updatePerson = {
       ...person,
       rule: 'Update rule',
@@ -160,7 +162,25 @@ describe('/PUT team:id', () => {
     })
   })
 
-  step('ERROR 500 - update person', (done) => {
+  step('Update person success ONLY public field', (done) => {
+    const updatePerson = {
+      public: false
+    }
+
+    requestPut(`/team/${personId}`, updatePerson, (err, res) => {
+      success(err, res)
+      done()
+    })
+  })
+
+  step('ERROR 500 - need minimun 1 properties in body', (done) => {
+    requestPut(`/team/${personId}`, {}, (err, res) => {
+      error500_schemaFailed(err, res)
+      done()
+    })
+  })
+
+  step('ERROR 500 - update item', (done) => {
     const updatePerson = {
       ...person,
       isFlorist: "332",

@@ -29,7 +29,7 @@ router.route('/:id')
   )
   .put(
     validateParams(Additive.paramsSchema),
-    validateBody(Additive.bodySchema),
+    validateBody(Additive.updateSchema),
     commonController.updateOne(Additive.table, ['data'])
   )
   .delete(

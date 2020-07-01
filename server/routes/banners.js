@@ -1,28 +1,40 @@
 const express = require('express')
-const cacheControl = require('express-cache-controller')
+// const cacheControl = require('express-cache-controller')
 const router = express.Router()
-const bannersController = require("../controllers/banners")
 const commonController = require("../controllers/common")
 const { Banner } = require('../models/banner')
-const { validateSchema } = require('../middlewares/jsonSchemaValidator')
+const {
+  validateQuery,
+  validateBody,
+  validateParams
+} = require('../middlewares/jsonSchemaValidator')
+
+// cacheControl({ MaxAge: 10 }),
 
 router.route('/')
   .get(
-    cacheControl({ MaxAge: 10 }),
-    bannersController.getAll
+    validateQuery(Banner.querySchema),
+    commonController.getAll(Banner.table)
   )
   .post(
-    validateSchema(Banner.jsonSchema),
-    commonController.createOne('banners')
+    validateBody(Banner.bodySchema),
+    commonController.createOne(Banner.table)
   )
 
 router.route('/:id')
   .get(
-    cacheControl({ MaxAge: 10 }),
-    bannersController.getOne)
+    validateParams(Banner.paramsSchema),
+    validateQuery(Banner.querySchema),
+    commonController.getOne(Banner.table)
+  )
   .put(
-    validateSchema(Banner.jsonSchema),
-    commonController.updateOne('banners')
+    validateParams(Banner.paramsSchema),
+    validateBody(Banner.updateSchema),
+    commonController.updateOne(Banner.table)
+  )
+  .delete(
+    validateParams(Banner.paramsSchema),
+    commonController.deleteOne(Banner.table)
   )
 
 module.exports = router
