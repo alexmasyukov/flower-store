@@ -4,7 +4,6 @@ class Banner {
   static type = 'object'
   static minProperties = 1
   static properties = {
-    id: { type: 'integer' },
     city_id: { type: 'integer' },
     order: { type: 'integer' },
     public: { type: 'boolean' },

@@ -1,5 +1,4 @@
 const express = require('express')
-// const cacheControl = require('express-cache-controller')
 const router = express.Router()
 const commonController = require("../controllers/common")
 const { Additive } = require('../models/additive')
@@ -9,7 +8,6 @@ const {
   validateParams
 } = require('../middlewares/jsonSchemaValidator')
 
-// cacheControl({ MaxAge: 10 }),
 
 router.route('/')
   .get(

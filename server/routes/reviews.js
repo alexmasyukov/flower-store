@@ -1,29 +1,37 @@
 const express = require('express')
-const cacheControl = require('express-cache-controller')
 const router = express.Router()
-const reviewsController = require("../controllers/reviews")
 const commonController = require("../controllers/common")
 const { Review } = require('../models/review')
-const { validateSchema } = require('../middlewares/jsonSchemaValidator')
+const {
+  validateQuery,
+  validateBody,
+  validateParams
+} = require('../middlewares/jsonSchemaValidator')
 
 router.route('/')
   .get(
-    cacheControl({ MaxAge: 10 }),
-    reviewsController.getAll
+    validateQuery(Review.querySchema),
+    commonController.getAll(Review.table, 'created_at', 'desc')
   )
   .post(
-    validateSchema(Review.jsonSchema),
-    reviewsController.createOne
+    validateBody(Review.bodySchema),
+    commonController.createOne(Review.table)
   )
 
 router.route('/:id')
   .get(
-    cacheControl({ MaxAge: 10 }),
-    reviewsController.getOne)
-  .put(
-    validateSchema(Review.jsonSchema),
-    reviewsController.updateOne
+    validateParams(Review.paramsSchema),
+    validateQuery(Review.querySchema),
+    commonController.getOne(Review.table)
   )
-  .delete(commonController.deleteOne('reviews'))
+  .put(
+    validateParams(Review.paramsSchema),
+    validateBody(Review.updateSchema),
+    commonController.updateOne(Review.table)
+  )
+  .delete(
+    validateParams(Review.paramsSchema),
+    commonController.deleteOne(Review.table)
+  )
 
 module.exports = router

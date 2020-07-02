@@ -1,30 +1,38 @@
 const express = require('express')
-const cacheControl = require('express-cache-controller')
 const router = express.Router()
-const contentController = require("../controllers/content")
 const commonController = require("../controllers/common")
 const { Content } = require('../models/content')
-const { validateSchema } = require('../middlewares/jsonSchemaValidator')
+const {
+  validateQuery,
+  validateBody,
+  validateParams
+} = require('../middlewares/jsonSchemaValidator')
+
 
 router.route('/')
   .get(
-    cacheControl({ sMaxAge: 10 }),
-    contentController.getAll
+    validateQuery(Content.querySchema),
+    commonController.getAll(Content.table)
   )
   .post(
-    validateSchema(Content.jsonSchema),
-    contentController.createOne
+    validateBody(Content.bodySchema),
+    commonController.createOne(Content.table)
   )
 
 router.route('/:id')
   .get(
-    cacheControl({ sMaxAge: 10 }),
-    contentController.getOne
+    validateParams(Content.paramsSchema),
+    validateQuery(Content.querySchema),
+    commonController.getOne(Content.table)
   )
   .put(
-    validateSchema(Content.jsonSchema),
-    contentController.updateOne
+    validateParams(Content.paramsSchema),
+    validateBody(Content.updateSchema),
+    commonController.updateOne(Content.table)
   )
-  .delete(commonController.deleteOne('content'))
+  .delete(
+    validateParams(Content.paramsSchema),
+    commonController.deleteOne(Content.table)
+  )
 
 module.exports = router

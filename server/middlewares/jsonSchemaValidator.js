@@ -77,7 +77,6 @@ function validateQuery(schema, reqField = 'query') {
     if (valid.status === 'error') {
       return res.status(500).send(valid.errors)
     }
-
     next()
   }
 }

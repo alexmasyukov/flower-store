@@ -1,13 +1,14 @@
-class Entitie {
-  static table = 'entities'
+class City {
+  static table = 'cities'
 
   static type = 'object'
   static minProperties = 1
   static properties = {
-    eType: { type: 'string' },
-    eTypeTitle: { type: 'string' },
-    value: { type: 'string' },
-    extra: { type: ['object', 'null'] }
+    public: { type: 'boolean' },
+    eng: { type: 'string' },
+    rus: { type: 'string' },
+    contacts: { type: 'object' },
+    extra: { type: 'object' }
   }
 
   static get bodySchema() {
@@ -16,9 +17,10 @@ class Entitie {
       type,
       minProperties,
       required: [
-        'eType',
-        'eTypeTitle',
-        'value',
+        'public',
+        'eng',
+        'rus',
+        'contacts',
         'extra'
       ],
       properties
@@ -39,7 +41,7 @@ class Entitie {
   }
 
   static get querySchema() {
-    const { type, properties } = this
+    const { type, properties: { contacts, extra, ...properties } } = this
     return {
       type,
       properties
@@ -57,5 +59,5 @@ class Entitie {
 }
 
 module.exports = {
-  Entitie
+  City
 }
