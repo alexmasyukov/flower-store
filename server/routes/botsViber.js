@@ -3,9 +3,11 @@ const router = express.Router()
 const commonController = require("../controllers/common")
 const botViberController = require("../controllers/botViber")
 const { BotViber } = require('../models/botViber')
-const { validateSchema } = require('../middlewares/jsonSchemaValidator')
-
-const table = BotViber.table
+const {
+  validateQuery,
+  validateBody,
+  validateParams
+} = require('../middlewares/jsonSchemaValidator')
 
 router.route('/test')
   .get(botViberController.test)
@@ -14,10 +16,15 @@ router.route('/send')
   .post(botViberController.sendMessage)
 
 router.route('/:id')
-  .get(commonController.getOne(table, {}))
+  .get(
+    validateParams(BotViber.paramsSchema),
+    validateQuery(BotViber.querySchema),
+    commonController.getOne(BotViber.table, {})
+  )
   .put(
-    validateSchema(BotViber.jsonSchema),
-    commonController.updateOne(table, ['notify_subscribers'])
+    validateParams(BotViber.paramsSchema),
+    validateBody(BotViber.updateSchema),
+    commonController.updateOne(BotViber.table, ['notify_subscribers'])
   )
 
 

@@ -25,7 +25,7 @@ const requestDelete = (url, endHandler) => {
 }
 
 const requestPost = (url, body, endHandler) => {
-  chai.request(apiUrl)
+  return chai.request(apiUrl)
     .post(url)
     .set('content-type', 'application/json')
     .send(body)

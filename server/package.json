@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "mocha --timeout 10000"
+    "test": "mocha --timeout 10000 "
   },
   "dependencies": {
     "ajv": "^6.10.2",

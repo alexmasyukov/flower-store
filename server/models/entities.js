@@ -1,8 +1,13 @@
+const {
+  type,
+  all,
+  minProperties,
+  paramsSchema
+} = require('../models/common')
+
 class Entitie {
   static table = 'entities'
 
-  static type = 'object'
-  static minProperties = 1
   static properties = {
     eType: { type: 'string' },
     eTypeTitle: { type: 'string' },
@@ -11,7 +16,7 @@ class Entitie {
   }
 
   static get bodySchema() {
-    const { type, properties, minProperties } = this
+    const { properties } = this
     return {
       type,
       minProperties,
@@ -25,29 +30,21 @@ class Entitie {
     }
   }
 
-  static get paramsSchema() {
-    const { type } = this
+  static paramsSchema = paramsSchema
+
+  static get querySchema() {
+    const { properties } = this
     return {
       type,
-      required: [
-        'id'
-      ],
       properties: {
-        id: { type: 'integer' }
+        all,
+        ...properties
       }
     }
   }
 
-  static get querySchema() {
-    const { type, properties } = this
-    return {
-      type,
-      properties
-    }
-  }
-
   static get updateSchema() {
-    const { type, properties, minProperties } = this
+    const { properties } = this
     return {
       type,
       minProperties,

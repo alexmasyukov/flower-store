@@ -1,6 +1,9 @@
 const R = require('ramda')
 const knex = require('../db/knex')
 const utils = require('../utils')
+const {
+  removeWhenIsDefine
+} = require('../utils/modificators')
 
 module.exports = {
   getAll(table, orderBy = 'id', desc = '', query = {
@@ -8,13 +11,19 @@ module.exports = {
   }) {
     return async function(req, res, next) {
       try {
+        const { all, ...baseQuery } = req.query
+
+        const where = R.compose(
+          removeWhenIsDefine(all, 'public')
+        )({
+          ...query,
+          ...baseQuery
+        })
+
         const items = await knex
           .select()
           .from(table)
-          .where({
-            ...query,
-            ...req.query
-          })
+          .where(where)
           .orderBy(orderBy, desc)
 
         if (!items.length)
@@ -30,14 +39,20 @@ module.exports = {
   getOne(table, query = { public: true }) {
     return async function(req, res, next) {
       try {
+        const { all, ...baseQuery } = req.query
+
+        const where = R.compose(
+          removeWhenIsDefine(all, 'public')
+        )({
+          ...query,
+          ...baseQuery,
+          ...req.params
+        })
+
         const item = await knex
           .select()
           .from(table)
-          .where({
-            ...query,
-            ...req.query,
-            ...req.params
-          })
+          .where(where)
           .first()
 
         if (!item)

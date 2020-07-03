@@ -12,31 +12,28 @@ const {
   requestPut
 } = require('./common')
 
-const url = '/content'
+const url = '/customers'
 const title = url.replace('/', '')
 
 const item = {
   city_id: 1,
-  public: false,
-  order: 999,
-  title: "Тестовый",
-  content: ''
+  phone: '79967778899',
+  name: 'Юнона',
+  points: 100,
+  last_sms_code: ''
 }
 
 const post_put_500_shemaError_item = {
   ...item,
-  order: "test",
-  title: false,
-  content: 678
+  phone: 89145678899,
+  points: '100',
+  instagram: false
 }
 
 const update_200_success = {
   ...item,
-  city_id: 1,
-  public: true,
-  order: 222,
-  title: "ОБНОВЛЕНО",
-  content: 'content'
+  phone: 'update phone',
+  name: '@Telegram'
 }
 
 let itemId = 0
@@ -45,19 +42,19 @@ let itemId = 0
 const necessaryFieldsInArray = (err, res) => {
   res.body.should.all.have.property('id')
   res.body.should.all.have.property('city_id')
-  res.body.should.all.have.property('public')
-  res.body.should.all.have.property('order')
-  res.body.should.all.have.property('content')
-  res.body.should.all.have.property('title')
+  res.body.should.all.have.property('phone')
+  res.body.should.all.have.property('name')
+  res.body.should.all.have.property('points')
+  res.body.should.all.have.property('last_sms_code')
 }
 
 const necessaryFields = (err, res) => {
   res.body.should.have.property('id')
   res.body.should.have.property('city_id')
-  res.body.should.have.property('public')
-  res.body.should.have.property('order')
-  res.body.should.have.property('content')
-  res.body.should.have.property('title')
+  res.body.should.have.property('phone')
+  res.body.should.have.property('name')
+  res.body.should.have.property('points')
+  res.body.should.have.property('last_sms_code')
 }
 
 
@@ -86,7 +83,6 @@ describe(`/POST ${title}`, () => {
   })
 })
 
-
 describe(`/GET ${title}`, () => {
   it('all items', (done) => {
     request(`${url}?all=true`, (err, res) => {
@@ -96,17 +92,17 @@ describe(`/GET ${title}`, () => {
     })
   })
 
-  it('all items where public = false and city_id = 1', (done) => {
-    request(`${url}?public=false&city_id=1`, (err, res) => {
+  it('all items where city_id = 1', (done) => {
+    request(`${url}?all=true&city_id=1`, (err, res) => {
       successArray(err, res)
       necessaryFieldsInArray(err, res)
-      expect(res.body.every(item => item.public === false && item.city_id === 1)).to.be.true
+      expect(res.body.every(item => item.city_id === 1)).to.be.true
       done()
     })
   })
 
   it('ERROR 404', (done) => {
-    request(`${url}?title=ertwtwd&public=false&city_id=555`, (err, res) => {
+    request(`${url}?all=true&phone=ertwtwd&city_id=555`, (err, res) => {
       error404(err, res)
       done()
     })
@@ -119,6 +115,7 @@ describe(`/GET ${title}`, () => {
     })
   })
 })
+
 
 describe(`/GET ${title}:id`, () => {
   it(`only item by id=${itemId}`, (done) => {
@@ -154,7 +151,6 @@ describe(`/GET ${title}:id`, () => {
   })
 })
 
-
 describe(`/PUT ${title}:id`, () => {
   step('Update item success several filelds', (done) => {
     requestPut(`${url}/${itemId}`, update_200_success, (err, res) => {
@@ -164,8 +160,8 @@ describe(`/PUT ${title}:id`, () => {
   })
 
 
-  step('Update item success ONLY public field', (done) => {
-    requestPut(`${url}/${itemId}`, { public: false }, (err, res) => {
+  step('Update item success ONLY name TEST', (done) => {
+    requestPut(`${url}/${itemId}`, { name: 'NAME' }, (err, res) => {
       success(err, res)
       done()
     })

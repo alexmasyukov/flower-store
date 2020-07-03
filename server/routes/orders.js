@@ -1,50 +1,56 @@
 const express = require('express')
-const cacheControl = require('express-cache-controller')
+// const cacheControl = require('express-cache-controller')
 const router = express.Router()
 const commonController = require("../controllers/common")
 const ordersController = require('../controllers/orders')
 const viberBotController = require('../controllers/botViber')
-const { OrderModel, OrderCompleteModel } = require('../models/order')
-const { validateSchema } = require('../middlewares/jsonSchemaValidator')
+const { Order } = require('../models/order')
+const {
+  validateQuery,
+  validateBody,
+  validateParams
+} = require('../middlewares/jsonSchemaValidator')
+
+// cacheControl({ noCache: true }),
 
 router.route('/')
   .get(
-    cacheControl({ MaxAge: 10 }),
-    commonController.getAll(OrderModel.table, 'id', 'desc', {})
+    validateQuery(Order.querySchema),
+    commonController.getAll(Order.table, 'id', 'desc', {})
   )
   .post(
-    validateSchema(OrderModel.jsonSchema),
-    commonController.createOne(OrderModel.table, ['products'], true),
+    validateBody(Order.bodySchema),
+    commonController.createOne(Order.table, ['products', 'steps'], true),
     ordersController.orderToMessage,
     viberBotController.sendMessage
   )
 
 
+router.route('/:id')
+  .get(
+    validateParams(Order.paramsSchema),
+    validateQuery(Order.querySchema),
+    // todo: Сделать дополнительный middleware на добавление customer
+    //  к основному запросу по id order
+    commonController.getOne(Order.table,{})
+  )
+  .put(
+    validateParams(Order.paramsSchema),
+    validateBody(Order.updateSchema),
+    commonController.updateOne(Order.table)
+  )
+  .delete(
+    validateParams(Order.paramsSchema),
+    commonController.deleteOne(Order.table)
+  )
+
+
 router.route('/confirmation')
   .get(
-    cacheControl({ noCache: true }),
     ordersController.confirmation
   )
 
 // router.route('/notify')
 //   .get(ordersController.nofity)
-
-
-router.route('/complete')
-  .put(
-    validateSchema(OrderCompleteModel.jsonSchema),
-    ordersController.updateComplete
-  )
-
-
-router.route('/:id')
-  .get(
-    cacheControl({ MaxAge: 10 }),
-    ordersController.getOne
-  )
-  .put(
-    validateSchema(OrderModel.jsonSchema),
-    commonController.updateOne(OrderModel.table)
-  )
 
 module.exports = router

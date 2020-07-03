@@ -23,7 +23,7 @@ const banner = {
   ]
 }
 
-let bannerId = 0
+let itemId = 0
 
 
 
@@ -47,7 +47,7 @@ describe('/POST banners', () => {
   step('Add new banner', (done) => {
     requestPost('/banners', banner, (err, res) => {
       success(err, res)
-      bannerId = res.body.result
+      itemId = res.body.result
       done()
     })
   })
@@ -79,7 +79,7 @@ describe('/POST banners', () => {
 
 describe('/GET banners', () => {
   it('all the banners, every has id, city_id, public', (done) => {
-    request('/banners', (err, res) => {
+    request('/banners?all=true', (err, res) => {
       successArray(err, res)
       necessaryFieldsInArray(err, res)
       done()
@@ -111,26 +111,26 @@ describe('/GET banners', () => {
 })
 
 describe('/GET banners/:id', () => {
-  it('only banner by id=1', (done) => {
-    request('/banners/1', (err, res) => {
+  it(`only banner by id=${itemId}`, (done) => {
+    request(`/banners/${itemId}?all=true`, (err, res) => {
       successItem(err, res)
       necessaryFields(err, res)
-      res.body.should.have.property('id', 1)
+      res.body.should.have.property('id', itemId)
       done()
     })
   })
 
   it('should get banner without error of not exist field testField', (done) => {
-    request('/banners/1?testField=1234', (err, res) => {
+    request(`/banners/${itemId}?all=true&testField=1234`, (err, res) => {
       successItem(err, res)
       necessaryFields(err, res)
-      res.body.should.have.property('id', 1)
+      res.body.should.have.property('id', itemId)
       done()
     })
   })
 
   it('ERROR 404 - by id, but city_id not found', (done) => {
-    request('/banners/1?city_id=3332', (err, res) => {
+    request(`/banners/${itemId}?all=true&city_id=3332`, (err, res) => {
       error404(err, res)
       done()
     })
@@ -156,7 +156,7 @@ describe('/PUT banners:id', () => {
       images: ['test']
     }
 
-    requestPut(`/banners/${bannerId}`, updateItem, (err, res) => {
+    requestPut(`/banners/${itemId}`, updateItem, (err, res) => {
       success(err, res)
       done()
     })
@@ -168,7 +168,7 @@ describe('/PUT banners:id', () => {
       public: false
     }
 
-    requestPut(`/banners/${bannerId}`, updateItem, (err, res) => {
+    requestPut(`/banners/${itemId}`, updateItem, (err, res) => {
       success(err, res)
       done()
     })
@@ -176,7 +176,7 @@ describe('/PUT banners:id', () => {
 
 
   step('ERROR 500 - need minimun 1 properties in body', (done) => {
-    requestPut(`/banners/${bannerId}`, {}, (err, res) => {
+    requestPut(`/banners/${itemId}`, {}, (err, res) => {
       error500_schemaFailed(err, res)
       done()
     })
@@ -190,7 +190,7 @@ describe('/PUT banners:id', () => {
       images: "333"
     }
 
-    requestPut(`/banners/${bannerId}`, updatePerson, (err, res) => {
+    requestPut(`/banners/${itemId}`, updatePerson, (err, res) => {
       error500_schemaFailed(err, res)
       done()
     })
@@ -207,7 +207,7 @@ describe('/PUT banners:id', () => {
 
 describe('/DELETE banners/:id', () => {
   step('should success delete', (done) => {
-    requestDelete(`/banners/${bannerId}`, (err, res) => {
+    requestDelete(`/banners/${itemId}`, (err, res) => {
       success(err, res)
       done()
     })

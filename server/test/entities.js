@@ -84,7 +84,7 @@ describe(`/POST ${title}`, () => {
 
 describe(`/GET ${title}`, () => {
   it('all items', (done) => {
-    request(`${url}`, (err, res) => {
+    request(`${url}?all=true`, (err, res) => {
       successArray(err, res)
       necessaryFieldsInArray(err, res)
       done()
@@ -92,7 +92,7 @@ describe(`/GET ${title}`, () => {
   })
 
   it('all items where eTypeTitle = Упаковка and eType = packing', (done) => {
-    request(`${url}?eTypeTitle=%D0%A3%D0%BF%D0%B0%D0%BA%D0%BE%D0%B2%D0%BA%D0%B0&eType=packing`, (err, res) => {
+    request(`${url}?all=true&eTypeTitle=%D0%A3%D0%BF%D0%B0%D0%BA%D0%BE%D0%B2%D0%BA%D0%B0&eType=packing`, (err, res) => {
       successArray(err, res)
       necessaryFieldsInArray(err, res)
       expect(res.body.every(item => item.eTypeTitle === 'Упаковка'
@@ -102,7 +102,7 @@ describe(`/GET ${title}`, () => {
   })
 
   it('ERROR 404', (done) => {
-    request(`${url}?eTypeTitle=testtesttest`, (err, res) => {
+    request(`${url}?all=true&eTypeTitle=testtesttest`, (err, res) => {
       error404(err, res)
       done()
     })
@@ -117,26 +117,26 @@ describe(`/GET ${title}`, () => {
 })
 
 describe(`/GET ${title}:id`, () => {
-  it('only item by id=1', (done) => {
-    request(`${url}/1`, (err, res) => {
+  it(`only item by id=${itemId}`, (done) => {
+    request(`${url}/${itemId}?all=true`, (err, res) => {
       successItem(err, res)
       necessaryFields(err, res)
-      res.body.should.have.property('id', 1)
+      res.body.should.have.property('id', itemId)
       done()
     })
   })
 
   it('get item without error (param testField should be removed)', (done) => {
-    request(`${url}/1?testField=1234`, (err, res) => {
+    request(`${url}/${itemId}?all=true&testField=1234`, (err, res) => {
       successItem(err, res)
       necessaryFields(err, res)
-      res.body.should.have.property('id', 1)
+      res.body.should.have.property('id', itemId)
       done()
     })
   })
 
   it('ERROR 404 - by id, eType not found', (done) => {
-    request(`${url}/1?eType=testMyR`, (err, res) => {
+    request(`${url}/${itemId}?all=true&eType=testMyR`, (err, res) => {
       error404(err, res)
       done()
     })

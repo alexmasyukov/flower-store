@@ -93,7 +93,7 @@ describe(`/POST ${title}`, () => {
 
 describe(`/GET ${title}`, () => {
   it('all items', (done) => {
-    request(`${url}`, (err, res) => {
+    request(`${url}?all=true`, (err, res) => {
       successArray(err, res)
       necessaryFieldsInArray(err, res)
       done()
@@ -125,26 +125,26 @@ describe(`/GET ${title}`, () => {
 })
 
 describe(`/GET ${title}:id`, () => {
-  it('only item by id=1', (done) => {
-    request(`${url}/1`, (err, res) => {
+  it(`only item by id=${itemId}`, (done) => {
+    request(`${url}/${itemId}?all=true`, (err, res) => {
       successItem(err, res)
       necessaryFields(err, res)
-      res.body.should.have.property('id', 1)
+      res.body.should.have.property('id', itemId)
       done()
     })
   })
 
   it('get item without error (param testField should be removed)', (done) => {
-    request(`${url}/1?testField=1234`, (err, res) => {
+    request(`${url}/${itemId}?all=true&testField=1234`, (err, res) => {
       successItem(err, res)
       necessaryFields(err, res)
-      res.body.should.have.property('id', 1)
+      res.body.should.have.property('id', itemId)
       done()
     })
   })
 
   it('ERROR 404 - by id, city_id not found', (done) => {
-    request(`${url}/1?city_id=3332`, (err, res) => {
+    request(`${url}/${itemId}?city_id=3332`, (err, res) => {
       error404(err, res)
       done()
     })

@@ -22,7 +22,6 @@ class Product {
                 'sizes'
             ],
             properties: {
-                id: { type: 'integer' },
                 city_id: { type: 'integer' },
                 public: { type: 'boolean' },
                 order: { type: ['integer', 'null'] },

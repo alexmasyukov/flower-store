@@ -35,8 +35,7 @@ const additive = {
   cart_title: "Тест"
 }
 
-let additiveId = 0
-
+let itemId = 0
 
 
 const necessaryFieldsInArray = (err, res) => {
@@ -55,18 +54,16 @@ const necessaryFields = (err, res) => {
   res.body.should.have.property('cart_title')
 }
 
-
-
 describe('/POST additives', () => {
-  step('Add new additive', (done) => {
+  it('Add new additive', (done) => {
     requestPost('/additives', additive, (err, res) => {
       success(err, res)
-      additiveId = res.body.result
+      itemId = res.body.result
       done()
     })
   })
 
-  step('ERROR 500 - schema error, wrong types of fields', (done) => {
+  it('ERROR 500 - schema error, wrong types of fields', (done) => {
     const newItem = {
       ...additive,
       cart_title: true,
@@ -79,7 +76,7 @@ describe('/POST additives', () => {
     })
   })
 
-  step('ERROR 500 - need minimun 1 properties in body', (done) => {
+  it('ERROR 500 - need minimun 1 properties in body', (done) => {
     requestPost(`/additives`, {}, (err, res) => {
       error500_schemaFailed(err, res)
       done()
@@ -88,10 +85,43 @@ describe('/POST additives', () => {
 })
 
 
+describe('/GET additives/:id', () => {
+  step(`only additive by id=${itemId}`, (done) => {
+    request(`/additives/${itemId}?all=true`, (err, res) => {
+      successItem(err, res)
+      necessaryFields(err, res)
+      res.body.should.have.property('id', itemId)
+      done()
+    })
+  })
+
+  step('should get additive without error of not exist field testField', (done) => {
+    request(`/additives/${itemId}?all=true&testField=1234`, (err, res) => {
+      successItem(err, res)
+      necessaryFields(err, res)
+      res.body.should.have.property('id', itemId)
+      done()
+    })
+  })
+
+  it('ERROR 404 - by id, but city_id not found', (done) => {
+    request(`/additives/${itemId}?all=true&city_id=3332`, (err, res) => {
+      error404(err, res)
+      done()
+    })
+  })
+
+  it('ERROR 404 - id not found', (done) => {
+    request('/additives/1234567890', (err, res) => {
+      error404(err, res)
+      done()
+    })
+  })
+})
 
 describe('/GET additives', () => {
   it('all the additives, every has id, city_id, public', (done) => {
-    request('/additives', (err, res) => {
+    request('/additives?all=true', (err, res) => {
       successArray(err, res)
       necessaryFieldsInArray(err, res)
       done()
@@ -122,41 +152,6 @@ describe('/GET additives', () => {
   })
 })
 
-describe('/GET additives/:id', () => {
-  it('only additive by id=1', (done) => {
-    request('/additives/1', (err, res) => {
-      successItem(err, res)
-      necessaryFields(err, res)
-      res.body.should.have.property('id', 1)
-      done()
-    })
-  })
-
-  it('should get additive without error of not exist field testField', (done) => {
-    request('/additives/1?testField=1234', (err, res) => {
-      successItem(err, res)
-      necessaryFields(err, res)
-      res.body.should.have.property('id', 1)
-      done()
-    })
-  })
-
-  it('ERROR 404 - by id, but city_id not found', (done) => {
-    request('/additives/1?city_id=3332', (err, res) => {
-      error404(err, res)
-      done()
-    })
-  })
-
-  it('ERROR 404 - id not found', (done) => {
-    request('/additives/1234567890', (err, res) => {
-      error404(err, res)
-      done()
-    })
-  })
-})
-
-
 describe('/PUT additives:id', () => {
   step('Update item success several filelds', (done) => {
     const updateItem = {
@@ -166,32 +161,29 @@ describe('/PUT additives:id', () => {
       data: []
     }
 
-    requestPut(`/additives/${additiveId}`, updateItem, (err, res) => {
+    requestPut(`/additives/${itemId}`, updateItem, (err, res) => {
       success(err, res)
       done()
     })
   })
-
 
   step('Update item success ONLY public field', (done) => {
     const updateItem = {
       public: false
     }
 
-    requestPut(`/additives/${additiveId}`, updateItem, (err, res) => {
+    requestPut(`/additives/${itemId}`, updateItem, (err, res) => {
       success(err, res)
       done()
     })
   })
 
-
   step('ERROR 500 - need minimun 1 properties in body', (done) => {
-    requestPut(`/additives/${additiveId}`, {}, (err, res) => {
+    requestPut(`/additives/${itemId}`, {}, (err, res) => {
       error500_schemaFailed(err, res)
       done()
     })
   })
-
 
   step('ERROR 500 - schema error, wrong types of fields', (done) => {
     const updatePerson = {
@@ -200,7 +192,7 @@ describe('/PUT additives:id', () => {
       data: "333"
     }
 
-    requestPut(`/additives/${additiveId}`, updatePerson, (err, res) => {
+    requestPut(`/additives/${itemId}`, updatePerson, (err, res) => {
       error500_schemaFailed(err, res)
       done()
     })
@@ -214,10 +206,9 @@ describe('/PUT additives:id', () => {
   })
 })
 
-
 describe('/DELETE additives/:id', () => {
   step('should success delete', (done) => {
-    requestDelete(`/additives/${additiveId}`, (err, res) => {
+    requestDelete(`/additives/${itemId}`, (err, res) => {
       success(err, res)
       done()
     })

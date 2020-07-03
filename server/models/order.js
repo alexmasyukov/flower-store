@@ -1,50 +1,60 @@
-class OrderModel {
-    static get table() {
-        return 'orders'
-    }
+const {
+  type,
+  all,
+  minProperties,
+  paramsSchema
+} = require('../models/common')
 
-    static get jsonSchema() {
-        return {
-            type: 'object',
-            required: [
-                'city_id',
-                'customer_id',
-                'steps',
-                'products'
-            ],
-            properties: {
-                id: { type: 'integer' },
-                city_id: { type: 'integer' },
-                customer_id: { type: 'integer' },
-                complete: { type: 'boolean' },
-                steps: { type: "object" },
-                products: { type: "array" },
-            }
-        }
-    }
-}
+class Order {
+  static table = 'orders'
 
-class OrderCompleteModel {
-    static get table() {
-        return 'orders'
-    }
+  static properties = {
+    city_id: { type: 'integer' },
+    customer_id: { type: 'integer' },
+    complete: { type: 'boolean' },
+    steps: { type: "object" },
+    products: { type: "object" }
+  }
 
-    static get jsonSchema() {
-        return {
-            type: 'object',
-            required: [
-                'id',
-                'complete'
-            ],
-            properties: {
-                id: { type: 'integer' },
-                complete: { type: 'boolean' }
-            }
-        }
+  static get bodySchema() {
+    const { properties } = this
+    return {
+      type,
+      minProperties,
+      required: [
+        'city_id',
+        'customer_id',
+        'complete',
+        'steps',
+        'products'
+      ],
+      properties
     }
+  }
+
+  static paramsSchema = paramsSchema
+
+  static get querySchema() {
+    const { properties: { products, steps, ...properties } } = this
+    return {
+      type,
+      properties: {
+        all,
+        ...properties
+      }
+    }
+  }
+
+  static get updateSchema() {
+    const { properties } = this
+    return {
+      type,
+      minProperties,
+      properties
+    }
+  }
 }
 
 module.exports = {
-    OrderCompleteModel,
-    OrderModel
+  Order
 }

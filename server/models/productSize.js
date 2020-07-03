@@ -1,10 +1,14 @@
+const {
+  type,
+  all,
+  minProperties,
+  paramsSchema
+} = require('../models/common')
+
 class ProductSize {
   static table = 'product_sizes'
 
-  static type = 'object'
-  static minProperties = 1
   static properties = {
-    id: { type: 'integer' },
     city_id: { type: 'integer' },
     product_id: { type: 'integer' },
     order: { type: ['integer', 'null'] },
@@ -31,7 +35,7 @@ class ProductSize {
   }
 
   static get bodySchema() {
-    const { type, properties, minProperties } = this
+    const { properties } = this
     return {
       type,
       minProperties,
@@ -51,32 +55,23 @@ class ProductSize {
     }
   }
 
-  static get paramsSchema() {
-    const { type } = this
-    return {
-      type,
-      required: [
-        'id'
-      ],
-      properties: {
-        id: { type: 'integer' }
-      }
-    }
-  }
+  static paramsSchema = paramsSchema
 
   static get querySchema() {
     const {
-      type,
       properties: { flowers, flowers_counts, images, ...properties }
     } = this
     return {
       type,
-      properties
+      properties: {
+        all,
+        ...properties
+      }
     }
   }
 
   static get updateSchema() {
-    const { type, properties, minProperties } = this
+    const { properties } = this
     return {
       type,
       minProperties,

@@ -1,36 +1,47 @@
 const express = require('express')
-const cacheControl = require('express-cache-controller')
+// const cacheControl = require('express-cache-controller')
 const router = express.Router()
 const commonController = require("../controllers/common")
 const customersController = require("../controllers/customers")
 const { Customer } = require('../models/customer')
-const { validateSchema } = require('../middlewares/jsonSchemaValidator')
+const {
+  validateQuery,
+  validateBody,
+  validateParams
+} = require('../middlewares/jsonSchemaValidator')
+
 
 router.route('/')
   .get(
-    cacheControl({ MaxAge: 10 }),
-    commonController.getAll('customers', 'id', 'desc', {})
+    validateQuery(Customer.querySchema),
+    commonController.getAll(Customer.table, 'id', 'desc', {})
   )
   .post(
-    validateSchema(Customer.jsonSchema),
-    commonController.createOne('customers')
-  )
-
-router.route('/confim')
-  .post(
-    validateSchema(Customer.confimJsonSchema),
-    customersController.confim
+    validateBody(Customer.bodySchema),
+    commonController.createOne(Customer.table, ['extra'])
   )
 
 router.route('/:id')
   .get(
-    cacheControl({ MaxAge: 10 }),
-    commonController.getOne('customers', {})
+    validateParams(Customer.paramsSchema),
+    validateQuery(Customer.querySchema),
+    commonController.getOne(Customer.table, {})
   )
   .put(
-    validateSchema(Customer.jsonSchema),
-    commonController.updateOne('customers')
+    validateParams(Customer.paramsSchema),
+    validateBody(Customer.updateSchema),
+    commonController.updateOne(Customer.table, ['extra'])
   )
-  // .delete(commonController.deleteOne('customers'))
+  .delete(
+    validateParams(Customer.paramsSchema),
+    commonController.deleteOne(Customer.table)
+  )
+
+
+router.route('/confim')
+  .post(
+    validateBody(Customer.confimJsonSchema),
+    customersController.confim
+  )
 
 module.exports = router

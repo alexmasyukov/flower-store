@@ -1,8 +1,13 @@
+const {
+  type,
+  all,
+  minProperties,
+  paramsSchema
+} = require('../models/common')
+
 class Content {
   static table = 'content'
 
-  static type = 'object'
-  static minProperties = 1
   static properties = {
     city_id: { type: 'integer' },
     order: { type: 'integer' },
@@ -12,7 +17,7 @@ class Content {
   }
 
   static get bodySchema() {
-    const { type, properties, minProperties } = this
+    const { properties } = this
     return {
       type,
       minProperties,
@@ -27,29 +32,21 @@ class Content {
     }
   }
 
-  static get paramsSchema() {
-    const { type } = this
+  static paramsSchema = paramsSchema
+
+  static get querySchema() {
+    const { properties: { content, ...properties } } = this
     return {
       type,
-      required: [
-        'id'
-      ],
       properties: {
-        id: { type: 'integer' }
+        all,
+        ...properties
       }
     }
   }
 
-  static get querySchema() {
-    const { type, properties: { content, ...properties } } = this
-    return {
-      type,
-      properties
-    }
-  }
-
   static get updateSchema() {
-    const { type, properties, minProperties } = this
+    const { properties } = this
     return {
       type,
       minProperties,

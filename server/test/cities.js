@@ -12,6 +12,7 @@ const title = url.replace('/', '')
 
 
 const necessaryFieldsInArray = (err, res) => {
+  res.body.should.all.have.property('id')
   res.body.should.all.have.property('public')
   res.body.should.all.have.property('eng')
   res.body.should.all.have.property('rus')
@@ -20,6 +21,7 @@ const necessaryFieldsInArray = (err, res) => {
 }
 
 const necessaryFields = (err, res) => {
+  res.body.should.have.property('id')
   res.body.should.have.property('public')
   res.body.should.have.property('eng')
   res.body.should.have.property('rus')
@@ -30,7 +32,7 @@ const necessaryFields = (err, res) => {
 
 describe(`/GET ${title}`, () => {
   it('all items', (done) => {
-    request(`${url}`, (err, res) => {
+    request(`${url}?all=true`, (err, res) => {
       successArray(err, res)
       necessaryFieldsInArray(err, res)
       done()
@@ -48,7 +50,7 @@ describe(`/GET ${title}`, () => {
   })
 
   it('ERROR 404', (done) => {
-    request(`${url}?title=ertwtwd&public=false&city_id=555`, (err, res) => {
+    request(`${url}?all=true&eng=ertwtwd&public=false`, (err, res) => {
       error404(err, res)
       done()
     })
@@ -64,7 +66,7 @@ describe(`/GET ${title}`, () => {
 
 describe(`/GET ${title}:id`, () => {
   it('only item by id=1', (done) => {
-    request(`${url}/1`, (err, res) => {
+    request(`${url}/1?all=true`, (err, res) => {
       successItem(err, res)
       necessaryFields(err, res)
       res.body.should.have.property('id', 1)
@@ -73,7 +75,7 @@ describe(`/GET ${title}:id`, () => {
   })
 
   it('get item without error (param testField should be removed)', (done) => {
-    request(`${url}/1?testField=1234`, (err, res) => {
+    request(`${url}/1?all=true&testField=1234`, (err, res) => {
       successItem(err, res)
       necessaryFields(err, res)
       res.body.should.have.property('id', 1)
@@ -82,7 +84,7 @@ describe(`/GET ${title}:id`, () => {
   })
 
   it('ERROR 404 - by id, eng not found', (done) => {
-    request(`${url}/1?eng=URAL`, (err, res) => {
+    request(`${url}/1?all=true&eng=URAL`, (err, res) => {
       error404(err, res)
       done()
     })

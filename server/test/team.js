@@ -24,7 +24,7 @@ const person = {
   instagram: "TEST 4"
 }
 
-let personId = 0
+let itemId = 0
 
 
 const necessaryFieldsInArray = (err, res) => {
@@ -44,7 +44,7 @@ describe('/POST team', () => {
   step('Add new person', (done) => {
     requestPost('/team', person, (err, res) => {
       success(err, res)
-      personId = res.body.result
+      itemId = res.body.result
       done()
     })
   })
@@ -72,7 +72,7 @@ describe('/POST team', () => {
 
 describe('/GET team', () => {
   it('all the persons, every has id, city_id, public', (done) => {
-    request('/team', (err, res) => {
+    request('/team?all=true', (err, res) => {
       successArray(err, res)
       necessaryFieldsInArray(err, res)
       done()
@@ -89,7 +89,7 @@ describe('/GET team', () => {
   })
 
   it('only persons where is_florist=false', (done) => {
-    request('/team?is_florist=false', (err, res) => {
+    request('/team?all=true&is_florist=false', (err, res) => {
       successArray(err, res)
       necessaryFieldsInArray(err, res)
       expect(res.body.every(item => item.is_florist === false)).to.be.true
@@ -113,26 +113,26 @@ describe('/GET team', () => {
 })
 
 describe('/GET team/:id', () => {
-  it('only person by id=1', (done) => {
-    request('/team/1', (err, res) => {
+  it(`only person by id=${itemId}`, (done) => {
+    request(`/team/${itemId}?all=true`, (err, res) => {
       successItem(err, res)
       necessaryFields(err, res)
-      res.body.should.have.property('id', 1)
+      res.body.should.have.property('id', itemId)
       done()
     })
   })
 
   it('should get person without error of not exist field testField', (done) => {
-    request('/team/1?testField=1234', (err, res) => {
+    request(`/team/${itemId}?all=true&testField=1234`, (err, res) => {
       successItem(err, res)
       necessaryFields(err, res)
-      res.body.should.have.property('id', 1)
+      res.body.should.have.property('id', itemId)
       done()
     })
   })
 
   it('ERROR 404 - by id, but city_id not found', (done) => {
-    request('/team/1?city_id=3332', (err, res) => {
+    request(`/team/${itemId}?all=true&city_id=3332`, (err, res) => {
       error404(err, res)
       done()
     })
@@ -156,7 +156,7 @@ describe('/PUT team:id', () => {
       public: true
     }
 
-    requestPut(`/team/${personId}`, updatePerson, (err, res) => {
+    requestPut(`/team/${itemId}`, updatePerson, (err, res) => {
       success(err, res)
       done()
     })
@@ -167,14 +167,14 @@ describe('/PUT team:id', () => {
       public: false
     }
 
-    requestPut(`/team/${personId}`, updatePerson, (err, res) => {
+    requestPut(`/team/${itemId}`, updatePerson, (err, res) => {
       success(err, res)
       done()
     })
   })
 
   step('ERROR 500 - need minimun 1 properties in body', (done) => {
-    requestPut(`/team/${personId}`, {}, (err, res) => {
+    requestPut(`/team/${itemId}`, {}, (err, res) => {
       error500_schemaFailed(err, res)
       done()
     })
@@ -187,7 +187,7 @@ describe('/PUT team:id', () => {
       public: "323"
     }
 
-    requestPut(`/team/${personId}`, updatePerson, (err, res) => {
+    requestPut(`/team/${itemId}`, updatePerson, (err, res) => {
       error500_schemaFailed(err, res)
       done()
     })
@@ -204,7 +204,7 @@ describe('/PUT team:id', () => {
 
 describe('/DELETE team/:id', () => {
   step('should success delete', (done) => {
-    requestDelete(`/team/${personId}`, (err, res) => {
+    requestDelete(`/team/${itemId}`, (err, res) => {
       success(err, res)
       done()
     })

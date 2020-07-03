@@ -1,8 +1,14 @@
+const {
+  type,
+  all,
+  minProperties,
+  paramsSchema
+} = require('../models/common')
+
+
 class Additive {
   static table = 'additives'
 
-  static type = 'object'
-  static minProperties = 1
   static properties = {
     city_id: { type: 'integer' },
     order: { type: 'integer' },
@@ -30,7 +36,7 @@ class Additive {
   }
 
   static get bodySchema() {
-    const { type, properties, minProperties } = this
+    const { properties } = this
     return {
       type,
       minProperties,
@@ -46,29 +52,22 @@ class Additive {
     }
   }
 
-  static get paramsSchema() {
-    const { type } = this
+  static paramsSchema = paramsSchema
+
+  static get querySchema() {
+    const { properties: { data, ...properties } } = this
+
     return {
       type,
-      required: [
-        'id'
-      ],
       properties: {
-        id: { type: 'integer' }
+        all,
+        ...properties
       }
     }
   }
 
-  static get querySchema() {
-    const { type, properties: { data, ...properties } } = this
-    return {
-      type,
-      properties
-    }
-  }
-
   static get updateSchema() {
-    const { type, properties, minProperties } = this
+    const { properties } = this
     return {
       type,
       minProperties,
