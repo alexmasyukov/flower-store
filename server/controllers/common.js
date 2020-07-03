@@ -36,7 +36,7 @@ module.exports = {
     }
   },
 
-  getOne(table, query = { public: true }) {
+  getOne(table, query = { public: true }, nextMiddleware = false) {
     return async function(req, res, next) {
       try {
         const { all, ...baseQuery } = req.query
@@ -57,6 +57,11 @@ module.exports = {
 
         if (!item)
           return next(utils.error(404, 'error', `${table} not found`))
+
+        if (nextMiddleware) {
+          res[nextMiddleware] = item
+          return next()
+        }
 
         res.json(item)
       } catch (e) {
