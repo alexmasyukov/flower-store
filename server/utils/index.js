@@ -6,6 +6,7 @@ const error = (status, code, message) => {
   const error = new Error(message)
   error.status = status
   error.code = code
+  error.message = message
   return error
 }
 
@@ -62,7 +63,13 @@ const when = (cond, f) => x => {
   return cond(x) ? f(x) : x
 }
 
+const ksort = o => Object.keys(o).sort().reduce((res, key) => ({
+  ...res,
+  [key]: o[key]
+}), {})
+
 module.exports = {
+  ksort,
   error,
   extractFileExt,
   convertEntitie,

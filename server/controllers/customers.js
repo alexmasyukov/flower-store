@@ -1,91 +1,87 @@
 const knex = require('../db/knex')
 const utils = require('../utils')
+const smsController = require('../controllers/sms')
 
 
 const STATUS = {
-    CODE_SENT: 'CODE_SENT',
-    CONFIM_DONE: 'CONFIM_DONE',
-    INCORRECT_CODE: 'INCORRECT_CODE',
-    SEND_SMS_ERROR: 'SEND_SMS_ERROR'
+  SEND_SMS_DONE: 'SEND_SMS_DONE',
+  DONE: 'DONE',
+  INCORRECT_CODE: 'INCORRECT_CODE',
+  SEND_SMS_ERROR: 'SEND_SMS_ERROR'
 }
 
 const table = 'customers'
 
-async function sendSmsCode(code) {
-    return await new Promise((resolve, reject) => {
-        setTimeout(() => {
-            Math.random() > 0.5 ? resolve('ok') : reject('fuck')
-        }, 1000)
-    })
-}
-
 
 async function getCustomerByPhone(phone) {
-    const customer = await knex
-        .select('id', 'points', 'last_sms_code', 'points')
-        .from(table)
-        .where('phone', phone)
-        .first()
-
-    return customer
+  return await knex
+    .select('id', 'points', 'last_sms_code', 'points')
+    .from(table)
+    .where('phone', phone)
+    .first()
 }
 
 async function insertCustomer(customer) {
-    const newCustomer = await knex(table)
-        .insert(customer)
-        .returning(['id', 'phone', 'last_sms_code', 'points'])
+  const newCustomer = await knex(table)
+    .insert(customer)
+    .returning(['id', 'phone', 'last_sms_code', 'points'])
 
-    return newCustomer[0]
+  return newCustomer[0]
 }
 
 async function updateLastSmsCodeInCustomer(customerId, code) {
-    const id = await knex(table)
-        .update({
-            last_sms_code: code
-        })
-        .where('id', customerId)
-        .returning('id')
+  const id = await knex(table)
+    .update({
+      last_sms_code: code
+    })
+    .where('id', customerId)
+    .returning('id')
 
-    return id
+  return id
 }
 
+
 module.exports = {
-    async confim(req, res, next) {
-        const { phone, name, sms_code } = req.body
+  async confim(req, res, next) {
+    try {
+      const { phone, name, sms_code } = req.body
 
-        const customer = await getCustomerByPhone(phone) ||
-            await insertCustomer({ phone, name })
+      const customer = await getCustomerByPhone(phone) ||
+        await insertCustomer({ phone, name })
 
-        if (!sms_code) {
-            const code = Math.random().toString().substr(2, 4)
+      if (!sms_code) {
+        const code = Math.random().toString().substr(2, 4)
 
-            try {
-                await sendSmsCode(code)
-            } catch (e) {
-                // next(utils.error(500, 'ERROR', e))
-                return res.status(500).json({
-                    status: STATUS.SEND_SMS_ERROR,
-                    result: e
-                })
-            }
-
-            await updateLastSmsCodeInCustomer(customer.id, code)
-            return res.json({
-                status: STATUS.CODE_SENT,
-                result: {}
-            })
+        let sms = {}
+        try {
+          sms = await smsController.sendSms(phone, code) //'Клумба код: ' +
+          console.log('sms', sms)
+        } catch (e) {
+          console.log(e)
+          return next(utils.error(500, STATUS.SEND_SMS_ERROR, e))
         }
 
-        if (Number(sms_code) === Number(customer.last_sms_code)) {
-            return res.json({
-                status: STATUS.CONFIM_DONE, //STATUS.SEND_SMS_ERROR
-                result: { points : customer.points }
-            })
-        }
+        await updateLastSmsCodeInCustomer(customer.id, code)
 
-        res.json({
-            status: STATUS.INCORRECT_CODE, //STATUS.SEND_SMS_ERROR
-            result: {}
+        return res.json({
+          status: STATUS.SEND_SMS_DONE,
+          result: sms
         })
+      }
+
+      if (Number(sms_code) === Number(customer.last_sms_code)) {
+        return res.json({
+          status: STATUS.DONE,
+          result: { points: customer.points }
+        })
+      }
+
+      res.json({
+        status: STATUS.INCORRECT_CODE,
+        result: {}
+      })
+    } catch (e) {
+      return next(utils.error(500, STATUS.SEND_SMS_ERROR, e))
     }
+  }
 }

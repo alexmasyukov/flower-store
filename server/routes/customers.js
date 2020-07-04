@@ -3,6 +3,7 @@ const express = require('express')
 const router = express.Router()
 const commonController = require("../controllers/common")
 const customersController = require("../controllers/customers")
+const smsController = require('../controllers/sms')
 const { Customer } = require('../models/customer')
 const {
   validateQuery,
@@ -41,6 +42,7 @@ router.route('/:id')
 router.route('/confim')
   .post(
     validateBody(Customer.confimJsonSchema),
+    // smsController.getSmsConfig('sendSMS'),
     customersController.confim
   )
 
