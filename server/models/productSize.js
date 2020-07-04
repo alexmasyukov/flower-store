@@ -9,8 +9,8 @@ class ProductSize {
   static table = 'product_sizes'
 
   static properties = {
-    city_id: { type: 'integer' },
     product_id: { type: 'integer' },
+    city_id: { type: 'integer' },
     order: { type: ['integer', 'null'] },
     public: { type: 'boolean' },
     fast: { type: 'boolean' },
@@ -40,7 +40,7 @@ class ProductSize {
       type,
       minProperties,
       required: [
-        'city_id',
+        // 'city_id',
         'order',
         'public',
         'title',
@@ -75,9 +75,7 @@ class ProductSize {
     return {
       type,
       minProperties,
-      properties: {
-        public: properties.public
-      }
+      properties
     }
   }
 }

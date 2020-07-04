@@ -19,7 +19,7 @@ const update_200_success = {
   public: true
 }
 
-const itemId = 52
+const itemId = 60
 
 const necessaryFieldsInArray = (err, res) => {
   res.body.should.all.have.property('id')
@@ -53,26 +53,26 @@ const necessaryFields = (err, res) => {
 
 
 describe(`/GET ${title}:id`, () => {
-  it('only item by id=52', (done) => {
-    request(`${url}/52?all=true`, (err, res) => {
+  it('only item by id=60', (done) => {
+    request(`${url}/60?all=true`, (err, res) => {
       successItem(err, res)
       necessaryFields(err, res)
-      res.body.should.have.property('id', 52)
+      res.body.should.have.property('id', 60)
       done()
     })
   })
 
   it('get item without error (param testField should be removed)', (done) => {
-    request(`${url}/52?all=true&testField=1234`, (err, res) => {
+    request(`${url}/60?all=true&testField=1234`, (err, res) => {
       successItem(err, res)
       necessaryFields(err, res)
-      res.body.should.have.property('id', 52)
+      res.body.should.have.property('id', 60)
       done()
     })
   })
 
   it('ERROR 404 - by id, city_id not found', (done) => {
-    request(`${url}/52?all=true&city_id=3332`, (err, res) => {
+    request(`${url}/60?all=true&city_id=3332`, (err, res) => {
       error404(err, res)
       done()
     })

@@ -1,34 +1,52 @@
 const express = require('express')
-const cacheControl = require('express-cache-controller')
+// const cacheControl = require('express-cache-controller')
 const router = express.Router()
-const { validateSchema, validateProductSizes } = require('../middlewares/jsonSchemaValidator')
 const productController = require('../controllers/products')
+const commonController = require('../controllers/common')
 const { Product } = require('../models/product')
 const { ProductSize } = require('../models/productSize')
+const {
+  validateQuery,
+  validateBody,
+  validateParams,
+  validateProductSizes
+} = require('../middlewares/jsonSchemaValidator')
+
+// cacheControl({ maxAge: 5 }),
 
 router.route('/')
   .get(
-    cacheControl({ maxAge: 5 }),
-    productController.getAllProducts)
+    validateQuery(Product.querySchema),
+    productController.getAllProducts
+  )
   .post(
-    validateSchema(Product.jsonSchema),
-    validateProductSizes(ProductSize.jsonSchema),
+    validateBody(Product.bodySchema),
+    validateProductSizes(ProductSize.bodySchema),
     productController.createProduct
   )
 
-router.route('/update-order')
-  .put(productController.updateOrder)
-
 router.route('/:id')
-  .get(productController.getProduct)
+  .get(
+    validateParams(Product.paramsSchema),
+    validateQuery(Product.querySchema),
+    productController.getProduct
+  )
   .put(
-    validateSchema(Product.jsonSchema),
-    validateProductSizes(ProductSize.jsonSchema),
+    validateParams(Product.paramsSchema),
+    validateBody(Product.updateSchema),
+    // todo: fix it может внутрь товара положить схему размеров
+    // validateProductSizes(ProductSize.updateSchema),
     productController.updateProduct
   )
-  .delete(productController.deleteProduct)
+  .delete(
+    validateParams(Product.paramsSchema),
+    commonController.deleteOne(Product.table)
+  )
 
-router.route('/:id/:field')
-  .put(productController.updateProductField)
+
+// router.route('/:id/:field')
+//   .put(productController.updateProductField)
+// router.route('/update-order')
+//   .put(productController.updateOrder)
 
 module.exports = router

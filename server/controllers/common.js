@@ -123,7 +123,7 @@ module.exports = {
     return async function(req, res, next) {
       try {
         const found = await knex
-          .select()
+          .select('id')
           .from(table)
           .where('id', req.params.id)
 

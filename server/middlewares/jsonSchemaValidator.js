@@ -92,7 +92,7 @@ function validateProductSizes(schema) {
     }
 
     req.body.sizes.forEach(size => {
-      const valid = validate(schema, size)
+      const valid = validate(schema, size, ajv)
       if (valid.status === 'error') {
         return res.status(500).send(valid.errors)
       }
