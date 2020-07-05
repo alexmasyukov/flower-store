@@ -6,11 +6,17 @@ const {
   success,
   successItem,
   successArray,
-  request,
-  requestDelete,
-  requestPost,
-  requestPut
 } = require('./common')
+
+delete require.cache[require.resolve('./auth')]
+
+const {
+  request,
+  requestPost,
+  requestDelete,
+  requestPut,
+  loguot
+} = require('./auth')
 
 const url = '/bot-viber'
 const title = url.replace('/', '')
@@ -114,3 +120,5 @@ describe(`/PUT ${title}:id`, () => {
     })
   })
 })
+
+loguot()

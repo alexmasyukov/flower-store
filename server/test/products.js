@@ -5,12 +5,18 @@ const {
   error500_schemaFailed,
   success,
   successItem,
-  successArray,
-  request,
-  requestDelete,
-  requestPost,
-  requestPut
+  successArray
 } = require('./common')
+
+delete require.cache[require.resolve('./auth')]
+
+const {
+  request,
+  requestPost,
+  requestDelete,
+  requestPut,
+  loguot
+} = require('./auth')
 
 const url = '/products'
 const title = url.replace('/', '')
@@ -340,3 +346,5 @@ describe(`/DELETE ${title}:id`, () => {
     })
   })
 })
+
+loguot()

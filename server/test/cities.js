@@ -3,13 +3,21 @@ const {
   error404,
   error500_schemaFailed,
   successItem,
-  successArray,
-  request
+  successArray
 } = require('./common')
+
+const {
+  request,
+  requestPost,
+  requestDelete,
+  requestPut,
+  loguot
+} = require('./auth')
+
+delete require.cache[require.resolve('./auth')]
 
 const url = '/cities'
 const title = url.replace('/', '')
-
 
 const necessaryFieldsInArray = (err, res) => {
   res.body.should.all.have.property('id')
@@ -97,3 +105,5 @@ describe(`/GET ${title}:id`, () => {
     })
   })
 })
+
+loguot()

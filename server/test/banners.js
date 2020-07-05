@@ -6,12 +6,17 @@ const {
   success,
   successItem,
   successArray,
-  request,
-  requestDelete,
-  requestPost,
-  requestPut
 } = require('./common')
 
+delete require.cache[require.resolve('./auth')]
+
+const {
+  request,
+  requestPost,
+  requestDelete,
+  requestPut,
+  loguot
+} = require('./auth')
 
 const banner = {
   city_id: 1,
@@ -220,3 +225,5 @@ describe('/DELETE banners/:id', () => {
     })
   })
 })
+
+loguot()

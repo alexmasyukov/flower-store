@@ -4,9 +4,17 @@ const {
   error500_schemaFailed,
   success,
   successItem,
-  request,
-  requestPut
 } = require('./common')
+
+delete require.cache[require.resolve('./auth')]
+
+const {
+  request,
+  requestPost,
+  requestDelete,
+  requestPut,
+  loguot
+} = require('./auth')
 
 const url = '/products-sizes'
 const title = url.replace('/', '')
@@ -126,3 +134,5 @@ describe(`/PUT ${title}:id`, () => {
     })
   })
 })
+
+loguot()

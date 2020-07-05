@@ -6,11 +6,17 @@ const {
   success,
   successItem,
   successArray,
-  request,
-  requestDelete,
-  requestPost,
-  requestPut
 } = require('./common')
+
+delete require.cache[require.resolve('./auth')]
+
+const {
+  request,
+  requestPost,
+  requestDelete,
+  requestPut,
+  loguot
+} = require('./auth')
 
 const url = '/content'
 const title = url.replace('/', '')
@@ -211,3 +217,5 @@ describe(`/DELETE ${title}:id`, () => {
     })
   })
 })
+
+loguot()

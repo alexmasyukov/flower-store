@@ -77,8 +77,8 @@ app.use(session({
     httpOnly: true,
     domain: 'localhost',
     maxAge: 10000 * 10000 // ten seconds, for testing
-  }
-  // saveUninitialized: false
+  },
+  saveUninitialized: false
 }))
 app.use(passport.initialize())
 app.use(passport.session())

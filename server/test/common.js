@@ -12,29 +12,33 @@ chai.use(chaiThings)
 
 const apiUrl = 'http://localhost/api/v1'
 
-const request = (url, endHandler) => {
+const request = (url, endHandler, cookies = '') => {
   chai.request(apiUrl)
     .get(url)
+    .set('Cookie', cookies)
     .end(endHandler)
 }
 
-const requestDelete = (url, endHandler) => {
+const requestDelete = (url, endHandler, cookies = '') => {
   chai.request(apiUrl)
     .delete(url)
+    .set('Cookie', cookies)
     .end(endHandler)
 }
 
-const requestPost = (url, body, endHandler) => {
+const requestPost = (url, body, endHandler, cookies = '') => {
   return chai.request(apiUrl)
     .post(url)
+    .set('Cookie', cookies)
     .set('content-type', 'application/json')
     .send(body)
     .end(endHandler)
 }
 
-const requestPut = (url, body, endHandler) => {
+const requestPut = (url, body, endHandler, cookies = '') => {
   chai.request(apiUrl)
     .put(url)
+    .set('Cookie', cookies)
     .set('content-type', 'application/json')
     .send(body)
     .end(endHandler)
@@ -86,8 +90,6 @@ module.exports = {
   successItem,
   successArray
 }
-
-
 
 
 // describe('/POST team', () => {
