@@ -8,17 +8,18 @@ const imageminPngquant = require('imagemin-pngquant')
 const sharp = require('sharp')
 const router = express.Router()
 const utils = require('../utils')
+const checkAuth = require('../middlewares/checkAuth')
 
 // https://appdividend.com/2019/02/14/node-express-image-upload-and-resize-tutorial-example/#Step_6_Create_fileupload_middleware
 
 
 const storageConfig = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../uploads'))
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${uuidv4()}.${utils.extractFileExt(file.originalname)}`)
-    }
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../uploads'))
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${uuidv4()}.${utils.extractFileExt(file.originalname)}`)
+  }
 })
 
 
@@ -26,175 +27,176 @@ const memoryStorageConfig = multer.memoryStorage()
 
 
 const fileFilter = (req, file, cb) => {
-    if (file.mimetype === "image/png" ||
-      file.mimetype === "image/jpg" ||
-      file.mimetype === "image/jpeg") {
-        cb(null, true)
-    } else {
-        cb({
-            status: 415,
-            code: 'WRONG_FILE_TYPE',
-            message: 'only images image/png, image/jpg, image/jpeg'
-        }, false)
-    }
+  if (file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg") {
+    cb(null, true)
+  } else {
+    cb({
+      status: 415,
+      code: 'WRONG_FILE_TYPE',
+      message: 'only images image/png, image/jpg, image/jpeg'
+    }, false)
+  }
 }
 
 
 const upload = multer({
-    storage: memoryStorageConfig, //storageConfig,
-    fileFilter
+  storage: memoryStorageConfig, //storageConfig,
+  fileFilter
 }).array('attachments', 2)
 
 
 const uploadImages = (req, res, next) => {
-    upload(req, res, (err) => {
-        // Ошибки multer
-        if (err) {
-            const { status = 422, code, message } = err
-            next(utils.error(status, code, message))
-            return
-        }
+  upload(req, res, (err) => {
+    // Ошибки multer
+    if (err) {
+      const { status = 422, code, message } = err
+      next(utils.error(status, code, message))
+      return
+    }
 
-        // Остальные ошибки
-        if (!req.files.length) {
-            next(utils.error(500, 'NO_FILES', 'no files to download'))
-            return
-        }
+    // Остальные ошибки
+    if (!req.files.length) {
+      next(utils.error(500, 'NO_FILES', 'no files to download'))
+      return
+    }
 
-        // нет ошибок, передаем управление слудующей middleware
-        // при этом в req.files будет существовать
-        next()
-    })
+    // нет ошибок, передаем управление слудующей middleware
+    // при этом в req.files будет существовать
+    next()
+  })
 }
 
 const extractBufferFilesFromMulter = (req, res, next) => {
-    req.processedFiles = req.files.map(file => ({
-        filename: `${uuidv4()}`,
-        ext: `${utils.extractFileExt(file.originalname)}`,
-        buffer: file.buffer
-    }))
+  req.processedFiles = req.files.map(file => ({
+    filename: `${uuidv4()}`,
+    ext: `${utils.extractFileExt(file.originalname)}`,
+    buffer: file.buffer
+  }))
 
-    next()
+  next()
 }
 
 const resizeImages = async (width, processedFiles, next) => {
-    const files = []
+  const files = []
 
-    for (const file of processedFiles) {
-        try {
-            const buffer = await sharp(file.buffer)
-              .resize({
-                  width
-              })
-              .toBuffer()
+  for (const file of processedFiles) {
+    try {
+      const buffer = await sharp(file.buffer)
+        .resize({
+          width
+        })
+        .toBuffer()
 
-            files.push({
-                ...file,
-                buffer
-            })
-        } catch (err) {
-            next(utils.error(422, 'IMAGE_RESIZE_ERROR', err.message))
-            return
-        }
+      files.push({
+        ...file,
+        buffer
+      })
+    } catch (err) {
+      next(utils.error(422, 'IMAGE_RESIZE_ERROR', err.message))
+      return
     }
+  }
 
-    return files
+  return files
 }
 
 
 const compressImages = async (processedFiles, next) => {
-    const files = []
+  const files = []
 
-    for (const file of processedFiles) {
-        try {
-            console.log(file)
-            let plugins = []
+  for (const file of processedFiles) {
+    try {
+      // console.log(file)
+      let plugins = []
 
-            switch (file.ext) {
-                case 'jpg':
-                case 'jpeg':
-                    plugins.push(imageminMozjpeg({
-                        quality: 80,
-                        progressive: true
-                    }))
-                    break
-                case 'png':
-                    plugins.push(
-                      imageminPngquant({
-                          quality: [0.8, 0.8]
-                      })
-                    )
-                    break
-            }
-
-            let buffer = file.buffer
-            try {
-                buffer = await imagemin.buffer(file.buffer, {
-                    plugins
-                })
-            } catch (e) {
-                // console.error(e);
-            }
-
-            files.push({
-                ...file,
-                buffer
+      switch (file.ext) {
+        case 'jpg':
+        case 'jpeg':
+          plugins.push(imageminMozjpeg({
+            quality: 80,
+            progressive: true
+          }))
+          break
+        case 'png':
+          plugins.push(
+            imageminPngquant({
+              quality: [0.8, 0.8]
             })
-        } catch (err) {
-            return next(utils.error(422, 'UPLOADING_FILE_ERROR', err.message))
-        }
-    }
+          )
+          break
+      }
 
-    return files
+      let buffer = file.buffer
+      try {
+        buffer = await imagemin.buffer(file.buffer, {
+          plugins
+        })
+      } catch (e) {
+        // console.error(e);
+      }
+
+      files.push({
+        ...file,
+        buffer
+      })
+    } catch (err) {
+      return next(utils.error(422, 'UPLOADING_FILE_ERROR', err.message))
+    }
+  }
+
+  return files
 }
 
 const saveFiles = async (path, prefix, processedFiles, next) => {
-    const files = []
+  const files = []
 
-    for (const file of processedFiles) {
-        try {
-            const filepath = `${prefix}${file.filename}.${file.ext}`
-            const save = await sharp(file.buffer)
-              .toFile(`${path}${filepath}`)
+  for (const file of processedFiles) {
+    try {
+      const filepath = `${prefix}${file.filename}.${file.ext}`
+      const save = await sharp(file.buffer)
+        .toFile(`${path}${filepath}`)
 
-            files.push(filepath)
-        } catch (err) {
-            next(utils.error(500, 'SAVE_UPLOAD_FILE_ERROR', 'sharp save'))
-        }
+      files.push(filepath)
+    } catch (err) {
+      next(utils.error(500, 'SAVE_UPLOAD_FILE_ERROR', 'sharp save'))
     }
+  }
 
-    return files
+  return files
 }
 
 
 const saveImages = async (req, res, next) => {
-    const thumb_width = 250
-    const sm_width = 400
-    const lg_width = 1920
+  const thumb_width = 250
+  const sm_width = 400
+  const lg_width = 1920
 
-    const thumb = await resizeImages(thumb_width, req.processedFiles, next)
-      .then(files => compressImages(files, next))
-      .then(files => saveFiles('uploads/', 'thumb_', files, next))
+  const thumb = await resizeImages(thumb_width, req.processedFiles, next)
+    .then(files => compressImages(files, next))
+    .then(files => saveFiles('uploads/', 'thumb_', files, next))
 
-    const sm = await resizeImages(sm_width, req.processedFiles, next)
-      .then(files => compressImages(files, next))
-      .then(files => saveFiles('uploads/', 'sm_', files, next))
+  const sm = await resizeImages(sm_width, req.processedFiles, next)
+    .then(files => compressImages(files, next))
+    .then(files => saveFiles('uploads/', 'sm_', files, next))
 
-    const lg = await resizeImages(lg_width, req.processedFiles, next)
-      .then(files => compressImages(files, next))
-      .then(files => saveFiles('uploads/', '', files, next))
+  const lg = await resizeImages(lg_width, req.processedFiles, next)
+    .then(files => compressImages(files, next))
+    .then(files => saveFiles('uploads/', '', files, next))
 
-    res.json({
-        result: {
-            thumb,
-            sm,
-            lg
-        }
-    })
+  res.json({
+    result: {
+      thumb,
+      sm,
+      lg
+    }
+  })
 }
 
 
 router.post('/',
+  checkAuth,
   uploadImages,
   extractBufferFilesFromMulter,
   saveImages

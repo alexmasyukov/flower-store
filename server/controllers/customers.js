@@ -55,9 +55,9 @@ module.exports = {
         let sms = {}
         try {
           sms = await smsController.sendSms(phone, code) //'Клумба код: ' +
-          console.log('sms', sms)
+          // console.log('sms', sms)
         } catch (e) {
-          console.log(e)
+          // console.log(e)
           return next(utils.error(500, STATUS.SEND_SMS_ERROR, e))
         }
 

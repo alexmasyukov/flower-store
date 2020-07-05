@@ -7,14 +7,17 @@ const {
   validateBody,
   validateParams
 } = require('../middlewares/jsonSchemaValidator')
+const checkAuth = require('../middlewares/checkAuth')
 
 
 router.route('/')
   .get(
+    checkAuth,
     validateQuery(Content.querySchema),
     commonController.getAll(Content.table)
   )
   .post(
+    checkAuth,
     validateBody(Content.bodySchema),
     commonController.createOne(Content.table)
   )
@@ -26,11 +29,13 @@ router.route('/:id')
     commonController.getOne(Content.table)
   )
   .put(
+    checkAuth,
     validateParams(Content.paramsSchema),
     validateBody(Content.updateSchema),
     commonController.updateOne(Content.table)
   )
   .delete(
+    checkAuth,
     validateParams(Content.paramsSchema),
     commonController.deleteOne(Content.table)
   )

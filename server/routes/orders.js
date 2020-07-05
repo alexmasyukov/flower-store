@@ -11,11 +11,13 @@ const {
   validateBody,
   validateParams
 } = require('../middlewares/jsonSchemaValidator')
+const checkAuth = require('../middlewares/checkAuth')
 
 // cacheControl({ noCache: true }),
 
 router.route('/')
   .get(
+    checkAuth,
     validateQuery(Order.querySchema),
     commonController.getAll(Order.table, 'id', 'desc', {})
   )
@@ -29,6 +31,7 @@ router.route('/')
 
 router.route('/:id')
   .get(
+    checkAuth,
     validateParams(Order.paramsSchema),
     validateQuery(Order.querySchema),
     commonController.getOne(Order.table, {}, 'result_order'),
@@ -58,22 +61,16 @@ router.route('/:id')
     }
   )
   .put(
+    checkAuth,
     validateParams(Order.paramsSchema),
     validateBody(Order.updateSchema),
     commonController.updateOne(Order.table)
   )
   .delete(
+    checkAuth,
     validateParams(Order.paramsSchema),
     commonController.deleteOne(Order.table)
   )
 
-
-router.route('/confirmation')
-  .get(
-    ordersController.confirmation
-  )
-
-// router.route('/notify')
-//   .get(ordersController.nofity)
 
 module.exports = router

@@ -7,6 +7,8 @@ const {
   validateBody,
   validateParams
 } = require('../middlewares/jsonSchemaValidator')
+const checkAuth = require('../middlewares/checkAuth')
+
 
 router.route('/')
   .get(
@@ -14,6 +16,7 @@ router.route('/')
     commonController.getAll(Review.table, 'created_at', 'desc')
   )
   .post(
+    checkAuth,
     validateBody(Review.bodySchema),
     commonController.createOne(Review.table)
   )
@@ -25,11 +28,13 @@ router.route('/:id')
     commonController.getOne(Review.table)
   )
   .put(
+    checkAuth,
     validateParams(Review.paramsSchema),
     validateBody(Review.updateSchema),
     commonController.updateOne(Review.table)
   )
   .delete(
+    checkAuth,
     validateParams(Review.paramsSchema),
     commonController.deleteOne(Review.table)
   )

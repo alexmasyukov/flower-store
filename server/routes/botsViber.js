@@ -8,20 +8,28 @@ const {
   validateBody,
   validateParams
 } = require('../middlewares/jsonSchemaValidator')
+const checkAuth = require('../middlewares/checkAuth')
 
 router.route('/test')
-  .get(botViberController.test)
+  .get(
+    checkAuth,
+    botViberController.test
+  )
 
 router.route('/send')
-  .post(botViberController.sendMessage)
+  .post(
+    botViberController.sendMessage
+  )
 
 router.route('/:id')
   .get(
+    checkAuth,
     validateParams(BotViber.paramsSchema),
     validateQuery(BotViber.querySchema),
     commonController.getOne(BotViber.table, {})
   )
   .put(
+    checkAuth,
     validateParams(BotViber.paramsSchema),
     validateBody(BotViber.updateSchema),
     commonController.updateOne(BotViber.table, ['notify_subscribers'])

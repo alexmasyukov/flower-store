@@ -1,5 +1,5 @@
 const express = require('express')
-// const cacheControl = require('express-cache-controller')
+const cacheControl = require('express-cache-controller')
 const router = express.Router()
 const productController = require('../controllers/products')
 const commonController = require('../controllers/common')
@@ -11,15 +11,17 @@ const {
   validateParams,
   validateProductSizes
 } = require('../middlewares/jsonSchemaValidator')
+const checkAuth = require('../middlewares/checkAuth')
 
-// cacheControl({ maxAge: 5 }),
 
 router.route('/')
   .get(
     validateQuery(Product.querySchema),
+    cacheControl({ maxAge: 10 }),
     productController.getAllProducts
   )
   .post(
+    checkAuth,
     validateBody(Product.bodySchema),
     validateProductSizes(ProductSize.bodySchema),
     productController.createProduct
@@ -32,6 +34,7 @@ router.route('/:id')
     productController.getProduct
   )
   .put(
+    checkAuth,
     validateParams(Product.paramsSchema),
     validateBody(Product.updateSchema),
     // todo: fix it может внутрь товара положить схему размеров
@@ -39,6 +42,7 @@ router.route('/:id')
     productController.updateProduct
   )
   .delete(
+    checkAuth,
     validateParams(Product.paramsSchema),
     commonController.deleteOne(Product.table)
   )

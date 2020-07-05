@@ -7,6 +7,7 @@ const {
   validateBody,
   validateParams
 } = require('../middlewares/jsonSchemaValidator')
+const checkAuth = require('../middlewares/checkAuth')
 
 
 router.route('/')
@@ -15,6 +16,7 @@ router.route('/')
     commonController.getAll(TeamPerson.table)
   )
   .post(
+    checkAuth,
     validateBody(TeamPerson.bodySchema),
     commonController.createOne(TeamPerson.table)
   )
@@ -26,11 +28,13 @@ router.route('/:id')
     commonController.getOne(TeamPerson.table)
   )
   .put(
+    checkAuth,
     validateParams(TeamPerson.paramsSchema),
     validateBody(TeamPerson.updateSchema),
     commonController.updateOne(TeamPerson.table)
   )
   .delete(
+    checkAuth,
     validateParams(TeamPerson.paramsSchema),
     commonController.deleteOne(TeamPerson.table)
   )
