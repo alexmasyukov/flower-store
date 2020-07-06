@@ -130,7 +130,7 @@ services:
 #      - bot-viber-dev
       - api-dev
       # - app-dev
-#      - cms-dev
+      - cms-dev
     volumes:
       - ./settings/nginx_dev:/etc/nginx/conf.d
     ports:

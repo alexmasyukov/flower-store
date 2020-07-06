@@ -62,8 +62,38 @@ passport.use('local', new LocalStrategy(
 passport.serializeUser((user, done) => done(null, user))
 passport.deserializeUser((user, done) => done(null, user))
 
+const whitelist = ['http://localhost:5000', 'http://localhost']
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
+  },
+  methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  credentials: true, //Credentials are cookies, authorization headers or TLS client certificates.
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'device-remember-token', 'Access-Control-Allow-Origin', 'Origin', 'Accept']
+};
+// var corsOptionsDelegate = function (req, callback) {
+//   var corsOptions;
+//   console.log(req.header('Origin'))
+//   if (whitelist.indexOf(req.header('Origin')) !== -1) {
+//     corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
+//   }else{
+//     corsOptions = { origin: false } // disable CORS for this request
+//   }
+//   callback(null, corsOptions) // callback expects two parameters: error and options
+// }
+
 // middleware stack
-app.use(cors())
+app.use(cors(corsOptions))
+// {
+//   // origin: '*',
+//   // origin: 'http://localhost:5000',
+//   credentials: true
+// }))
 app.use(logger)
 app.use(compression())  // { threshold: 0 } what is it?
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -74,10 +104,11 @@ app.use(session({
   secret: 'keyboard cat',
   cookie: {
     path: '/',
-    httpOnly: true,
+    httpOnly: false,
     domain: 'localhost',
     maxAge: 10000 * 10000 // ten seconds, for testing
   },
+  resave: true,
   saveUninitialized: false
 }))
 app.use(passport.initialize())

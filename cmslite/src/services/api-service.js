@@ -20,46 +20,37 @@ export default class ApiService {
   getSmallImage = (name) => this.getImage(`sm_${name}`)
 
   getResource = async (url) => {
-    console.log('getResource', url)
-    const res = await fetch(`${this._apiBase}${this._apiVersion}${url}`, {
-      'Accept-Encoding': 'compress, gzip'
+    return await axios.get(`${this._apiBase}${this._apiVersion}${url}`, {
+      'Accept-Encoding': 'compress, gzip',
+      withCredentials: true
     })
-    if (!res.ok) {
-      throw new Error(`Could not fetch ${url}` +
-        `, received ${res.status}`)
-    }
-    return await res.json()
   }
 
-  // postResource = async (url) => {
-  //     return await axios.post(`${this._apiBase}${url}`, {}, {
-  //         responseType: 'json'
-  //     })
-  //       .then(res => res.data)
-  //       .catch(function(error) {
-  //           alert('Ошибка в запросе / ' + error)
-  //           throw new Error(`Could not fetch ${url}` +
-  //             `, received ${error}`)
-  //       })
-  // }
-
   putResource = async (url, obj = {}, params = {}) => {
-    return await axios.put(`${this._apiBase}${this._apiVersion}${url}`, obj, params)
+    return await axios.put(`${this._apiBase}${this._apiVersion}${url}`, obj, {
+      ...params,
+      responseType: 'json',
+      withCredentials: true
+    })
       .then(res => res.data)
       .catch(this._apiErrHandler)
   }
 
   deleteResource = async (url, params = {}) => {
-    return await axios.delete(`${this._apiBase}${this._apiVersion}${url}`, params)
+    return await axios.delete(`${this._apiBase}${this._apiVersion}${url}`, {
+      ...params,
+      withCredentials: true
+    })
       .then(res => res.data)
       .catch(this._apiErrHandler)
   }
 
   postResource = async (url, obj) => {
     return await axios.post(`${this._apiBase}${this._apiVersion}${url}`, obj, {
-      responseType: 'json'
+      responseType: 'json',
+      withCredentials: true
     })
-      .then(res => res.data)
+      .then(res => res)
       .catch(this._apiErrHandler)
   }
 
@@ -80,44 +71,29 @@ export default class ApiService {
 
 
   // Products
-  saveProduct = async (product) => await this.postResource(`/products`, product)
+  getAllProducts = (convert_entities = true) => async () =>
+    await this.getResource(`/products?all=true&convert_entities=${convert_entities}`)
+
+  getProduct = (id, convert_entities = false) => async () =>
+    await this.getResource(`/products/${id}?&all=true&convert_entities=${convert_entities}`)
+
+  saveProduct = async (product) =>
+    await this.postResource(`/products`, product)
+
   updateProduct = async (product) =>
-    await this.putResource(`/products/${product.id}`, product, {
-      responseType: 'json'
-    })
+    await this.putResource(`/products/${product.id}`, product)
 
-  deleteProduct = async (id) => await this.deleteResource(`/products/${id}`)
-
-  getProduct = (
-    id,
-    convertEntities = false,
-    withUnpublic = false,
-    withUnpublicSizes = false
-  ) => async () => await this.getResource(`/products/${id}??withUnpublic=${withUnpublic}&withUnpublicSizes=${withUnpublicSizes}&convertEntities=${convertEntities}`)
-
-  getAllProducts = (
-    convertEntities = false,
-    withUnpublic = false,
-    withUnpublicSizes = false
-  ) => async () => {
-    return await this.getResource(`/products?withUnpublic=${withUnpublic}&withUnpublicSizes=${withUnpublicSizes}&convertEntities=${convertEntities}`)
-    //.map(this._transformProduct)
-  }
+  deleteProduct = async (id) =>
+    await this.deleteResource(`/products/${id}`)
 
   updateProductPublic = async (id, boolValue = true) =>
-    await this.putResource(`/products/${id}/public`, {
-      value: boolValue
-    })
+    await this.putResource(`/products/${id}`, { public: boolValue })
 
   updateProductSizePublic = async (id, boolValue = true) =>
-    await this.putResource(`/product-sizes/${id}/public`, {
-      value: boolValue
-    })
+    await this.putResource(`/products-sizes/${id}`, { public: boolValue })
 
   updateProductSizeFast = async (id, boolValue = true) =>
-    await this.putResource(`/product-sizes/${id}/fast`, {
-      value: boolValue
-    })
+    await this.putResource(`/products-sizes/${id}`, { fast: boolValue })
 
   updateProductOrderUp = async (order) =>
     await this.putResource(`/products/update-order`, {
@@ -133,91 +109,139 @@ export default class ApiService {
 
 
   // Entities
-  getAllEntities = async () => await this.getResource(`/entities`)
-  getEntitie = (id) => async () => await this.getResource(`/entities/${id}`)
-  updateEntitie = async (entitie) => await this.putResource(`/entities/${entitie.id}`, entitie, {
-    responseType: 'json'
-  })
-  saveEntitie = async (entitie) => await this.postResource(`/entities`, entitie)
+  getAllEntities = async () =>
+    await this.getResource(`/entities`)
+
+  getEntitie = (id) => async () =>
+    await this.getResource(`/entities/${id}`)
+
+  updateEntitie = async (entitie) =>
+    await this.putResource(`/entities/${entitie.id}`, entitie)
+
+  saveEntitie = async (entitie) =>
+    await this.postResource(`/entities`, entitie)
+
 
   // Reviews
-  getAllReviews = async () => await this.getResource(`/reviews?withUnpublic=true`)
-  getLastReviews = (count = 1) => async () => await this.getResource(`/reviews?count=${count}`)
-  getReview = (id) => async () => await this.getResource(`/reviews/${id}?withUnpublic=true`)
-  updateReview = async (review) => await this.putResource(`/reviews/${review.id}`, review, {
-    responseType: 'json'
-  })
-  saveReview = async (review) => await this.postResource(`/reviews`, review)
-  deleteReview = async (id) => await this.deleteResource(`/reviews/${id}`)
+  getAllReviews = async () =>
+    await this.getResource(`/reviews?all=true`)
+
+  getReview = (id) => async () =>
+    await this.getResource(`/reviews/${id}?all=true`)
+
+  updateReview = async (review) =>
+    await this.putResource(`/reviews/${review.id}`, review)
+
+  saveReview = async (review) =>
+    await this.postResource(`/reviews`, review)
+
+  deleteReview = async (id) =>
+    await this.deleteResource(`/reviews/${id}`)
 
 
   // Additives
-  getAllAdditives = async () => await this.getResource(`/additives?withUnpublic=true`)
-  getAdditive = (id) => async () => await this.getResource(`/additives/${id}?withUnpublic=true`)
-  updateAdditive = async (additive) => await this.putResource(`/additives/${additive.id}`, additive, {
-    responseType: 'json'
-  })
-  saveAdditive = async (additive) => await this.postResource(`/additives`, additive)
-  deleteAdditive = async (id) => await this.deleteResource(`/additives/${id}`)
+  getAllAdditives = async () =>
+    await this.getResource(`/additives?all=true`)
+
+  getAdditive = (id) => async () =>
+    await this.getResource(`/additives/${id}?all=true`)
+
+  updateAdditive = async (additive) =>
+    await this.putResource(`/additives/${additive.id}`, additive)
+
+  saveAdditive = async (additive) =>
+    await this.postResource(`/additives`, additive)
+
+  deleteAdditive = async (id) =>
+    await this.deleteResource(`/additives/${id}`)
+
 
   // BotViber
-  getBotViber = (id) => async () => await this.getResource(`/bot-viber/${id}`)
-  updateBotViber = async (data) => await this.putResource(`/bot-viber/${data.id}`, data, {
-    responseType: 'json'
-  })
-  testBotViber = async () => await this.getResource(`/bot-viber/test`)
+  getBotViber = (id) => async () =>
+    await this.getResource(`/bot-viber/${id}?all=true`)
+
+  updateBotViber = async (data) =>
+    await this.putResource(`/bot-viber/${data.id}`, data)
+
+  testBotViber = async () =>
+    await this.getResource(`/bot-viber/test`)
 
 
   // Customers
-  getAllCustomers = async () => await this.getResource(`/customers`)
+  getAllCustomers = async () =>
+    await this.getResource(`/customers?all=true`)
+
   confimCustomer = async (data) =>
-    await axios.post(`${this._apiBase}${this._apiVersion}/customers/confim`, data, {
-      responseType: 'json'
-    })
-  // .then(res => res.data)
-  // .catch(this._apiErrHandler)
-  // this.postResource(`/customers/confim`, confim, {
-  //   responseType: 'json'
-  // })
+    await this.putResource(`/customers/confim`, data)
+
 
   // Orders
-  getAllOrders = async () => await this.getResource(`/orders`)
-  getOrder = (id) => async () => await this.getResource(`/orders/${id}`)
+  getAllOrders = async () =>
+    await this.getResource(`/orders?all=true`)
+
+  getOrder = (id) => async () =>
+    await this.getResource(`/orders/${id}?all=true`)
 
 
   // Team
-  getAllFlorists = async () => await this.getResource(`/team?isFlorist=true`)
-  getTeam = async () => await this.getResource(`/team?withUnpublic=true`)
-  getTeamPerson = (id) => async () => await this.getResource(`/team/${id}?withUnpublic=true`)
-  updateTeamPerson = async (person) => await this.putResource(`/team/${person.id}`, person, {
-    responseType: 'json'
-  })
-  saveTeamPerson = async (person) => await this.postResource(`/team`, person)
-  deleteTeamPerson = async (id) => await this.deleteResource(`/team/${id}`)
+  getTeam = async () =>
+    await this.getResource(`/team?all=true`)
+
+  getAllFlorists = async () =>
+    await this.getResource(`/team?isFlorist=true`)
+
+  getTeamPerson = (id) => async () =>
+    await this.getResource(`/team/${id}?all=true`)
+
+  updateTeamPerson = async (person) =>
+    await this.putResource(`/team/${person.id}`, person)
+
+  saveTeamPerson = async (person) =>
+    await this.postResource(`/team`, person)
+
+  deleteTeamPerson = async (id) =>
+    await this.deleteResource(`/team/${id}`)
 
 
   // Banners
-  getAllBanners = async () => await this.getResource(`/banners?withUnpublic=true`)
-  getBanner = (id) => async () => await this.getResource(`/banners/${id}?withUnpublic=true`)
-  updateBanner = async (banner) => await this.putResource(`/banners/${banner.id}`, banner, {
-    responseType: 'json'
-  })
-  saveBanner = async (banner) => await this.postResource(`/banners`, banner)
+  getAllBanners = async () =>
+    await this.getResource(`/banners?all=true`)
+
+  getBanner = (id) => async () =>
+    await this.getResource(`/banners/${id}?all=true`)
+
+  updateBanner = async (banner) =>
+    await this.putResource(`/banners/${banner.id}`, banner)
+
+  saveBanner = async (banner) =>
+    await this.postResource(`/banners`, banner)
 
 
   // Content
-  getAllContent = async () => await this.getResource(`/content?withUnpublic=true`)
-  getContent = (id) => async () => await this.getResource(`/content/${id}?withUnpublic=true`)
-  updateContent = async (content) => await this.putResource(`/content/${content.id}`, content, {
-    responseType: 'json'
-  })
-  saveContent = async (content) => await this.postResource(`/content`, content)
+  getAllContent = async () =>
+    await this.getResource(`/content?all=true`)
+
+  getContent = (id) => async () =>
+    await this.getResource(`/content/${id}?all=true`)
+
+  updateContent = async (content) =>
+    await this.putResource(`/content/${content.id}`, content)
+
+  saveContent = async (content) =>
+    await this.postResource(`/content`, content)
+
+
+  // Auth
+  login = async (username, password) =>
+    await this.postResource(`/login`, {
+      username,
+      password
+    })
 
 
   // Cities
-  getAllCities = async () => {
-    return await this.getResource(`/cities`)
-  }
+  getAllCities = async () =>
+    await this.getResource(`/cities`)
 
 
   _apiErrHandler = (error) => {
@@ -249,100 +273,4 @@ export default class ApiService {
     //   `, received ${error}`)
     return error
   }
-
-
-  _transformProduct = ({ sizes, ...base }) => ({
-    ...base,
-    sizes: sizes.map(({ images, ...sizeBase }) => ({
-      images: images.map(img => this.getImage(img)),
-      ...sizeBase
-    }))
-  })
-
-
-  // OTHER
-  //
-  // _transformProduct = product => ({
-  //         ...product
-  //     })
-  getAllPeople = async () => {
-    const res = await this.getResource(`/people/`)
-    return res.results.map(this._transformPerson)
-  }
-
-
-  getPerson = async id =>
-    await this.getResource(`/people/${id}/`)
-      .then(this._transformPerson)
-
-
-  getAllPlanets = async () => {
-    const res = await this.getResource(`/planets/`)
-    return res.results.map(this._transformPlanet)
-  }
-
-
-  getPlanet = async id =>
-    await this.getResource(`/planets/${id}`)
-      .then(this._transformPlanet)
-
-
-  getAllStarships = async () => {
-    const res = await this.getResource(`/starships/`)
-    return res.results.map(this._transformStarship)
-  }
-
-
-  getStarship = async id =>
-    await this.getResource(`/starships/${id}/`)
-      .then(this._transformStarship)
-
-
-  getPersonImage = ({ id }) =>
-    `${this._imageBase}/characters/${id}.jpg`
-
-  getStarshipImage = ({ id }) =>
-    `${this._imageBase}/starships/${id}.jpg`
-
-  getPlanetImage = ({ id }) =>
-    `${this._imageBase}/planets/${id}.jpg`
-
-
-  _extractIdFromUrl = url => {
-    const idRegExp = /\/([0-9]*)\/$/
-    return url.match(idRegExp)[1]
-  }
-
-
-  _transformPerson = person => ({
-    id: this._extractIdFromUrl(person.url),
-    name: person.name,
-    gender: person.gender,
-    birthYear: person.birth_year,
-    eyeColor: person.eye_color
-  })
-
-
-  _transformPlanet = planet => ({
-    id: this._extractIdFromUrl(planet.url),
-    diameter: planet.diameter,
-    rotationPeriod: planet.rotation_period,
-    population: planet.population,
-    name: planet.name
-  })
-
-
-  _transformStarship = starship => ({
-    id: this._extractIdFromUrl(starship.url),
-    name: starship.name,
-    model: starship.model,
-    manufacturer: starship.manufacturer,
-    costInCredits: starship.cost_in_credits,
-    length: starship.length,
-    crew: starship.crew,
-    passengers: starship.passengers,
-    cargoCapacity: starship.cargo_capacity
-  })
-
-
 }

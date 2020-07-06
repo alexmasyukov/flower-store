@@ -6,22 +6,31 @@ const logout = require('../middlewares/logout')
 
 
 router.route('/logout')
-  .get(logout)
+  .get(
+    logout,
+    (req, res, next) => res.json({ status: 'done' })
+  )
 
 
 router.route('/login')
   .post(
     passport.authenticate('local'),
     (req, res, next) => {
-      if (req.user)
+      if (req.user) {
+        console.log(req.user)
         next()
+      }
       else
         res.json({ none: '-' })
     },
     async function(req, res, next) {
-      const n = req.session.views || 0
-      req.session.views = n + 1
-      res.end(`${n} views`)
+      // console.log(req.session)
+      res.json({
+        status: 'done'
+      })
+      // const n = req.session.views || 0
+      // req.session.views = n + 1
+      // res.end(`${n} views`)
     }
   )
 

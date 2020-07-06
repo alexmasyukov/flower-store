@@ -15,7 +15,7 @@ const CmsMenu = ({ className, city }) => {
       <Link to={`/${city}/customers`}>Клиенты</Link>
       <Link to={`/${city}/orders`}>Заказы</Link>
       <Link to={`/${city}/bot-viber`}>Бот Viber</Link>
-      {/*<Link to="/settings">Настройки</Link>*/}
+      <Link to={`/logout`} className="ml-4">Выход</Link>
     </div>
   )
 }
