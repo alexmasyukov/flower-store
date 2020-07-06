@@ -12,11 +12,11 @@ const fallback = () => (
   <div>Загрузка модуля...</div>
 )
 const List = loadable(() => import('components/OrdersList'), {
-    fallback: fallback()
+  fallback: fallback()
 })
 
-const mapMethodsToProps = (apiService) => ({
-    getAll: apiService.getAllOrders
+const mapMethodsToProps = (apiService, { cityId }) => ({
+  getAll: apiService.getAllOrders(cityId)
 })
 
 
@@ -24,16 +24,16 @@ const ListContainer = compose(
   withRouterParams,
   withApiService(mapMethodsToProps),
   withData({
-      getDataMethod: 'getAll',
-      dataPropName: 'items',
-      loadingText: 'items'
+    getDataMethod: 'getAll',
+    dataPropName: 'items',
+    loadingText: 'items'
   })
 )(List)
 
 const CmsOrdersPage = () => (
   <CmsLayout>
-      <h1>Заказы</h1>
-      <ListContainer/>
+    <h1>Заказы</h1>
+    <ListContainer/>
   </CmsLayout>
 )
 

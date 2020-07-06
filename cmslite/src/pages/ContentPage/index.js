@@ -16,8 +16,8 @@ const ContentList = loadable(() => import('components/ContentList'), {
 })
 
 
-const mapMethodsToProps = (apiService) => ({
-  getAllContent: apiService.getAllContent
+const mapMethodsToProps = (apiService, { cityId }) => ({
+  getAllContent: apiService.getAllContent(cityId)
 })
 
 const ContentListContainer = compose(

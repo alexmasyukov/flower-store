@@ -7,7 +7,7 @@ class CmsLayout extends Component {
     render() {
         return (
           <div className={cn('container', styles.layout)}>
-              <CmsMenu className={styles.menu}/>
+              <CmsMenu/>
               {this.props.children}
           </div>
         )

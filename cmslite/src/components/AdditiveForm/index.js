@@ -36,14 +36,15 @@ class AdditiveForm extends Component {
   }
 
   render() {
-    const { additive, getImage, uploadImages } = this.props
+    const { additive, getImage, uploadImages, cityId: city_id } = this.props
     const itemModel = additiveModel.data[0]
     const maxButtonItems = 3
 
     return (
       <Formik
         initialValues={{
-          ...additive
+          ...additive,
+          city_id
         }}
         validationSchema={additiveSchema}
         onSubmit={(values, { setSubmitting }) => {

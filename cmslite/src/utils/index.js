@@ -1,3 +1,9 @@
+export function getCityIdByEngName(engName, cities) {
+    return Object.values(cities)
+      .filter(item => item.ENG === engName)
+      .reduce((res, item) => item, false)
+}
+
 export function getDisplayName(WrappedComponent) {
     return WrappedComponent.displayName || WrappedComponent.name || 'Component'
 }

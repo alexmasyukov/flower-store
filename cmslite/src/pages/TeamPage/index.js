@@ -12,14 +12,14 @@ const fallback = () => (
   <div>Загрузка модуля...</div>
 )
 const Team = loadable(() => import('components/Team'), {
-    fallback: fallback()
+  fallback: fallback()
 })
 
 
-const mapMethodsToProps = (apiService) => ({
-    getImage: apiService.getImage,
-    getTeam: apiService.getTeam,
-    delete: apiService.deleteTeamPerson
+const mapMethodsToProps = (apiService, { cityId }) => ({
+  getImage: apiService.getImage,
+  getTeam: apiService.getTeam(cityId),
+  delete: apiService.deleteTeamPerson
 })
 
 
@@ -27,17 +27,17 @@ const TeamContainer = compose(
   withRouterParams,
   withApiService(mapMethodsToProps),
   withData({
-      getDataMethod: 'getTeam',
-      dataPropName: 'team',
-      loadingText: 'team'
+    getDataMethod: 'getTeam',
+    dataPropName: 'team',
+    loadingText: 'team'
   })
 )(Team)
 
 const CmsTeamPage = () => (
   <CmsLayout>
-      <h1>Команда</h1>
-      <Link className={styles.addBtn} to={`${window.location.pathname}/add`}>Добавить</Link>
-      <TeamContainer/>
+    <h1>Команда</h1>
+    <Link className={styles.addBtn} to={`${window.location.pathname}/add`}>Добавить</Link>
+    <TeamContainer/>
   </CmsLayout>
 )
 

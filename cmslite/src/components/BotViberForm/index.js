@@ -33,7 +33,7 @@ class BotViberForm extends Component {
 
 
   render() {
-    const { bot } = this.props
+    const { bot  } = this.props
     const { test } = this.state
 
     return (

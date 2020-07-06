@@ -13,35 +13,35 @@ const fallback = () => (
 )
 
 const ReviewForm = loadable(() => import('components/ReviewForm'), {
-    fallback: fallback()
+  fallback: fallback()
 })
 
 const mapMethodsToProps = (apiService, props) => {
-    return {
-        getReview: apiService.getReview(props.id),
-        uploadImages: apiService.uploadImages,
-        getImage: apiService.getImage,
-        save: apiService.updateReview
-    }
+  return {
+    getReview: apiService.getReview(props.id),
+    uploadImages: apiService.uploadImages,
+    getImage: apiService.getImage,
+    save: apiService.updateReview
+  }
 }
 
 const ReviewFormContainer = compose(
   withRouterParams,
   withApiService(mapMethodsToProps),
   withData({
-      getDataMethod: 'getReview',
-      dataPropName: 'review',
-      loadingText: 'review'
+    getDataMethod: 'getReview',
+    dataPropName: 'review',
+    loadingText: 'review'
   })
 )(ReviewForm)
 
 
 const mapMethodsToProps_NewItem = (apiService) => {
-    return {
-        save: apiService.saveReview,
-        uploadImages: apiService.uploadImages,
-        getImage: apiService.getImage
-    }
+  return {
+    save: apiService.saveReview,
+    uploadImages: apiService.uploadImages,
+    getImage: apiService.getImage
+  }
 }
 
 const ReviewFormContainer_NewItem = compose(
@@ -52,12 +52,12 @@ const ReviewFormContainer_NewItem = compose(
 
 const CmsReviewFormPage = ({ isNew }) => (
   <CmsLayout>
-      <FormName isNew={isNew}/>
-      {isNew ? (
-        <ReviewFormContainer_NewItem review={reviewModel}/>
-      ) : (
-        <ReviewFormContainer/>
-      )}
+    <FormName isNew={isNew}/>
+    {isNew ? (
+      <ReviewFormContainer_NewItem review={reviewModel}/>
+    ) : (
+      <ReviewFormContainer/>
+    )}
   </CmsLayout>
 )
 

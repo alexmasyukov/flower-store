@@ -43,7 +43,7 @@ class ContentForm extends Component {
 
 
   render() {
-    // const { content } = this.props
+    const { cityId: city_id } = this.props
     const { inititalValues } = this.state
 
     return (
@@ -51,7 +51,8 @@ class ContentForm extends Component {
         <Formik
           enableReinitialize={true}
           initialValues={{
-            ...inititalValues
+            ...inititalValues,
+            city_id
           }}
           validationSchema={contentSchema}
           onSubmit={(values, { setSubmitting }) => {

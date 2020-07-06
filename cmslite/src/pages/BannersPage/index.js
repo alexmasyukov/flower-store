@@ -17,8 +17,8 @@ const BannersList = loadable(() => import('components/BannersList'), {
 })
 
 
-const mapMethodsToProps = (apiService) => ({
-  getAllBanners: apiService.getAllBanners,
+const mapMethodsToProps = (apiService, { cityId }) => ({
+  getAllBanners: apiService.getAllBanners(cityId),
   getImage: apiService.getImage
 })
 

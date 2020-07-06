@@ -37,12 +37,13 @@ class ReviewForm extends Component {
   }
 
   render() {
-    const { review } = this.props
+    const { review, cityId: city_id } = this.props
 
     return (
       <Formik
         initialValues={{
-          ...review
+          ...review,
+          city_id
         }}
         validationSchema={reviewSchema}
         onSubmit={(values, { setSubmitting }) => {

@@ -1,10 +1,17 @@
 import React from 'react'
 import { Link } from "react-router-dom"
 import withRouterParams from 'components/hoc/withRouterParams'
+import styles from 'layouts/Cms/cmsLayout.module.sass'
+import { getCityIdByEngName } from "utils"
+import { CITIES } from "constants/common"
 
-const CmsMenu = ({ className, city }) => {
+
+const CmsMenu = ({city}) => {
+  const foundCity = getCityIdByEngName(city, CITIES)
+
   return (
-    <div className={className}>
+    <div className={styles.menu}>
+      <h3 className={styles.city}>{foundCity.RUS}</h3>
       <Link to={`/${city}/products`}>Товары</Link>
       <Link to={`/${city}/reviews`}>Отзывы</Link>
       <Link to={`/${city}/entities`}>Справочник</Link>

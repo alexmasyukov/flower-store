@@ -28,12 +28,13 @@ class TeamPersonForm extends Component {
   }
 
   render() {
-    const { person, uploadImages, getImage } = this.props
+    const { person, uploadImages, getImage, cityId: city_id } = this.props
 
     return (
       <Formik
         initialValues={{
-          ...person
+          ...person,
+          city_id
         }}
         validationSchema={teamPersonSchema}
         onSubmit={(values, { setSubmitting }) => {

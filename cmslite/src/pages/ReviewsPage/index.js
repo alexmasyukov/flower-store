@@ -12,13 +12,13 @@ const fallback = () => (
   <div>Загрузка модуля...</div>
 )
 const ReviewsList = loadable(() => import('components/ReviewsList'), {
-    fallback: fallback()
+  fallback: fallback()
 })
 
 
-const mapMethodsToProps = (apiService) => ({
-    getAllReviews: apiService.getAllReviews,
-    delete: apiService.deleteReview
+const mapMethodsToProps = (apiService, { cityId }) => ({
+  getAllReviews: apiService.getAllReviews(cityId),
+  delete: apiService.deleteReview
 })
 
 
@@ -26,17 +26,17 @@ const ReviewsListContainer = compose(
   withRouterParams,
   withApiService(mapMethodsToProps),
   withData({
-      getDataMethod: 'getAllReviews',
-      dataPropName: 'reviews',
-      loadingText: 'reviews'
+    getDataMethod: 'getAllReviews',
+    dataPropName: 'reviews',
+    loadingText: 'reviews'
   })
 )(ReviewsList)
 
 const CmsReviewsPage = () => (
   <CmsLayout>
-      <h1>Отзывы</h1>
-      <Link className={styles.addBtn} to={`${window.location.pathname}/add`}>Добавить</Link>
-      <ReviewsListContainer/>
+    <h1>Отзывы</h1>
+    <Link className={styles.addBtn} to={`${window.location.pathname}/add`}>Добавить</Link>
+    <ReviewsListContainer/>
   </CmsLayout>
 )
 

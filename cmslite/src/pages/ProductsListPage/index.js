@@ -12,19 +12,19 @@ const fallback = () => (
   <div>Загрузка модуля...</div>
 )
 const ProductsList = loadable(() => import('components/ProductsList'), {
-    fallback: fallback()
+  fallback: fallback()
 })
 
 
-const mapMethodsToProps = (apiService) => ({
-    getAllProducts: apiService.getAllProducts(true, true),
-    getImage: apiService.getImage,
-    updateProductPublic: apiService.updateProductPublic,
-    updateProductSizePublic: apiService.updateProductSizePublic,
-    updateProductSizeFast: apiService.updateProductSizeFast,
-    updateProductOrderUp: apiService.updateProductOrderUp,
-    updateProductOrderDown: apiService.updateProductOrderDown,
-    deleteProduct: apiService.deleteProduct,
+const mapMethodsToProps = (apiService, { cityId }) => ({
+  getAllProducts: apiService.getAllProducts(cityId, true),
+  getImage: apiService.getImage,
+  updateProductPublic: apiService.updateProductPublic,
+  updateProductSizePublic: apiService.updateProductSizePublic,
+  updateProductSizeFast: apiService.updateProductSizeFast,
+  updateProductOrderUp: apiService.updateProductOrderUp,
+  updateProductOrderDown: apiService.updateProductOrderDown,
+  deleteProduct: apiService.deleteProduct
 })
 
 
@@ -32,18 +32,18 @@ const ProductListContainer = compose(
   withRouterParams,
   withApiService(mapMethodsToProps),
   withData({
-      getDataMethod: 'getAllProducts',
-      dataPropName: 'products',
-      loadingText: 'products'
+    getDataMethod: 'getAllProducts',
+    dataPropName: 'products',
+    loadingText: 'products'
   })
 )(ProductsList)
 
-const CmsProductsListPage = () => (
+const CmsProductsListPage = ({city}) => (
   <CmsLayout>
-      <h1>Букеты</h1>
-      <Link className={styles.addBtn} to={`${window.location.pathname}/add`}>Добавить</Link>
-      <ProductListContainer/>
+    <h1>Букеты</h1>
+    <Link className={styles.addBtn} to={`/${city}/products/add`}>Добавить</Link>
+    <ProductListContainer/>
   </CmsLayout>
 )
 
-export default CmsProductsListPage
+export default withRouterParams(CmsProductsListPage)

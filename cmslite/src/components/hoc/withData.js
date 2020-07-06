@@ -35,7 +35,7 @@ const withData = ({
       })
 
       this.props[getDataMethod]()
-        .then(({ data }) => {
+        .then((data) => {
           this.setState({
             loading: false,
             data

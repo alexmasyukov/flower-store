@@ -29,12 +29,13 @@ class BannerForm extends Component {
   }
 
   render() {
-    const { banner, uploadImages, getImage } = this.props
+    const { banner, uploadImages, getImage, cityId: city_id } = this.props
 
     return (
       <Formik
         initialValues={{
-          ...banner
+          ...banner,
+          city_id
         }}
         validationSchema={bannerSchema}
         onSubmit={(values, { setSubmitting }) => {

@@ -13,9 +13,7 @@ export default class ApiService {
 
   _imageBase = this._apiBase + '/static/'
 
-  getImage = (name) =>
-    `${this._imageBase}${name}`
-
+  getImage = (name) => `${this._imageBase}${name}`
   getThumbImage = (name) => this.getImage(`thumb_${name}`)
   getSmallImage = (name) => this.getImage(`sm_${name}`)
 
@@ -24,6 +22,8 @@ export default class ApiService {
       'Accept-Encoding': 'compress, gzip',
       withCredentials: true
     })
+      .then(res => res.data)
+      .catch(this._apiErrHandler)
   }
 
   putResource = async (url, obj = {}, params = {}) => {
@@ -71,8 +71,8 @@ export default class ApiService {
 
 
   // Products
-  getAllProducts = (convert_entities = true) => async () =>
-    await this.getResource(`/products?all=true&convert_entities=${convert_entities}`)
+  getAllProducts = (cityId, convert_entities = true) => async () =>
+    await this.getResource(`/products?city_id=${cityId}&all=true&convert_entities=${convert_entities}`)
 
   getProduct = (id, convert_entities = false) => async () =>
     await this.getResource(`/products/${id}?&all=true&convert_entities=${convert_entities}`)
@@ -109,8 +109,8 @@ export default class ApiService {
 
 
   // Entities
-  getAllEntities = async () =>
-    await this.getResource(`/entities`)
+  getAllEntities = (cityId) => async () =>
+    await this.getResource(`/entities?city_id=${cityId}`)
 
   getEntitie = (id) => async () =>
     await this.getResource(`/entities/${id}`)
@@ -123,8 +123,8 @@ export default class ApiService {
 
 
   // Reviews
-  getAllReviews = async () =>
-    await this.getResource(`/reviews?all=true`)
+  getAllReviews = (cityId) => async () =>
+    await this.getResource(`/reviews?city_id=${cityId}&all=true`)
 
   getReview = (id) => async () =>
     await this.getResource(`/reviews/${id}?all=true`)
@@ -140,8 +140,8 @@ export default class ApiService {
 
 
   // Additives
-  getAllAdditives = async () =>
-    await this.getResource(`/additives?all=true`)
+  getAllAdditives = (cityId) => async () =>
+    await this.getResource(`/additives?city_id=${cityId}&all=true`)
 
   getAdditive = (id) => async () =>
     await this.getResource(`/additives/${id}?all=true`)
@@ -157,8 +157,8 @@ export default class ApiService {
 
 
   // BotViber
-  getBotViber = (id) => async () =>
-    await this.getResource(`/bot-viber/${id}?all=true`)
+  getBotViber = (cityId) => async () =>
+    await this.getResource(`/bot-viber/${cityId}?city_id=${cityId}&all=true`)
 
   updateBotViber = async (data) =>
     await this.putResource(`/bot-viber/${data.id}`, data)
@@ -168,27 +168,27 @@ export default class ApiService {
 
 
   // Customers
-  getAllCustomers = async () =>
-    await this.getResource(`/customers?all=true`)
+  getAllCustomers = (cityId) => async () =>
+    await this.getResource(`/customers?city_id=${cityId}&all=true`)
 
   confimCustomer = async (data) =>
     await this.putResource(`/customers/confim`, data)
 
 
   // Orders
-  getAllOrders = async () =>
-    await this.getResource(`/orders?all=true`)
+  getAllOrders = (cityId) => async () =>
+    await this.getResource(`/orders?city_id=${cityId}&all=true`)
 
   getOrder = (id) => async () =>
     await this.getResource(`/orders/${id}?all=true`)
 
 
   // Team
-  getTeam = async () =>
-    await this.getResource(`/team?all=true`)
+  getTeam = (cityId) => async () =>
+    await this.getResource(`/team?city_id=${cityId}&all=true`)
 
-  getAllFlorists = async () =>
-    await this.getResource(`/team?isFlorist=true`)
+  getAllFlorists = (cityId) => async () =>
+    await this.getResource(`/team?city_id=${cityId}&is_florist=true`)
 
   getTeamPerson = (id) => async () =>
     await this.getResource(`/team/${id}?all=true`)
@@ -204,8 +204,8 @@ export default class ApiService {
 
 
   // Banners
-  getAllBanners = async () =>
-    await this.getResource(`/banners?all=true`)
+  getAllBanners = (cityId) => async () =>
+    await this.getResource(`/banners?city_id=${cityId}&all=true`)
 
   getBanner = (id) => async () =>
     await this.getResource(`/banners/${id}?all=true`)
@@ -218,8 +218,8 @@ export default class ApiService {
 
 
   // Content
-  getAllContent = async () =>
-    await this.getResource(`/content?all=true`)
+  getAllContent = (cityId) => async () =>
+    await this.getResource(`/content?city_id=${cityId}&all=true`)
 
   getContent = (id) => async () =>
     await this.getResource(`/content/${id}?all=true`)
@@ -246,10 +246,8 @@ export default class ApiService {
   getAllCities = async () =>
     await this.getResource(`/cities`)
 
-
   _apiErrHandler = (error) => {
     console.error('_apiErrHandler')
-    alert('Ошибка в запросе, подробности в консоли')
     if (error.response) {
       /*
        * The request was made and the server responded with a
@@ -270,14 +268,19 @@ export default class ApiService {
       // Something happened in setting up the request and triggered an Error
       console.log('Error', error.message)
     }
-    // console.log(error.errors.map(err => err.message).join('\n'))
-    // console.log()
-    // alert('Ошибка в запросе / ' + error)
-    // throw new Error(`Could not fetch` +
-    //   `, received ${error}`)
 
+    const next = (cb) => new Promise(cb)
 
-    return new Promise((resolve, reject) => {
+    if (error.response.status !== 404)
+      alert('Ошибка в запросе, подробности в консоли')
+
+    if (error.response.status === 404) {
+      return next((resolve) => {
+        resolve([])
+      })
+    }
+
+    return next((resolve, reject) => {
       reject(error)
     })
   }

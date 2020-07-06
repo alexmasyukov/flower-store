@@ -16,8 +16,8 @@ const AdditivesList = loadable(() => import('components/AdditivesList'), {
 })
 
 
-const mapMethodsToProps = (apiService) => ({
-    getAll: apiService.getAllAdditives,
+const mapMethodsToProps = (apiService, { cityId }) => ({
+    getAll: apiService.getAllAdditives(cityId),
     delete: apiService.deleteAdditive
 })
 

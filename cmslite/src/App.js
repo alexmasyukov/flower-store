@@ -36,8 +36,6 @@ import { CITIES } from 'constants/common'
 
 
 const Check = ({ city }) => {
-  console.log(city)
-
   return (CITIES.CHITA.ENG !== city && CITIES.MOSCOW.ENG !== city) ?
     <Redirect to="/"/> : <All/>
 }

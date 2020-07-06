@@ -23,10 +23,10 @@ const emptyProductWithEmptySize = {
   sizes: [{ ...productSizeModel }]
 }
 
-const commonApi = (apiService) => ({
-  getAllEntities: apiService.getAllEntities,
-  getAllFlorists: apiService.getAllFlorists,
-  getAllAdditives: apiService.getAllAdditives,
+const commonApi = (apiService, { cityId }) => ({
+  getAllEntities: apiService.getAllEntities(cityId),
+  getAllFlorists: apiService.getAllFlorists(cityId),
+  getAllAdditives: apiService.getAllAdditives(cityId),
   uploadImages: apiService.uploadImages,
   getImage: apiService.getImage
 })
@@ -53,7 +53,7 @@ const commonHOCs = (WrappedComponent) =>
 
 const mapMethodsToProps = (apiService, props) => {
   return {
-    ...commonApi(apiService),
+    ...commonApi(apiService, props),
     getProduct: apiService.getProduct(props.id, false),
     save: apiService.updateProduct
   }
@@ -71,9 +71,9 @@ const ProductFormContainer = compose(
 )(ProductForm)
 
 
-const mapMethodsToProps_NewItem = (apiService) => {
+const mapMethodsToProps_NewItem = (apiService, props) => {
   return {
-    ...commonApi(apiService),
+    ...commonApi(apiService, props),
     save: apiService.saveProduct
   }
 }

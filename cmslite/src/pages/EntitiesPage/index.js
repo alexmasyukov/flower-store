@@ -12,12 +12,12 @@ const fallback = () => (
   <div>Загрузка модуля...</div>
 )
 const EntitiesList = loadable(() => import('components/EntitiesList'), {
-    fallback: fallback()
+  fallback: fallback()
 })
 
 
-const mapMethodsToProps = (apiService) => ({
-    getAllEntities: apiService.getAllEntities
+const mapMethodsToProps = (apiService, { cityId }) => ({
+  getAllEntities: apiService.getAllEntities(cityId)
 })
 
 
@@ -25,17 +25,17 @@ const EntitiesListContainer = compose(
   withRouterParams,
   withApiService(mapMethodsToProps),
   withData({
-      getDataMethod: 'getAllEntities',
-      dataPropName: 'entities',
-      loadingText: 'entities'
+    getDataMethod: 'getAllEntities',
+    dataPropName: 'entities',
+    loadingText: 'entities'
   })
 )(EntitiesList)
 
 const CmsEntitiesPage = () => (
   <CmsLayout>
-      <h1>Справочник</h1>
-      <Link className={styles.addBtn} to={`${window.location.pathname}/add`}>Добавить</Link>
-      <EntitiesListContainer/>
+    <h1>Справочник</h1>
+    <Link className={styles.addBtn} to={`${window.location.pathname}/add`}>Добавить</Link>
+    <EntitiesListContainer/>
   </CmsLayout>
 )
 

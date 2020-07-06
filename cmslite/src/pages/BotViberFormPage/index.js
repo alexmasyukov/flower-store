@@ -12,32 +12,33 @@ const fallback = () => (
 )
 
 const BotViberForm = loadable(() => import('components/BotViberForm'), {
-    fallback: fallback()
+  fallback: fallback()
 })
 
-const mapMethodsToProps = (apiService, props) => {
-    return {
-        getBotViber: apiService.getBotViber(1),
-        save: apiService.updateBotViber,
-        testBot: apiService.testBotViber
-    }
+const mapMethodsToProps = (apiService, { cityId }) => {
+  console.log(cityId)
+  return {
+    getBotViber: apiService.getBotViber(cityId),
+    save: apiService.updateBotViber,
+    testBot: apiService.testBotViber
+  }
 }
 
 const BotViberFormContainer = compose(
   withRouterParams,
   withApiService(mapMethodsToProps),
   withData({
-      getDataMethod: 'getBotViber',
-      dataPropName: 'bot',
-      loadingText: 'bot'
+    getDataMethod: 'getBotViber',
+    dataPropName: 'bot',
+    loadingText: 'bot'
   })
 )(BotViberForm)
 
 
 const CmsBotViberFormPage = () => (
   <CmsLayout>
-      <FormName/>
-      <BotViberFormContainer/>
+    <FormName/>
+    <BotViberFormContainer/>
   </CmsLayout>
 )
 

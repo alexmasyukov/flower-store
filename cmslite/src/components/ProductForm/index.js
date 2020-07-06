@@ -82,13 +82,17 @@ class ProductForm extends Component {
   }
 
   render() {
-    const { product, florists, additives, uploadImages, getImage } = this.props
+    const {
+      product, florists, additives, uploadImages,
+      getImage, cityId: city_id
+    } = this.props
     const { imgIsLoading } = this.state
 
     const {
       florist_name: _1,
       florist_photo: _2,
       order: _3,
+      sizes,
       ...baseProduct
     } = product
 
@@ -98,7 +102,9 @@ class ProductForm extends Component {
       <Formik
         initialValues={{
           ...baseProduct,
-          selected_additive: 0
+          selected_additive: 0,
+          sizes: sizes.map(size => ({...size, city_id })),
+          city_id
         }}
         validationSchema={productSchema}
         onSubmit={({ selected_additive: _, ...values }, { setSubmitting }) => {
