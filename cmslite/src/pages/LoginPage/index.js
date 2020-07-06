@@ -22,7 +22,9 @@ function Page({ login }) {
   const handleLoginClick = async () => {
     try {
       const a = await login('test66', '1234')
-      if ('status' in a.data && a.data.status === 'done') {
+      console.log(a)
+      if ('status' in a && a.status === 'done') {
+        setIsError(false)
         setIsLogin(true)
       }
     } catch (e) {
@@ -47,7 +49,7 @@ function Page({ login }) {
                aria-describedby="basic-addon1"/>
         {isError && <div>Ошибка</div>}
 
-        <select value={CITIES.CHITA.ENG} onChange={(e) => setCity(e.target.value)}>
+        <select value={city} onChange={(e) => setCity(e.target.value)}>
           <option value={CITIES.CHITA.ENG}>{CITIES.CHITA.RUS}</option>
           <option value={CITIES.MOSCOW.ENG}>{CITIES.MOSCOW.RUS}</option>
         </select>

@@ -46,7 +46,7 @@ export default class ApiService {
   }
 
   postResource = async (url, obj) => {
-    await axios.post(`${this._apiBase}${this._apiVersion}${url}`, obj, {
+    return await axios.post(`${this._apiBase}${this._apiVersion}${url}`, obj, {
       responseType: 'json',
       withCredentials: true
     })

@@ -1,8 +1,8 @@
 const entitieModel = {
-    eType: '',
-    eTypeTitle: '',
-    value: '',
-    extra: {}
+  eType: '',
+  eTypeTitle: '',
+  value: '',
+  extra: {}
 }
 
 export default entitieModel
