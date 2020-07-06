@@ -15,49 +15,48 @@ const fallback = () => (
   <div>Загрузка модуля...</div>
 )
 const ProductForm = loadable(() => import('components/ProductForm'), {
-    fallback: fallback()
+  fallback: fallback()
 })
 
 const emptyProductWithEmptySize = {
-    ...productModel,
-    sizes: [{ ...productSizeModel }]
+  ...productModel,
+  sizes: [{ ...productSizeModel }]
 }
 
 const commonApi = (apiService) => ({
-    getAllEntities: apiService.getAllEntities,
-    getAllFlorists: apiService.getAllFlorists,
-    getAllAdditives: apiService.getAllAdditives,
-    uploadImages: apiService.uploadImages,
-    getImage: apiService.getImage
-
+  getAllEntities: apiService.getAllEntities,
+  getAllFlorists: apiService.getAllFlorists,
+  getAllAdditives: apiService.getAllAdditives,
+  uploadImages: apiService.uploadImages,
+  getImage: apiService.getImage
 })
 
 const commonHOCs = (WrappedComponent) =>
   compose(
     withData({
-        getDataMethod: 'getAllEntities',
-        dataPropName: 'entities',
-        loadingText: 'entities'
+      getDataMethod: 'getAllEntities',
+      dataPropName: 'entities',
+      loadingText: 'entities'
     }),
     withData({
-        getDataMethod: 'getAllFlorists',
-        dataPropName: 'florists',
-        loadingText: 'florists'
+      getDataMethod: 'getAllFlorists',
+      dataPropName: 'florists',
+      loadingText: 'florists'
     }),
     withData({
-        getDataMethod: 'getAllAdditives',
-        dataPropName: 'additives',
-        loadingText: 'additives'
+      getDataMethod: 'getAllAdditives',
+      dataPropName: 'additives',
+      loadingText: 'additives'
     })
   )(WrappedComponent)
 
 
 const mapMethodsToProps = (apiService, props) => {
-    return {
-        ...commonApi(apiService),
-        getProduct: apiService.getProduct(props.id, false),
-        saveProduct: apiService.updateProduct
-    }
+  return {
+    ...commonApi(apiService),
+    getProduct: apiService.getProduct(props.id, false),
+    save: apiService.updateProduct
+  }
 }
 
 const ProductFormContainer = compose(
@@ -65,18 +64,18 @@ const ProductFormContainer = compose(
   withApiService(mapMethodsToProps),
   commonHOCs,
   withData({
-      getDataMethod: 'getProduct',
-      dataPropName: 'product',
-      loadingText: 'product'
+    getDataMethod: 'getProduct',
+    dataPropName: 'product',
+    loadingText: 'product'
   })
 )(ProductForm)
 
 
 const mapMethodsToProps_NewItem = (apiService) => {
-    return {
-        ...commonApi(apiService),
-        saveProduct: apiService.saveProduct
-    }
+  return {
+    ...commonApi(apiService),
+    save: apiService.saveProduct
+  }
 }
 
 const ProductFormContainer_NewItem = compose(
@@ -88,12 +87,12 @@ const ProductFormContainer_NewItem = compose(
 
 const CmsProductFormPage = ({ isNew }) => (
   <CmsLayout>
-      <FormName isNew={isNew}/>
-      {isNew ? (
-        <ProductFormContainer_NewItem product={emptyProductWithEmptySize}/>
-      ) : (
-        <ProductFormContainer/>
-      )}
+    <FormName isNew={isNew}/>
+    {isNew ? (
+      <ProductFormContainer_NewItem product={emptyProductWithEmptySize}/>
+    ) : (
+      <ProductFormContainer/>
+    )}
   </CmsLayout>
 )
 

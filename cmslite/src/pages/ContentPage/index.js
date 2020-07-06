@@ -12,29 +12,29 @@ const fallback = () => (
   <div>Загрузка модуля...</div>
 )
 const ContentList = loadable(() => import('components/ContentList'), {
-    fallback: fallback()
+  fallback: fallback()
 })
 
 
 const mapMethodsToProps = (apiService) => ({
-    getAllContent: apiService.getAllContent
+  getAllContent: apiService.getAllContent
 })
 
 const ContentListContainer = compose(
   withRouterParams,
   withApiService(mapMethodsToProps),
   withData({
-      getDataMethod: 'getAllContent',
-      dataPropName: 'content',
-      loadingText: 'content'
+    getDataMethod: 'getAllContent',
+    dataPropName: 'content',
+    loadingText: 'content'
   })
 )(ContentList)
 
 const CmsContentPage = () => (
   <CmsLayout>
-      <h1>Контент</h1>
-      <Link className={styles.addBtn} to="/content-add">Добавить</Link>
-      <ContentListContainer/>
+    <h1>Контент</h1>
+    <Link className={styles.addBtn} to={`${window.location.pathname}/add`}>Добавить</Link>
+    <ContentListContainer/>
   </CmsLayout>
 )
 

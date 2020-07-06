@@ -46,11 +46,11 @@ export default class ApiService {
   }
 
   postResource = async (url, obj) => {
-    return await axios.post(`${this._apiBase}${this._apiVersion}${url}`, obj, {
+    await axios.post(`${this._apiBase}${this._apiVersion}${url}`, obj, {
       responseType: 'json',
       withCredentials: true
     })
-      .then(res => res)
+      .then(res => res.data)
       .catch(this._apiErrHandler)
   }
 
@@ -59,13 +59,13 @@ export default class ApiService {
     const data = new FormData()
     data.append('attachments', files)
     return axios.post(this._uploadImagesBase, data, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: { 'Content-Type': 'multipart/form-data' },
+      withCredentials: true
     })
       .then(res => res.data.result)
-      .catch(errors => {
+      .catch(err => {
         alert('Ошибка при загрузке изображения. Попробуйте другое изображение.')
-        console.log(errors)
-        console.log(errors.response.data)
+        this._apiErrHandler(err)
       })
   }
 
@@ -238,6 +238,9 @@ export default class ApiService {
       password
     })
 
+  logout = async () =>
+    await this.getResource(`/logout`)
+
 
   // Cities
   getAllCities = async () =>
@@ -245,15 +248,16 @@ export default class ApiService {
 
 
   _apiErrHandler = (error) => {
-    alert('Ошибка в запросе')
+    console.error('_apiErrHandler')
+    alert('Ошибка в запросе, подробности в консоли')
     if (error.response) {
       /*
        * The request was made and the server responded with a
        * status code that falls out of the range of 2xx
        */
-      console.log(error.response.data)
+      console.warn('error.response.data', error.response.data)
       // console.log(error.response.data);
-      console.log(error.response.headers)
+      console.warn('error.response.headers', error.response.headers)
       // .errors.map(err => err.path + ' ' + err.message)
     } else if (error.request) {
       /*
@@ -271,6 +275,10 @@ export default class ApiService {
     // alert('Ошибка в запросе / ' + error)
     // throw new Error(`Could not fetch` +
     //   `, received ${error}`)
-    return error
+
+
+    return new Promise((resolve, reject) => {
+      reject(error)
+    })
   }
 }

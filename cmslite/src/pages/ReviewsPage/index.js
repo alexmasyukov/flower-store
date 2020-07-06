@@ -35,7 +35,7 @@ const ReviewsListContainer = compose(
 const CmsReviewsPage = () => (
   <CmsLayout>
       <h1>Отзывы</h1>
-      <Link className={styles.addBtn} to="/reviews-add">Добавить</Link>
+      <Link className={styles.addBtn} to={`${window.location.pathname}/add`}>Добавить</Link>
       <ReviewsListContainer/>
   </CmsLayout>
 )

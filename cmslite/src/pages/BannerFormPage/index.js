@@ -13,36 +13,35 @@ const fallback = () => (
 )
 
 const BannerForm = loadable(() => import('components/BannerForm'), {
-    fallback: fallback()
+  fallback: fallback()
 })
 
 const mapMethodsToProps = (apiService, props) => {
-    return {
-        getBanner: apiService.getBanner(props.id),
-        uploadImages: apiService.uploadImages,
-        getImage: apiService.getImage,
-        save: apiService.updateBanner
-    }
+  return {
+    getBanner: apiService.getBanner(props.id),
+    uploadImages: apiService.uploadImages,
+    getImage: apiService.getImage,
+    save: apiService.updateBanner
+  }
 }
 
 const BannerFormContainer = compose(
   withRouterParams,
   withApiService(mapMethodsToProps),
   withData({
-      getDataMethod: 'getBanner',
-      dataPropName: 'banner',
-      loadingText: 'banner'
+    getDataMethod: 'getBanner',
+    dataPropName: 'banner',
+    loadingText: 'banner'
   })
 )(BannerForm)
 
 
-
 const mapMethodsToProps_NewItem = (apiService) => {
-    return {
-        save: apiService.saveBanner,
-        uploadImages: apiService.uploadImages,
-        getImage: apiService.getImage
-    }
+  return {
+    save: apiService.saveBanner,
+    uploadImages: apiService.uploadImages,
+    getImage: apiService.getImage
+  }
 }
 
 const BannerFormContainer_NewItem = compose(
@@ -51,14 +50,14 @@ const BannerFormContainer_NewItem = compose(
 )(BannerForm)
 
 
-const CmsBannerFormPage = ({isNew}) => (
+const CmsBannerFormPage = ({ isNew }) => (
   <CmsLayout>
-      <FormName isNew={isNew}/>
-      {isNew ? (
-        <BannerFormContainer_NewItem banner={bannerModel}/>
-      ): (
-        <BannerFormContainer/>
-      )}
+    <FormName isNew={isNew}/>
+    {isNew ? (
+      <BannerFormContainer_NewItem banner={bannerModel}/>
+    ) : (
+      <BannerFormContainer/>
+    )}
   </CmsLayout>
 )
 

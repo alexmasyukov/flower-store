@@ -2,7 +2,7 @@ const teamPersonModel = {
     city_id: 1,
     public: true,
     order: 0,
-    isFlorist: true,
+    is_florist: false,
     rule: '',
     name: '',
     photo: '',

@@ -35,7 +35,7 @@ const AdditivesListContainer = compose(
 const CmsAdditivesPage = () => (
   <CmsLayout>
       <h1>Добавки к букетам</h1>
-      <Link className={styles.addBtn} to="/additives-add">Добавить</Link>
+      <Link className={styles.addBtn} to={`${window.location.pathname}/add`}>Добавить</Link>
       <AdditivesListContainer/>
   </CmsLayout>
 )

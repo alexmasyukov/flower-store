@@ -1,6 +1,7 @@
 const {
   type,
   all,
+  limit,
   minProperties,
   paramsSchema
 } = require('../models/common')
@@ -61,6 +62,7 @@ class Additive {
       type,
       properties: {
         all,
+        limit,
         ...properties
       }
     }

@@ -1,6 +1,7 @@
 const {
   type,
   all,
+  limit,
   minProperties,
   paramsSchema
 } = require('../models/common')
@@ -44,6 +45,7 @@ class Review {
       type,
       properties: {
         all,
+        limit,
         ...properties
       }
     }

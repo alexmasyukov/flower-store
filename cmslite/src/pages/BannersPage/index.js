@@ -36,8 +36,8 @@ const BannersListContainer = compose(
 const CmsBannersPage = () => (
   <CmsLayout>
     <h1>Баннеры</h1>
-    <Link className={styles.addBtn} to="/banners-add">Добавить</Link>
-    <BannersListContainer />
+    <Link className={styles.addBtn} to={`${window.location.pathname}/add`}>Добавить</Link>
+    <BannersListContainer/>
   </CmsLayout>
 )
 

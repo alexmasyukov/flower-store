@@ -23,12 +23,8 @@ const bannerSchema = Yup.object({
 class BannerForm extends Component {
   handleSave(data) {
     this.props.save(data)
-      .then(res => {
-        if (res && 'status' in res && res.status === 'done') {
-          this.props.history.push(`/${this.props.city}/banners`)
-        } else {
-          alert('Ошибка при сохранении. Подробности в консоли')
-        }
+      .then(() => {
+        this.props.history.push(`/${this.props.city}/banners`)
       })
   }
 

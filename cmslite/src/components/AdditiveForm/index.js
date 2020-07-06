@@ -30,12 +30,8 @@ const additiveSchema = Yup.object({
 class AdditiveForm extends Component {
   handleSave(data) {
     this.props.save(data)
-      .then(res => {
-        if (res && 'status' in res && res.status === 'done') {
-          this.props.history.push(`/${this.props.city}/additives`)
-        } else {
-          alert('Ошибка при сохранении. Подробности в консоли')
-        }
+      .then(() => {
+        this.props.history.push(`/${this.props.city}/additives`)
       })
   }
 

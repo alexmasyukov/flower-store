@@ -105,7 +105,7 @@ app.use(session({
   cookie: {
     path: '/',
     httpOnly: false,
-    domain: 'localhost',
+    // domain: 'localhost',
     maxAge: 10000 * 10000 // ten seconds, for testing
   },
   resave: true,

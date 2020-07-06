@@ -20,17 +20,8 @@ class BotViberForm extends Component {
   }
 
   handleSave(data) {
-    // this.save(data)
-    //   .then(res => this.props.history.push(`/${this.props.city}/products`))
     this.props.save(data)
-      .then(res => {
-        console.log(res)
-        if (res && 'status' in res && res.status === 'done') {
-          this.props.history.push(`/${this.props.city}/products`)
-        } else {
-          alert('Ошибка при сохранении. Подробности в консоли')
-        }
-      })
+      .then(() => this.props.history.push(`/${this.props.city}/`))
   }
 
   handleBotTest() {

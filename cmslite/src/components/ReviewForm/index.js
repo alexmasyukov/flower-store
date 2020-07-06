@@ -30,15 +30,9 @@ const reviewSchema = Yup.object({
 
 class ReviewForm extends Component {
   handleSave(data) {
-    const { save, city } = this.props
-
-    save(data)
-      .then(res => {
-        if (res && 'status' in res && res.status === 'done') {
-          this.props.history.push(`/${city}/reviews`)
-        } else {
-          alert('Ошибка при сохранении. Подробности в консоли')
-        }
+    this.props.save(data)
+      .then(() => {
+        this.props.history.push(`/${this.props.city}/reviews`)
       })
   }
 

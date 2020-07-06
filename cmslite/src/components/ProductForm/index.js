@@ -74,14 +74,10 @@ class ProductForm extends Component {
       size.flowers = size.flowers.map(item => Number.parseInt(item))
       return size
     })
-    this.props.saveProduct(product)
-      .then(res => {
-        console.log(res)
-        if (res && 'status' in res && res.status === 'done') {
-          this.props.history.push(`/${this.props.city}/products`)
-        } else {
-          alert('Ошибка при сохранении. Подробности в консоли')
-        }
+
+    this.props.save(product)
+      .then(() => {
+        this.props.history.push(`/${this.props.city}/products`)
       })
   }
 

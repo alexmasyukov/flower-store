@@ -3,6 +3,7 @@ import { compose } from "utils"
 import withRouterParams from "components/hoc/withRouterParams"
 import withApiService from "components/hoc/withApiService"
 import { Redirect } from "react-router-dom"
+import { CITIES } from "constants/common"
 
 const mapMethodsToProps = (apiService) => ({
   login: apiService.login
@@ -16,9 +17,9 @@ const LoginPage = compose(
 function Page({ login }) {
   const [isError, setIsError] = useState(false)
   const [isLogin, setIsLogin] = useState(false)
+  const [city, setCity] = useState(CITIES.CHITA.ENG)
 
   const handleLoginClick = async () => {
-    console.log(login)
     try {
       const a = await login('test66', '1234')
       if ('status' in a.data && a.data.status === 'done') {
@@ -32,7 +33,7 @@ function Page({ login }) {
 
   if (isLogin) {
     return (
-      <Redirect to={'/chita'}/>
+      <Redirect to={`/${city}`}/>
     )
   }
 
@@ -45,6 +46,11 @@ function Page({ login }) {
         <input type="text" className="form-control" placeholder="Username" aria-label="Username"
                aria-describedby="basic-addon1"/>
         {isError && <div>Ошибка</div>}
+
+        <select value={CITIES.CHITA.ENG} onChange={(e) => setCity(e.target.value)}>
+          <option value={CITIES.CHITA.ENG}>{CITIES.CHITA.RUS}</option>
+          <option value={CITIES.MOSCOW.ENG}>{CITIES.MOSCOW.RUS}</option>
+        </select>
 
         <button onClick={handleLoginClick}>Войти</button>
       </div>

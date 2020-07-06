@@ -22,12 +22,8 @@ const teamPersonSchema = Yup.object({
 class TeamPersonForm extends Component {
   handleSave(data) {
     this.props.save(data)
-      .then(res => {
-        if (res && 'status' in res && res.status === 'done') {
-          this.props.history.push(`/${this.props.city}/team`)
-        } else {
-          alert('Ошибка при сохранении. Подробности в консоли')
-        }
+      .then(() => {
+        this.props.history.push(`/${this.props.city}/team`)
       })
   }
 
@@ -45,7 +41,7 @@ class TeamPersonForm extends Component {
           this.handleSave(values)
         }}
       >
-        {({ values, form }) => (
+        {({ values }) => (
           <Form>
             <Row className="mb-4">
               <div className="col-md-1">
@@ -67,7 +63,7 @@ class TeamPersonForm extends Component {
                        component={Checkbox}/>
               </div>
               <div className="col-md-2">
-                <Field name={`isFlorist`} title="Флорист" type="checkbox"
+                <Field name={`is_florist`} title="Флорист" type="checkbox"
                        component={Checkbox}/>
               </div>
             </Row>

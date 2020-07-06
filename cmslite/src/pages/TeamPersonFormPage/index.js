@@ -13,36 +13,36 @@ const fallback = () => (
 )
 
 const TeamPersonForm = loadable(() => import('components/TeamPersonForm'), {
-    fallback: fallback()
+  fallback: fallback()
 })
 
 
 const mapMethodsToProps = (apiService, props) => {
-    return {
-        getTeamPerson: apiService.getTeamPerson(props.id),
-        uploadImages: apiService.uploadImages,
-        getImage: apiService.getImage,
-        save: apiService.updateTeamPerson
-    }
+  return {
+    getTeamPerson: apiService.getTeamPerson(props.id),
+    uploadImages: apiService.uploadImages,
+    getImage: apiService.getImage,
+    save: apiService.updateTeamPerson
+  }
 }
 
 const TeamPersonFormContainer = compose(
   withRouterParams,
   withApiService(mapMethodsToProps),
   withData({
-      getDataMethod: 'getTeamPerson',
-      dataPropName: 'person',
-      loadingText: 'person'
+    getDataMethod: 'getTeamPerson',
+    dataPropName: 'person',
+    loadingText: 'person'
   })
 )(TeamPersonForm)
 
 
 const mapMethodsToProps_NewItem = (apiService) => {
-    return {
-        uploadImages: apiService.uploadImages,
-        getImage: apiService.getImage,
-        save: apiService.saveTeamPerson
-    }
+  return {
+    uploadImages: apiService.uploadImages,
+    getImage: apiService.getImage,
+    save: apiService.saveTeamPerson
+  }
 }
 
 const TeamPersonFormContainer_NewItem = compose(
@@ -53,12 +53,12 @@ const TeamPersonFormContainer_NewItem = compose(
 
 const CmsTeamPersonFormPage = ({ isNew }) => (
   <CmsLayout>
-      <FormName isNew={isNew}/>
-      {isNew ? (
-        <TeamPersonFormContainer_NewItem person={teamPersonModel}/>
-      ) : (
-        <TeamPersonFormContainer/>
-      )}
+    <FormName isNew={isNew}/>
+    {isNew ? (
+      <TeamPersonFormContainer_NewItem person={teamPersonModel}/>
+    ) : (
+      <TeamPersonFormContainer/>
+    )}
   </CmsLayout>
 )
 

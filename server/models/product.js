@@ -1,6 +1,7 @@
 const {
   type,
   all,
+  limit,
   minProperties,
   paramsSchema
 } = require('../models/common')
@@ -73,6 +74,7 @@ class Product {
       properties: {
         convert_entities: { type: 'boolean' },
         all,
+        limit,
         ...properties
       }
     }

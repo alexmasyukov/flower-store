@@ -30,12 +30,8 @@ const EntitieForm = ({ save, entitie, entities, city }) => {
     const { eTypeTitle } = data
 
     save(data)
-      .then(res => {
-        if (res && 'status' in res && res.status === 'done') {
-          history.push(`/${city}/entities?filter=${eTypeTitle}`)
-        } else {
-          alert('Ошибка при сохранении. Подробности в консоли')
-        }
+      .then(() => {
+        history.push(`/${city}/entities?filter=${eTypeTitle}`)
       })
   }
 

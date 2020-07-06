@@ -41,7 +41,7 @@ const ProductListContainer = compose(
 const CmsProductsListPage = () => (
   <CmsLayout>
       <h1>Букеты</h1>
-      <Link className={styles.addBtn} to="/products-add">Добавить</Link>
+      <Link className={styles.addBtn} to={`${window.location.pathname}/add`}>Добавить</Link>
       <ProductListContainer/>
   </CmsLayout>
 )

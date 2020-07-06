@@ -1,6 +1,7 @@
 const {
   type,
   all,
+  limit,
   minProperties,
   paramsSchema
 } = require('../models/common')
@@ -40,6 +41,7 @@ class Customer {
       type,
       properties: {
         all,
+        limit,
         ...properties
       }
     }

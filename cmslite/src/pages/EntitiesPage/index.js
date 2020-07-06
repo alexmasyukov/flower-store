@@ -34,7 +34,7 @@ const EntitiesListContainer = compose(
 const CmsEntitiesPage = () => (
   <CmsLayout>
       <h1>Справочник</h1>
-      <Link className={styles.addBtn} to="/entities-add">Добавить</Link>
+      <Link className={styles.addBtn} to={`${window.location.pathname}/add`}>Добавить</Link>
       <EntitiesListContainer/>
   </CmsLayout>
 )

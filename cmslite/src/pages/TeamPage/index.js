@@ -36,7 +36,7 @@ const TeamContainer = compose(
 const CmsTeamPage = () => (
   <CmsLayout>
       <h1>Команда</h1>
-      <Link className={styles.addBtn} to="/team-add">Добавить</Link>
+      <Link className={styles.addBtn} to={`${window.location.pathname}/add`}>Добавить</Link>
       <TeamContainer/>
   </CmsLayout>
 )

@@ -1,6 +1,7 @@
 const {
   type,
   all,
+  limit,
   minProperties,
   paramsSchema
 } = require('../models/common')
@@ -9,8 +10,8 @@ class ProductSize {
   static table = 'product_sizes'
 
   static properties = {
-    product_id: { type: 'integer' },
     city_id: { type: 'integer' },
+    product_id: { type: 'integer' },
     order: { type: ['integer', 'null'] },
     public: { type: 'boolean' },
     fast: { type: 'boolean' },
@@ -65,6 +66,7 @@ class ProductSize {
       type,
       properties: {
         all,
+        limit,
         ...properties
       }
     }

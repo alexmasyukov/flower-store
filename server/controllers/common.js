@@ -11,7 +11,7 @@ module.exports = {
   }) {
     return async function(req, res, next) {
       try {
-        const { all, ...baseQuery } = req.query
+        const { all, limit, ...baseQuery } = req.query
 
         const where = R.compose(
           removeWhenIsDefine(all, 'public')
@@ -25,6 +25,7 @@ module.exports = {
           .from(table)
           .where(where)
           .orderBy(orderBy, desc)
+          .limit(limit ? limit : 500)
 
         if (!items.length)
           return next(utils.error(404, 'error', `${table} not found`))
