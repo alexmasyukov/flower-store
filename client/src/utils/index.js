@@ -7,6 +7,14 @@ import { format } from "date-fns"
 //     return normalize(items, listSchema)
 // }
 
+export const phoneToTextFormat = (phone) =>
+  `${phone.slice(0, 2)} ${phone.slice(2, 7)} ${phone.slice(7)}`
+
+export function getCityIdByEngName(engName, cities) {
+    return Object.values(cities)
+      .filter(item => item.eng === engName)
+      .reduce((res, item) => item, false)
+}
 
 export function getDisplayName(WrappedComponent) {
     return WrappedComponent.displayName || WrappedComponent.name || 'Component'

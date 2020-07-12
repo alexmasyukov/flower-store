@@ -88,6 +88,15 @@ const CustomerForm = ({ name, phone, onSubmit, children }) => {
   }
 
   const handleRetrySendSms = async (values) => {
+    // console.log('values', values)
+    // if (values) {
+    //   setConfim({
+    //     values,
+    //     status: confim.status
+    //   })
+    // }
+    // let status = confim.status
+
     setAttempt(attempt + 1)
 
     try {
@@ -96,7 +105,10 @@ const CustomerForm = ({ name, phone, onSubmit, children }) => {
         values,
         status: sms.result
       })
+      // status = sms.result
     } catch (e) {
+      // console.log('send error', e)
+      // status = CONFIM_STATUS.SEND_SMS_ERROR
       if (attempt === 2) onSubmit(values)
       setIsTimer(true)
       setConfim({
@@ -104,6 +116,69 @@ const CustomerForm = ({ name, phone, onSubmit, children }) => {
         status: CONFIM_STATUS.SEND_SMS_ERROR
       })
     }
+
+    // console.log('handleRetrySendSms status', status, values)
+    //
+    // if (status === CONFIM_STATUS.SEND_SMS_ERROR) {
+    //   if (attempt === 2) onSubmit(values)
+    //   setIsTimer(true)
+    //
+    //   setConfim({
+    //     values,
+    //     status: CONFIM_STATUS.SEND_SMS_ERROR
+    //   })
+    // }
+    //
+    // setConfim({
+    //   values,
+    //   status
+    // })
+  }
+
+  const handleFormSubmit = (values) => {
+    // console.log('handleFormSubmit values', values)
+    // setConfim({
+    //   values,
+    //   status: CONFIM_STATUS.BEFORE_SEND
+    // })
+    //
+    // const send = await handleRetrySendSms(values)
+
+
+    // // console.log('handleFormSubmit', values, attempt)
+    // let status = confim.status
+    // try {
+    //   const sms = await sendSms()
+    //   status = sms.result
+    // } catch (e) {
+    //   // console.log('send error', e)
+    //   status = CONFIM_STATUS.SEND_SMS_ERROR
+    // }
+
+
+    // let sendResult
+    //
+    //
+    //
+    // console.log('sendResult', sendResult)
+    //
+    // if (sendResult.result === CONFIM_STATUS.SEND_SMS_ERROR) {
+    //   if (attempt === 2) onSubmit(confim.values)
+    //
+    //   setIsTimer(true)
+    //
+    //   setConfim({
+    //     values,
+    //     status: CONFIM_STATUS.SEND_SMS_ERROR
+    //   })
+    //
+    //   return
+    // }
+    //
+    // setConfim({
+    //   values,
+    //   status: sendResult.result
+    // })
   }
 
   const handleCheckSms = () => {
@@ -188,6 +263,7 @@ const CustomerForm = ({ name, phone, onSubmit, children }) => {
           )
         }}
       />
+
 
       {confim.status === CONFIM_STATUS.SEND_SMS_ERROR && (
         <>

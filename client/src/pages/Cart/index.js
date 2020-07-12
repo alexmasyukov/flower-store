@@ -5,14 +5,9 @@ import CartStepsContainer from "containers/cartStepsContainer"
 import CartProductListContainer from "containers/cartProductListContainer"
 import { Row } from "components/Bootstrap"
 import { orderSelector } from "store/selectors/cart"
-import { sendNotify} from 'api'
 
-const CartPage = ({ order }) => {
-  console.warn('order CartPage', order)
-
-  if (order.done && order.id) {
-    sendNotify({msg: `Новый заказ №${order.id} `})
-  }
+const Page = ({ order }) => {
+  // console.warn('order CartPage', order)
 
   return (
     <PageLayout>
@@ -42,6 +37,8 @@ const mapStateToProps = state => ({
   order: orderSelector(state)
 })
 
-export default connect(
+const CartPage = connect(
   mapStateToProps
-)(CartPage)
+)(Page)
+
+export default CartPage

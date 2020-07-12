@@ -14,12 +14,12 @@ const store = configureStore()
 const apiServiceInstance = new ApiService()
 
 render(
-    <ApiServiceProvider value={apiServiceInstance}>
-        <Provider store={store}>
-            <App history={history}/>
-        </Provider>
-    </ApiServiceProvider>,
-    document.getElementById('root')
+  <ApiServiceProvider value={apiServiceInstance}>
+    <Provider store={store}>
+      <App history={history}/>
+    </Provider>
+  </ApiServiceProvider>,
+  document.getElementById('root')
 )
 
 // If you want your app to work offline and load faster, you can change

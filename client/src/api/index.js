@@ -1,99 +1,86 @@
 import ApiService from "services/api-service"
-
 const apiServiceInstance = new ApiService()
-const getProducts = apiServiceInstance.getAllProducts(true)
-const getProduct = apiServiceInstance.getProduct
-const confimCustomer = apiServiceInstance.confimCustomer
-const sendOrderApi = apiServiceInstance.sendOrder
-const sendNotifyApi = apiServiceInstance.sendNotify
 
+// export const fetchBanner = async (city_id, id) => {
+//   // const a = await apiServiceInstance.getBanner(city_id, id)
+//
+//   // console.log('fetchBanner', a)
+//   return apiServiceInstance.getBanner(city_id, id)
+//     .then(banner => banner)
+//     .catch((error) => console.log(error))
+// }
 
-// todo Посмотри как объединить api, ведь путь одинаков
-//  api/products/
-//  api/products/idn1
+export const fetchContent = (city_id, id) => {
+  return async () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const content = await apiServiceInstance.getContent(city_id, id)
+        console.log('content', content)
+        resolve(content)
+      } catch (e) {
+        console.log(e)
+        reject(e)
+      }
+    })
+  }
 
-// import axios from 'axios'
+//   // const a = await apiServiceInstance.getBanner(city_id, id)
+//
+//   console.log('b', apiServiceInstance.getBanner(city_id, id)())
+//   // console.log('fetchBanner', a)
 
-export const fetchProducts = async (date) => {
-    return getProducts(true, false, false)
-        .then(products => {
-            return products
-            // .map(apiServiceInstance._transformProduct)
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-    // compose(
-    //   withRouterPsarams,
-    //   ,
-    //   withData({
-    //      getDataMethod: 'getAllEntities',
-    //      dataPropName: 'entities',
-    //      loadingText: 'entities'
-    //   }),
-    // return new Promise((resolve, reject) => {
-    //    // switch (date) {
-    //       resolve([])
-    //       // case date_25:
-    //       //    // setTimeout(() => resolve(mockProducts_25), 500)
-    //       //    setTimeout(() => resolve(mockProducts), 0)
-    //       //    break
-    //       //
-    //       // case date_26:
-    //       //    // setTimeout(() => resolve(mockProducts_26), 500)
-    //       //    setTimeout(() => resolve(mockProducts), 0)
-    //       //    break
-    //       //
-    //       // default:
-    //       //    setTimeout(() => resolve(mockProducts), 500)
-    //    // }
-    //
-    //    // resolve()
+  // const next = (cb) => new Promise(cb)
+
+  // const res = await apiServiceInstance.getBanner(city_id, id)()
+  //   console.log('res', res)
+  //
+  // return () => {
+  //
+  // }
+
+    // .then(content => {
+    //   console.log('getContent then', content)
+    //   return next(resolve => resolve(content))
     // })
+    // .catch((error) => {
+    //   console.log('fetchContent error', error)
+    //   return next((resolve, reject) => reject(error))
+    // })
+
 }
 
-// const _transformProduct = ({ sizes, florist, ...base }) => ({
-//     ...base,
-//     florist: {
-//         ...florist,
-//         photo: apiServiceInstance.getImage(florist.photo)
-//     },
-//     sizes: sizes.map(({ images, ...sizeBase }) => ({
-//         images: images.map(img => apiServiceInstance.getImage(img)),
-//         ...sizeBase
-//     }))
-// })
+export const fetchProducts = async (city_id, date) => {
+  console.log('fetchProducts')
+  return apiServiceInstance.getAllProducts(city_id, date)
+    .then(products => products)
+    .catch((error) => console.log(error))
+}
 
 export const fetchProduct = async (id) => {
-    console.log('api fetchProduct (id)', id)
-    console.log(getProduct(id))
-    return getProduct(id, true, false, false)()
-        .then(product => product)
-        .catch((error) => console.log(error))
+  return apiServiceInstance.getProduct(id, true)
+    .then(product => product)
+    .catch((error) => console.log(error))
 }
 
 export const fetchConfim = async (data) => {
-    console.log('api fetchConfim (data)', data)
-    // console.log(getProduct(id))
-    return confimCustomer(data)
-    //   .then(result => result)
-    //   .catch((error) => error)
+  console.log('api fetchConfim (data)', data)
+
+  return apiServiceInstance.confimCustomer(data)
+    .then(product => product)
+    .catch((error) => console.log(error))
 }
 
-export const sendOrder = async (data) => {
-    console.log('api sendOrder (data)', data)
-    return sendOrderApi(data)
+export const saveOrder = async (data) => {
+  console.log('api saveOrder (data)', data)
+
+  return apiServiceInstance.saveOrder(data)
+    .then(product => product)
+    .catch((error) => console.log(error))
 }
 
-export const sendNotify = async (data) => {
-    console.log('api sendNotify (data)', data)
-    await sendNotifyApi(data)
-}
-
-
-export const fetchAdditionalProducts = async () => {
-    return new Promise((resolve, reject) => {
-        // setTimeout(() => resolve(mockAdditional), 0)
-        resolve([])
-    })
-}
+// export const fetchAdditionalProducts = async () => {
+//   return new Promise((resolve, reject) => {
+//     // setTimeout(() => resolve(mockAdditional), 0)
+//     resolve([])
+//   })
+// }

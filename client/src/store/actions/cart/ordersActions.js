@@ -8,8 +8,7 @@ import {
 } from "store/actionTypes"
 import {
   fetchConfim as fetchConfimApi,
-  sendOrder as sendOrderApi,
-  // sendNotify as sendNotifyApi
+  saveOrder as saveOrderApi
 } from 'api'
 
 
@@ -47,12 +46,8 @@ export const sendOrder = (data) => async (dispatch) => {
   console.log('action sendOrderApi', data)
   dispatch(requestOrderSend())
   try {
-    const response = await sendOrderApi(data)
+    const response = await saveOrderApi(data)
     dispatch(successOrderSend(response))
-
-    // dispatch(sendNotifyApi({
-    //   msg: `Новый заказ №${response.data.result}, `
-    // }))
   } catch (e) {
     dispatch(failureOrderSend(e))
   }

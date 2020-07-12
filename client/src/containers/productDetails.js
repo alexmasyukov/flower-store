@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from "react-redux"
+import { compose } from "redux"
 import cn from 'classnames'
 import { useLocation } from "react-router-dom"
 import Preloader from "components/Preloader"
@@ -12,13 +13,14 @@ import FlowersInstruction from "components/ProductDetails/FlowersInstruction"
 import DeliveryInfo from "components/ProductDetails/DeliveryInfo"
 import ExpandBlock from "components/ProductDetails/ExpandBlock"
 // import { slugFromUrlSelector } from "store/selectors/router"
-import { fetchProduct, fetchProducts } from "store/actions/productsActions"
-import { activeProductSelector, productSelector } from "store/selectors/product"
+import { fetchProducts } from "store/actions/productsActions"
+import { productSelector } from "store/selectors/product"
 import { cartProductAdd } from "store/actions/cart/productsActions"
 import Additive from "components/ProductDetails/Additive"
 import Lightbox from 'react-image-lightbox'
-import { getFilterSelectedByKey } from "store/selectors/products"
+// import { getFilterSelectedByKey } from "store/selectors/products"
 
+// activeProductSelector,
 import { isNumber } from "utils"
 import Page404 from "pages/404"
 import withApiService from "components/hoc/withApiService"
@@ -26,6 +28,7 @@ import FlowersList from 'components/Common/FlowersList'
 
 import 'react-image-lightbox/style.css'
 import styles from "./productDetails.module.sass"
+import withCity from "components/hoc/withCity"
 // import { history } from 'store/configureStore'
 // import { Row } from "components/Bootstrap"
 // import propTypes from "prop-types"
@@ -38,14 +41,15 @@ function useQuery() {
   return new URLSearchParams(useLocation().search)
 }
 
-const ProductDetailsContainer = ({
-  product,
-  addToCart,
-  fetchProducts,
-  getThumbImage,
-  getSmallImage,
-  getImage
-}) => {
+const ProductDetails = ({
+                          product,
+                          addToCart,
+                          fetchProducts,
+                          getThumbImage,
+                          getSmallImage,
+                          getImage,
+                          city
+                        }) => {
   let query = useQuery()
   const activeSizeIndexFromRouter = Number.parseInt(query.get("activeSizeIndex"))
 
@@ -58,7 +62,7 @@ const ProductDetailsContainer = ({
 
   useEffect(() => {
     // console.warn('useEffect', product)
-    if (!product) fetchProducts('ssdfs')
+    if (!product) fetchProducts(city.id)
   }, [])
 
   const handleSizeClick = (activeSizeIndex) => {
@@ -130,10 +134,10 @@ const ProductDetailsContainer = ({
   // todo Понять как сделать редирект на 404
   // this.props.goToLink('/404')
   // if (!product) return history.push('/404')
-  if (!product) return <Preloader />
+  if (!product) return <Preloader/>
 
   const { florist, additives, sizes } = product
-  if (activeSizeIndex > sizes.length - 1) return <Page404 />
+  if (activeSizeIndex > sizes.length - 1) return <Page404/>
 
   const activeSize = sizes[activeSizeIndex]
   const images = activeSize.images
@@ -154,7 +158,7 @@ const ProductDetailsContainer = ({
 
   const totalSelectedAdditives = Object
     .values(selectedAdditives)
-    .reduce((total, {price}) => total + price, 0)
+    .reduce((total, { price }) => total + price, 0)
 
   const totalPrice = activeSize.price + totalSelectedAdditives
 
@@ -163,7 +167,7 @@ const ProductDetailsContainer = ({
       <div className={cn('col-md-5', styles.photo)}>
         <div className={styles.photoSizeTitle}>
           «{activeSize.title}»
-              </div>
+        </div>
 
         <img
           src={getSmallImage(activeImage)}
@@ -183,7 +187,7 @@ const ProductDetailsContainer = ({
           activeSize.images.map((img, i) => (
             <div key={i} className={cn(styles.thumb, i > 0 && "ml-2",
               activeImageIndex === i && styles.active)}>
-              <img src={getThumbImage(img)} onClick={handleSetIndexImage(i)} alt="" />
+              <img src={getThumbImage(img)} onClick={handleSetIndexImage(i)} alt=""/>
             </div>
           ))
         )}
@@ -197,7 +201,7 @@ const ProductDetailsContainer = ({
         </div>
 
         <div className="d-none d-lg-block d-xl-block">
-          <FlowersInstruction />
+          <FlowersInstruction/>
         </div>
       </div>
       <div className={cn('col-md-7', styles.usn)}>
@@ -234,13 +238,14 @@ const ProductDetailsContainer = ({
         {/*onClick={this.handleAdditionalProductClick}*/}
         {/*/>*/}
 
-        <br />
-        <h1>{totalPrice.toLocaleString('ru-RU')} <RoubleSymbol /></h1>
+        <br/>
+        <h1>{totalPrice.toLocaleString('ru-RU')} <RoubleSymbol/></h1>
 
 
         <div
           className={styles.addToCartBtn}
-          onClick={handleAddToCart}>В корзину</div>
+          onClick={handleAddToCart}>В корзину
+        </div>
 
         <div className="d-lg-none d-xl-none">
           <FloristSay
@@ -255,14 +260,14 @@ const ProductDetailsContainer = ({
             <FlowersList
               flowers={activeSize.flowers}
               counts={activeSize.flowers_counts}
-              className={styles.flowersList} />
+              className={styles.flowersList}/>
           </ExpandBlock>
         )}
 
-        <DeliveryInfo />
+        <DeliveryInfo/>
 
         <div className="d-lg-none d-xl-none">
-          <FlowersInstruction />
+          <FlowersInstruction/>
         </div>
 
       </div>
@@ -295,7 +300,13 @@ const mapApiMethodsToProps = (apiService) => ({
 // todo https://stackoverflow.com/questions/49213602/how-to-get-id-params-to-redux-action-from-react-router
 // todo use it
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withApiService(mapApiMethodsToProps)(ProductDetailsContainer))
+const ProductDetailsContainer = compose(
+  withCity,
+  withApiService(mapApiMethodsToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
+)(ProductDetails)
+
+export default ProductDetailsContainer

@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import cn from 'classnames'
+// import cn from 'classnames'
 // import {
 //   string as YupString,
 //   object as YupObject,
 //   setLocale
 // } from 'yup'
 // import styles from './cartContainer.module.sass'
-import { Row } from "components/Bootstrap"
+// import { Row } from "components/Bootstrap"
 import Step from "components/Cart/Common/Step"
 import NextButton from "components/Cart/Common/NextButton"
 import ChangeButton from "components/Cart/Common/ChangeButton"
@@ -20,7 +20,7 @@ import DeliveryTimeForm from "components/Cart/Steps/DeliveryTimeForm"
 import DeliveryTimeResult from "components/Cart/Steps/DeliveryTimeResult"
 import PayForm from "components/Cart/Steps/PayForm"
 import PayResult from "components/Cart/Steps/PayResult"
-import { DELIVERY_IS, PAY_TYPES, VALIDATION_MESSAGES as VM } from "constants/common"
+import { CONFIM_STATUS, DELIVERY_IS, PAY_TYPES, VALIDATION_MESSAGES as VM } from "constants/common"
 import styles from "components/Cart/cart.module.sass"
 import { connect } from "react-redux"
 import { confimSelector, orderSelector, cartProductsSelector } from "store/selectors/cart"
@@ -34,7 +34,7 @@ const initialState = {
     isEdit: true,
     isValid: true,
     name: 'Алексей',
-    phone: 79960225657
+    phone: '+7(996)022-5657'
   },
 
   confimCustomer: {
@@ -124,18 +124,6 @@ const validateOptions = {
 //   })
 
 
-// CODE_SENT
-// CONFIM_DONE
-// INCORRECT_CODE
-// SEND_SMS_ERROR
-const CONFIM_STATUS = {
-  BEFORE_SEND: 'BEFORE_SEND',
-  CODE_SENT: 'CODE_SENT',
-  CONFIM_DONE: 'CONFIM_DONE',
-  INCORRECT_CODE: 'INCORRECT_CODE',
-  SEND_SMS_ERROR: 'SEND_SMS_ERROR'
-}
-
 class CartSteps extends Component {
   state = {
     ...initialState
@@ -182,16 +170,34 @@ class CartSteps extends Component {
     }, state)
   }
 
-  handleChangeButton = (step) => () => {
-    this.setState(prev => {
-      const steps = this.getStepsWith_isEdit_false()
+  handleChangeButton = (stepName) => () => {
+    this.setState(prev => ({
+      [stepName]: {
+        ...prev[stepName],
+        isEdit: true
+      }
+    }))
+    // this.setState(prev => {
+    //
+    //   // todo переписать через compose эти две функции
+    //   const steps = this.getStepsWith_isEdit_false()
+    //
+    //   return {
+    //     ...steps,
+    //     [step]: {
+    //       ...prev[step],
+    //       isEdit: true
+    //     }
+    //   }
+    // })
+  }
 
-      return {
-        ...steps,
-        [step]: {
-          ...prev[step],
-          isEdit: true
-        }
+  handleStepSubmit = (stepName) => (step) => {
+    this.setState({
+      [stepName]: {
+        ...step,
+        isEdit: false,
+        isValid: true
       }
     })
   }
@@ -273,24 +279,24 @@ class CartSteps extends Component {
     // }
   }
 
-  handleSendConfim = () => {
-    console.log('handleSendConfim', this.state)
-
-    const { customer: { name, phone } } = this.state
-
-    this.setState(prev => ({
-      confimCustomer: {
-        ...prev.confimCustomer,
-        timerVisible: true
-      }
-    }), () => this.props.fetchConfim({ name, phone }))
-  }
+  // handleSendConfim = () => {
+  //   console.log('handleSendConfim', this.state)
+  //
+  //   const { customer: { name, phone } } = this.state
+  //
+  //   this.setState(prev => ({
+  //     confimCustomer: {
+  //       ...prev.confimCustomer,
+  //       timerVisible: true
+  //     }
+  //   }), () => this.props.fetchConfim({ name, phone }))
+  // }
 
   render() {
     const { confim } = this.props
     const {
       customer, recipient, delivery, order,
-      deliveryDateTime, pay, confimCustomer
+      deliveryDateTime, pay
     } = this.state
 
 
@@ -318,78 +324,42 @@ class CartSteps extends Component {
       <>
         <Step number={1} title="Ваши контакты" active={customer.isEdit}>
           {customer.isEdit ? (
-            <CustomerForm {...customer} onInputChange={this.handleInputChange}>
-              <NextButton onClick={this.handleNextButton('customer', 'delivery')} />
+            <CustomerForm {...customer} onSubmit={this.handleStepSubmit('customer')}>
+              <NextButton onClick={this.handleNextButton('customer', 'delivery')}/>
             </CustomerForm>
           ) : (
-              customer.isValid && (
-                <CustomerResult  {...customer}>
-                  <ChangeButton onClick={this.handleSendConfim} />
-
-                  {!order.done && (
-                    <>
-                      На ваш номер отправлен код подтверждения
-                      <Input
-                        placeholder="Код"
-                        value={confimCustomer.code}
-                        onChange={this.handleInputChange('confimCustomer.code')} />
-
-                      <div onClick={this.handleSendConfim}>Отправаить код еще раз</div>
-                      {confimCustomer.timerVisible && (
-                        <>Запросить код повторно можно через <Timer maxSeconds={3}
-                          onTimeEnd={this.handleTimeEnd} /> сек.</>
-                      )}
-
-                      <NextButton title='Подтвердить' onClick={this.handleNextButton('customer', 'delivery')} />
-                    </>)}
-
-                  {/* {!order.done && <NextButton title='Оформить заказ' onClick={this.handleSendOrder} />} */}
-
-
-                  {confim.isLoading && 'Отправка СМС...'}
-
-                  {confim.error && 'Невозможно отправить смс'}
-                  {confim.error && <pre>{JSON.stringify(confim.error, null, 2)}</pre>}
-
-
-                  {confim.data && confim.data.status === CONFIM_STATUS.CODE_SENT &&
-                    'Смс отправлено успешно'}
-
-
-
-
-                  {/* <ChangeButton onClick={this.handleChangeButton('customer')} /> */}
-                </CustomerResult>
-              )
-            )}
+            <CustomerResult  {...customer}>
+              <ChangeButton onClick={this.handleChangeButton('customer')}/>
+            </CustomerResult>
+          )}
         </Step>
 
         {/*deliveryTitle*/}
         <Step number={2} title={'Доставка / самовывоз'} active={delivery.isEdit}>
           {delivery.isEdit ? (
             <DeliveryForm {...delivery} onInputChange={this.handleInputChange}>
-              <NextButton onClick={this.handleNextButton('delivery', 'recipient')} />
+              <NextButton onClick={this.handleNextButton('delivery', 'recipient')}/>
             </DeliveryForm>
           ) : (
-              delivery.isValid && (
-                <DeliveryResult {...delivery}>
-                  <ChangeButton onClick={this.handleChangeButton('delivery')} />
-                </DeliveryResult>
-              )
-            )}
+            delivery.isValid && (
+              <DeliveryResult {...delivery}>
+                <ChangeButton onClick={this.handleChangeButton('delivery')}/>
+              </DeliveryResult>
+            )
+          )}
         </Step>
         <Step number={3} title="Получатель" active={recipient.isEdit}>
           {recipient.isEdit ? (
             <RecipientForm {...recipient} onInputChange={this.handleInputChange}>
-              <NextButton onClick={this.handleNextButton('recipient', 'deliveryDateTime')} />
+              <NextButton onClick={this.handleNextButton('recipient', 'deliveryDateTime')}/>
             </RecipientForm>
           ) : (
-              recipient.isValid && (
-                <RecipientResult {...recipient}>
-                  <ChangeButton onClick={this.handleChangeButton('recipient')} />
-                </RecipientResult>
-              )
-            )}
+            recipient.isValid && (
+              <RecipientResult {...recipient}>
+                <ChangeButton onClick={this.handleChangeButton('recipient')}/>
+              </RecipientResult>
+            )
+          )}
         </Step>
         <Step number={4} title={deliveryTimeTitle} active={deliveryDateTime.isEdit}>
           {deliveryDateTime.isEdit ? (
@@ -398,15 +368,15 @@ class CartSteps extends Component {
               deliveryIs={delivery.is}
               onInputChange={this.handleInputChange}
             >
-              <NextButton onClick={this.handleNextButton('deliveryDateTime', 'pay')} />
+              <NextButton onClick={this.handleNextButton('deliveryDateTime', 'pay')}/>
             </DeliveryTimeForm>
           ) : (
-              deliveryDateTime.isValid && (
-                <DeliveryTimeResult {...deliveryDateTime}>
-                  <ChangeButton onClick={this.handleChangeButton('deliveryDateTime')} />
-                </DeliveryTimeResult>
-              )
-            )}
+            deliveryDateTime.isValid && (
+              <DeliveryTimeResult {...deliveryDateTime}>
+                <ChangeButton onClick={this.handleChangeButton('deliveryDateTime')}/>
+              </DeliveryTimeResult>
+            )
+          )}
         </Step>
         <Step number={5} title="Оплата" active={pay.isEdit}>
           {pay.isEdit ? (
@@ -425,12 +395,12 @@ class CartSteps extends Component {
 
             </PayForm>
           ) : (
-              pay.isValid && (
-                <PayResult {...pay}>
-                  <ChangeButton onClick={this.handleChangeButton('pay')} />
-                </PayResult>
-              )
-            )}
+            pay.isValid && (
+              <PayResult {...pay}>
+                <ChangeButton onClick={this.handleChangeButton('pay')}/>
+              </PayResult>
+            )
+          )}
         </Step>
       </>
     )

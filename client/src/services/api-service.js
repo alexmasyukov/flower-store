@@ -1,102 +1,79 @@
 import axios from 'axios'
 
-export default class ApiService {
-  _apiBase = process.env.NODE_ENV === 'production' ?
-    'https://flower-cms.ru/api/v1' :
-    'http://localhost/api/v1'
+const next = (cb) => new Promise(cb)
 
-  _imageBase = '/api/static/'
+export default class ApiService {
+  _apiVersion = '/v1'
+
+  _apiBase = process.env.NODE_ENV === 'production' ?
+    'https://flower-cms.ru/api' :
+    'http://localhost/api'
+
+  _imageBase = this._apiBase + '/static/'
 
   getImage = (name) => `${this._imageBase}${name}`
   getThumbImage = (name) => this.getImage(`thumb_${name}`)
   getSmallImage = (name) => this.getImage(`sm_${name}`)
 
-  getResource = async (url) => {
-    console.log('getResource', url)
-    const res = await fetch(`${this._apiBase}${url}`, {
-      'Accept-Encoding': 'compress, gzip'
-    })
-    if (!res.ok) {
-      throw new Error(`Could not fetch ${url}` +
-        `, received ${res.status}`)
-    }
-    return await res.json()
-  }
-
-  postResource = async (url, obj) => {
-    return await axios.post(`${this._apiBase}${url}`, obj, {
-      responseType: 'json'
+  getResource = (url) => {
+    return axios.get(`${this._apiBase}${this._apiVersion}${url}`, {
+      'Accept-Encoding': 'compress, gzip',
+      withCredentials: true
     })
       .then(res => res.data)
       .catch(this._apiErrHandler)
   }
 
-  // todo: fix it on async await like as above
-  uploadImages = (files) => {
-    const data = new FormData()
-    data.append('attachments', files)
-    return axios.post(this._uploadImagesBase, data, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+  postResource = async (url, obj) => {
+    return await axios.post(`${this._apiBase}${this._apiVersion}${url}`, obj, {
+      responseType: 'json',
+      withCredentials: true
     })
-      .then(res => res.data.result)
-      .catch(errors => {
-        alert('Ошибка при загрузке изображения. Попробуйте другое изображение.')
-        console.log(errors)
-        console.log(errors.response.data)
-      })
+      .then(res => res.data)
+      .catch(this._apiErrHandler)
   }
 
 
-  // Products
-  getProduct = (
-    id,
-    convertEntities = false,
-    withUnpublic = false,
-    withUnpublicSizes = false
-  ) => async () => await this.getResource(`/products/${id}??withUnpublic=${withUnpublic}&withUnpublicSizes=${withUnpublicSizes}&convertEntities=${convertEntities}`)
+  getAllProducts = async (cityId, date) =>
+    await this.getResource(`/products?city_id=${cityId}&convert_entities=true`)
 
-  getAllProducts = (
-    convertEntities = false,
-    withUnpublic = false,
-    withUnpublicSizes = false
-  ) => async () => {
-    return await this.getResource(`/products?withUnpublic=${withUnpublic}&withUnpublicSizes=${withUnpublicSizes}&convertEntities=${convertEntities}`)
-    //.map(this._transformProduct)
-  }
+  getProduct = (cityId, id) => async () =>
+    await this.getResource(`/products/${id}?city_id=${cityId}&convert_entities=true`)
 
-  // Customers
-  getAllCustomers = async () => await this.getResource(`/customers`)
+
+  getAllReviews = (cityId) => async () =>
+    await this.getResource(`/reviews?city_id=${cityId}&limit=30`)
+
+  getLastReviews = (cityId) => async () =>
+    await this.getResource(`/reviews?city_id=${cityId}&limit=3`)
+
+
+  getTeam = (cityId) => async () =>
+    await this.getResource(`/team?city_id=${cityId}`)
+
   confimCustomer = async (data) =>
-    await axios.post(`${this._apiBase}/customers/confim`, data, {
-      responseType: 'json'
-    })
+    await this.postResource(`/customers/confim`, data)
 
-  getTeam = async () => await this.getResource(`/team?withUnpublic=true`)
-  getBanner = (id) => async () => await this.getResource(`/banners/${id}?withUnpublic=true`)
-  getContent = (id) => async () => await this.getResource(`/content/${id}?withUnpublic=true`)
-  getAllReviews = async () => await this.getResource(`/reviews?withUnpublic=true`)
-  getLastReviews = (count = 1) => async () => await this.getResource(`/reviews?count=${count}`)
+  saveOrder = async (order) =>
+    await this.postResource(`/orders`, order)
 
-  sendOrder = async (data) =>
-    await axios.post(`${this._apiBase}/orders`, data, {
-      responseType: 'json'
-    })
+  getBanner = (cityId, id) => async () =>
+    await this.getResource(`/banners/${id}?city_id=${cityId}`)
 
-  sendNotify = async (data) =>
-    await axios.post(`${this._apiBase}/bot-viber/send`, data, {
-      responseType: 'json'
-    })
+  getContent = (cityId, id) => async () =>
+    await this.getResource(`/content/${id}?city_id=${cityId}`)
+
 
   _apiErrHandler = (error) => {
-    alert('Ошибка в запросе')
+    console.warn('_apiErrHandler')
     if (error.response) {
       /*
        * The request was made and the server responded with a
        * status code that falls out of the range of 2xx
        */
-      console.log(error.response.data)
+      console.warn('error.response.data', error.response.data)
       // console.log(error.response.data);
-      console.log(error.response.headers)
+      console.warn('error.response.headers', error.response.headers)
       // .errors.map(err => err.path + ' ' + err.message)
     } else if (error.request) {
       /*
@@ -109,107 +86,20 @@ export default class ApiService {
       // Something happened in setting up the request and triggered an Error
       console.log('Error', error.message)
     }
-    // console.log(error.errors.map(err => err.message).join('\n'))
-    // console.log()
-    // alert('Ошибка в запросе / ' + error)
-    // throw new Error(`Could not fetch` +
-    //   `, received ${error}`)
-    return error
+
+
+    // if (error.response.status !== 404)
+    // alert('Ошибка в запросе, подробности в консоли')
+
+    // if (error.response.status === 404) {
+    //   return next((resolve) => {
+    //     resolve()
+    //   })
+    // }
+
+    return next((resolve, reject) => {
+      console.log(error)
+      return reject(error)
+    })
   }
-
-  //
-  // _transformProduct = ({ sizes, ...base }) => ({
-  //   ...base,
-  //   sizes: sizes.map(({ images, ...sizeBase }) => ({
-  //     images: images.map(img => this.getImage(img)),
-  //     ...sizeBase
-  //   }))
-  // })
-
-
-  // OTHER
-  //
-  // _transformProduct = product => ({
-  //         ...product
-  //     })
-  // getAllPeople = async () => {
-  //   const res = await this.getResource(`/people/`)
-  //   return res.results.map(this._transformPerson)
-  // }
-  //
-  //
-  // getPerson = async id =>
-  //   await this.getResource(`/people/${id}/`)
-  //     .then(this._transformPerson)
-  //
-  //
-  // getAllPlanets = async () => {
-  //   const res = await this.getResource(`/planets/`)
-  //   return res.results.map(this._transformPlanet)
-  // }
-  //
-  //
-  // getPlanet = async id =>
-  //   await this.getResource(`/planets/${id}`)
-  //     .then(this._transformPlanet)
-  //
-  //
-  // getAllStarships = async () => {
-  //   const res = await this.getResource(`/starships/`)
-  //   return res.results.map(this._transformStarship)
-  // }
-  //
-  //
-  // getStarship = async id =>
-  //   await this.getResource(`/starships/${id}/`)
-  //     .then(this._transformStarship)
-  //
-  //
-  // getPersonImage = ({ id }) =>
-  //   `${this._imageBase}/characters/${id}.jpg`
-  //
-  // getStarshipImage = ({ id }) =>
-  //   `${this._imageBase}/starships/${id}.jpg`
-  //
-  // getPlanetImage = ({ id }) =>
-  //   `${this._imageBase}/planets/${id}.jpg`
-  //
-  //
-  // _extractIdFromUrl = url => {
-  //   const idRegExp = /\/([0-9]*)\/$/
-  //   return url.match(idRegExp)[1]
-  // }
-  //
-  //
-  // _transformPerson = person => ({
-  //   id: this._extractIdFromUrl(person.url),
-  //   name: person.name,
-  //   gender: person.gender,
-  //   birthYear: person.birth_year,
-  //   eyeColor: person.eye_color
-  // })
-  //
-  //
-  // _transformPlanet = planet => ({
-  //   id: this._extractIdFromUrl(planet.url),
-  //   diameter: planet.diameter,
-  //   rotationPeriod: planet.rotation_period,
-  //   population: planet.population,
-  //   name: planet.name
-  // })
-  //
-  //
-  // _transformStarship = starship => ({
-  //   id: this._extractIdFromUrl(starship.url),
-  //   name: starship.name,
-  //   model: starship.model,
-  //   manufacturer: starship.manufacturer,
-  //   costInCredits: starship.cost_in_credits,
-  //   length: starship.length,
-  //   crew: starship.crew,
-  //   passengers: starship.passengers,
-  //   cargoCapacity: starship.cargo_capacity
-  // })
-
-
 }

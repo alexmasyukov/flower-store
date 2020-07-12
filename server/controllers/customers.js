@@ -5,9 +5,9 @@ const smsController = require('../controllers/sms')
 
 const STATUS = {
   SEND_SMS_DONE: 'SEND_SMS_DONE',
-  DONE: 'DONE',
+  SEND_SMS_ERROR: 'SEND_SMS_ERROR',
   INCORRECT_CODE: 'INCORRECT_CODE',
-  SEND_SMS_ERROR: 'SEND_SMS_ERROR'
+  DONE: 'DONE',
 }
 
 const table = 'customers'

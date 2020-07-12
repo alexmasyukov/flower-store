@@ -7,7 +7,7 @@ import { setDeliveryDateAndFetchProductsexport } from "store/actions/uiActions"
 
 class ModalSelectDelivetyDateCom extends Component {
    render() {
-      console.log('ModalSelectDelivetyDate CONTAINER RENDER')
+      // console.log('ModalSelectDelivetyDate CONTAINER RENDER')
       return (
          <ModalSelectDeliveryDate {...this.props} />
       )

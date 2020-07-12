@@ -10,116 +10,117 @@ import styles from "components/Product/Product.module.sass"
 
 
 const Product = ({
-                     id = 0,
-                     city_id = 1,
-                     public: pub = true,
-                     order = 0,
-                     available = {
-                         // expect: false,
-                         // fast: false
-                     },
-                     slug = '[slug]',
-                     title = '[title]',
+                   cityName,
+                   id = 0,
+                   city_id = 1,
+                   public: pub = true,
+                   order = 0,
+                   available = {
+                     // expect: false,
+                     // fast: false
+                   },
+                   slug = '[slug]',
+                   title = '[title]',
 
-                     florist_text = '',
-                     florist_photo = '',
-                     florist_name = '',
+                   florist_text = '',
+                   florist_photo = '',
+                   florist_name = '',
 
-                     color = '',
-                     stability = '',
-                     shade = '',
-                     packing = '',
-                     bouquetType = '',
-                     additives = [],
-                     additionalProducts = [],
-                     sizes = [{
-                         title: '[sizeTitle]',
-                         active: false,
-                         fast: false,
-                         diameter: 0,
-                         flowers: [],
-                         flowers_counts: [],
-                         price: 0,
-                         images: []
-                     }],
-                     firstActiveSizeIndex = 0,
-                     getThumbImage = () => {
-                     }
+                   color = '',
+                   stability = '',
+                   shade = '',
+                   packing = '',
+                   bouquetType = '',
+                   additives = [],
+                   additionalProducts = [],
+                   sizes = [{
+                     title: '[sizeTitle]',
+                     active: false,
+                     fast: false,
+                     diameter: 0,
+                     flowers: [],
+                     flowers_counts: [],
+                     price: 0,
+                     images: []
+                   }],
+                   firstActiveSizeIndex = 0,
+                   getThumbImage = () => {
+                   },
                  }) => {
 
-    const [selectSizeIndex, setSelectSizeIndex] = useState(false)
-    const [isDetails, setIsDetails] = useState(false)
-    const [linkParams, setLinkParams] = useState('')
+  const [selectSizeIndex, setSelectSizeIndex] = useState(false)
+  const [isDetails, setIsDetails] = useState(false)
+  const [linkParams, setLinkParams] = useState('')
 
-    useEffect(() => {
-        setSelectSizeIndex(false)
-        setLinkParams(`?activeSizeIndex=${firstActiveSizeIndex}`)
-    }, [sizes])
+  useEffect(() => {
+    setSelectSizeIndex(false)
+    setLinkParams(`?activeSizeIndex=${firstActiveSizeIndex}`)
+  }, [sizes])
 
-    const currentSize = sizes[firstActiveSizeIndex]
-    // console.warn(title, 'firstActiveSizeIndex', firstActiveSizeIndex)
+  const currentSize = sizes[firstActiveSizeIndex]
+  // console.warn(title, 'firstActiveSizeIndex', firstActiveSizeIndex)
 
-    const handleSizeClick = (index) => {
-        setLinkParams(`?activeSizeIndex=${index}`)
-        setIsDetails(true)
-        setSelectSizeIndex(index)
-    }
+  const handleSizeClick = (index) => {
+    setLinkParams(`?activeSizeIndex=${index}`)
+    setIsDetails(true)
+    setSelectSizeIndex(index)
+  }
 
-    // const onMouseEnter = (e) => {
-    //     console.log('enter')
-    //     setIsDetails(true)
-    // }
+  // const onMouseEnter = (e) => {
+  //     console.log('enter')
+  //     setIsDetails(true)
+  // }
 
-    // const onMouseOut = (e) => {
-    //     console.log('out')
-    //     setIsDetails(false)
-    // }
+  // const onMouseOut = (e) => {
+  //     console.log('out')
+  //     setIsDetails(false)
+  // }
 // onMouseEnter={(e) => onMouseEnter(e)}
-    // onMouseLeave={(e) => onMouseOut(e)}
+  // onMouseLeave={(e) => onMouseOut(e)}
 
-    return (
-      <div key={id}
-           className={cn(styles.product, 'col-6', 'col-md-4', 'mb-2', 'pl-1', 'pr-1')}
-      >
-          <Link className={styles.image} to={`/catalog/${id}${linkParams}`}>
-              <Photo src={getThumbImage(currentSize.images[0])}/>
-              <SizeInfo className={styles.size} diameter={currentSize.diameter}/>
-          </Link>
+  return (
+    <div key={id}
+         className={cn(styles.product, 'col-6', 'col-md-4', 'mb-2', 'pl-1', 'pr-1')}
+    >
+      <Link className={styles.image} to={`/${cityName}/catalog/${id}${linkParams}`}>
+        <Photo src={getThumbImage(currentSize.images[0])}/>
+        <SizeInfo className={styles.size} diameter={currentSize.diameter}/>
+      </Link>
 
-          <Available
-            fast={currentSize.fast}
-            small={true}
-            isDetails={isDetails}
-          />
+      <Available
+        fast={currentSize.fast}
+        small={true}
+        isDetails={isDetails}
+      />
 
-          <Link className={styles.title} to={`/catalog/${id}`}>
-              {title}
-          </Link>
+      <Link className={styles.title} to={`/${cityName}/catalog/${id}`}>
+        {title}
+      </Link>
 
-          <div className={styles.sizes}>
-              {sizes.map(({ id, fast, title, price, active }, i) => {
-                  let isActive = active
+      <div className={styles.sizes}>
+        {sizes.map(({ id, fast, title, price, active }, i) => {
+          let isActive = active
 
-                  if (selectSizeIndex || selectSizeIndex === 0) {
-                      isActive = (selectSizeIndex === i)
-                  }
-                  // console.log(title, selectSizeIndex, selectSizeIndex === i, isActive)
+          if (selectSizeIndex || selectSizeIndex === 0) {
+            isActive = (selectSizeIndex === i)
+          }
+          // console.log(title, selectSizeIndex, selectSizeIndex === i, isActive)
 
-                  return (
-                    <SizeTitle
-                      key={id}
-                      title={title}
-                      price={price}
-                      fast={fast}
-                      active={isActive}
-                      onClick={() => handleSizeClick(i)}
-                    />
-                  )
-              })}
-          </div>
-          <hr/>
+          return (
+            <SizeTitle
+              key={id}
+              title={title}
+              price={price}
+              fast={fast}
+              active={isActive}
+              onClick={() => handleSizeClick(i)}
+            />
+          )
+        })}
       </div>
-    )
+      <hr/>
+    </div>
+  )
 }
 
 

@@ -1,0 +1,98 @@
+/* Powered by: https://github.com/tonystar/float-label-css
+ */
+
+/* Re-usable mixins
+ * https://github.com/tonystar/float-label-css/blob/master/scss/_mixins.scss
+ */
+@mixin float-label-container
+  display: block
+  position: relative
+
+
+@mixin float-label
+  label //> span
+    position: absolute
+    left: 1em
+    //top: .4em
+    top: .7em
+    cursor: text
+    //font-size: 75%
+    font-size: 57%
+    opacity: 1
+    color: #8E8E93
+    transition: all .2s
+    text-transform: uppercase
+    letter-spacing: 1px
+    @content
+
+@mixin float-label-input
+  &::placeholder
+    opacity: 0
+    transition: all .2s
+
+  &:placeholder-shown:not(:focus)::placeholder
+    opacity: 0
+
+
+@mixin float-label-scaled
+  &:placeholder-shown:not(:focus) + *
+    font-size: 90%
+    opacity: .8
+    text-transform: none
+    letter-spacing: normal
+    @content
+
+.has_error
+  input
+    border: 1px solid #ff5677 !important
+    border-bottom-left-radius: 0 !important
+    border-bottom-right-radius: 0 !important
+
+/* Default styling
+ * https://github.com/tonystar/float-label-css/blob/master/scss/float-label.scss
+ */
+.has_float_label
+  margin-bottom: 13px
+
+  @include float-label-container
+  @include float-label
+
+  .error
+    font-size: 11px
+    color: #fff
+    width: 100%
+    background: #ff5677
+    display: block
+    font-weight: bold
+    padding: 0 10px 3px 10px
+    border-bottom-left-radius: 5px
+    border-bottom-right-radius: 5px
+
+  input
+    @include float-label-input
+    //font-size: inherit
+    //padding-top: 1em
+    font-size: 14px
+    padding: 1.45em 1em .35em .7em
+    //border: 0
+    border-radius: 4px
+    //border: solid 1px #c7c7cc
+    border: solid 1px #e4e4e4
+    //border-bottom: 2px solid rgba(0,0,0,.1)
+    font-weight: 400
+
+    @include float-label-scaled
+      top: .9em
+      color: #333
+
+    &:focus
+      outline: none
+      border-color: rgba(0, 0, 0, .5)
+
+
+*
+  box-sizing: border-box
+
+input
+  width: 100%
+

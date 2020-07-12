@@ -4,29 +4,39 @@ import { compose } from "utils"
 import withRouterParams from "components/hoc/withRouterParams"
 import withApiService from "components/hoc/withApiService"
 import withData from "components/hoc/withData"
+import withCity from "components/hoc/withCity"
+import { fetchContent } from "api"
+import { Redirect } from "react-router-dom"
 
 
 const fallback = () => (
   <div>Загрузка модуля...</div>
 )
 const Content = loadable(() => import('components/Content'), {
-    fallback: fallback()
+  fallback: fallback()
 })
 
-const mapMethodsToProps = (apiService, { contentId = 0 }) => {
-    return {
-        getImage: apiService.getImage,
-        getContent: apiService.getContent(contentId)
-    }
+// const fetchContent = (cityId, contentId) => {
+//   return () => {
+//     return new Promise((resolve, reject) => reject('none')) //resolve('OK'))
+//   }
+// }
+
+const mapMethodsToProps = (apiService, { city, contentId }) => {
+  return {
+    getImage: apiService.getImage,
+    getContent: apiService.getContent(city.id, contentId)//fetchContent(city.id, contentId)
+  }
 }
 
 const ContentContainer = compose(
-  withRouterParams,
+  withCity,
   withApiService(mapMethodsToProps),
   withData({
-      getDataMethod: 'getContent',
-      dataPropName: 'data',
-      loadingText: 'content'
+    getDataMethod: 'getContent',
+    dataPropName: 'data',
+    loadingText: 'content',
+    errorResponse: <Redirect to={'404'} />
   })
 )(Content)
 
