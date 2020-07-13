@@ -142,7 +142,7 @@ class CartProductList extends Component {
         {/*)}*/}
         {/* {
                this.renderAdditionalProductsInCart(
-                  additionalProducts,
+                  additionalProducts,ˇ
                   this.handleAdditionalProductIncrease,
                   this.handleAdditionalProductDecrease,
                   this.handleRemoveAdditionalItem

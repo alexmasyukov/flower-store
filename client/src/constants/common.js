@@ -11,11 +11,6 @@ export const PAY_TYPES = {
   ACCOUNT_FOR_A_LEGAL_ENTITY: 'ACCOUNT_FOR_A_LEGAL_ENTITY'
 }
 
-export const VALIDATION_MESSAGES = {
-  REQUIRE: 'Необходимо заполнить',
-  MIN_SYMBOLS: (min, otherText) => `Минимум ${min} ${otherText}`
-}
-
 export const AVAILABLE_TYPES = {
   BASE: 'BASE',
   FAST: 'FAST'

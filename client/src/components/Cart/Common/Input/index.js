@@ -2,6 +2,34 @@ import React from "react"
 import styles from 'components/Cart/Common/common.module.sass'
 import cn from 'classnames'
 
+const func = () => {
+}
+
+const InputStandart = ({
+                         name, value = '', disabled = false,
+                         placeholder = '', onChange = func
+                       }) => (
+  <input
+    type="text"
+    id={name}
+    value={value}
+    disabled={disabled}
+    placeholder={placeholder}
+    onChange={onChange}/>
+)
+
+const InputTextarea = ({
+                         name, value = '', disabled = false,
+                         placeholder = '', onChange = func
+                       }) => (
+  <textarea
+    id={name}
+    value={value}
+    disabled={disabled}
+    placeholder={placeholder}
+    onChange={onChange}/>
+)
+
 const Input = ({
                  label = '',
                  value,
@@ -17,7 +45,8 @@ const Input = ({
                  onBlur = () => {
                  },
                  onFocus = () => {
-                 }
+                 },
+                 ...otherProps
                }) => {
   switch (type) {
     case 'checkbox':
@@ -25,6 +54,8 @@ const Input = ({
         <label>
           <input
             type="checkbox"
+            name={name}
+            value={value}
             checked={checked}
             onChange={onChange}/>
           {label}
@@ -43,35 +74,31 @@ const Input = ({
         </label>
       )
     default:
+      const props = {
+        onChange, onBlur, onFocus,
+        name, value, placeholder, disabled
+      }
+
+      const hasError = (meta.error || meta.submitError) && meta.touched
+
       return (
         <div className={cn(
-          styles.has_float_label,
-          meta.error && meta.touched && styles.has_error
+          styles.has_float_label, hasError && styles.has_error
         )}>
-          {children ?
-            children({
-              onChange, onBlur, onFocus,
-              name, value, placeholder, disabled
-            })
-            : (
-              <input
-                type="text"
-                id={name}
-                value={value}
-                disabled={disabled}
-                placeholder={placeholder}
-                onChange={onChange}/>
-            )
+
+          {children && children(props)}
+          {type === 'textarea' ?
+            <InputTextarea {...props} {...otherProps} /> :
+            <InputStandart {...props} />
           }
+
           <label htmlFor={name}>{placeholder}</label>
-          {
-            (meta.error || meta.submitError) &&
-            meta.touched && (
-              <span className={styles.error}>
-                {meta.error || meta.submitError}
-              </span>
-            )
-          }
+
+          {hasError && (
+            <span className={styles.error}>
+              {meta.error || meta.submitError}
+            </span>
+          )}
         </div>
       )
   }

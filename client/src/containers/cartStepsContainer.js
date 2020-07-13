@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from "react-redux"
 // import cn from 'classnames'
 // import {
 //   string as YupString,
@@ -20,31 +21,17 @@ import DeliveryTimeForm from "components/Cart/Steps/DeliveryTimeForm"
 import DeliveryTimeResult from "components/Cart/Steps/DeliveryTimeResult"
 import PayForm from "components/Cart/Steps/PayForm"
 import PayResult from "components/Cart/Steps/PayResult"
-import { CONFIM_STATUS, DELIVERY_IS, PAY_TYPES, VALIDATION_MESSAGES as VM } from "constants/common"
-import styles from "components/Cart/cart.module.sass"
-import { connect } from "react-redux"
+import { DELIVERY_IS, PAY_TYPES } from "constants/common"
 import { confimSelector, orderSelector, cartProductsSelector } from "store/selectors/cart"
 import { fetchConfim, sendOrder } from "store/actions/cart/ordersActions"
-import Timer from 'components/Cart/Timer'
-import Input from "components/Cart/Common/Input"
+import styles from "components/Cart/cart.module.sass"
 
 
 const initialState = {
   customer: {
-    isEdit: true,
-    isValid: true,
+    isEdit: false,
     name: 'Алексей',
     phone: '+7(996)022-5657'
-  },
-
-  confimCustomer: {
-    timerVisible: false,
-    code: ''
-  },
-
-  order: {
-    done: false,
-    id: 0
   },
 
   delivery: {
@@ -88,6 +75,11 @@ const initialState = {
       kpp: ''
     },
     comment: 'sdf'
+  },
+
+  order: {
+    done: false,
+    id: 0
   }
 }
 
@@ -303,8 +295,8 @@ class CartSteps extends Component {
     // console.log('confim', confim)
     // console.log('order', order)
 
-    const deliveryTitle = delivery.is === DELIVERY_IS.COURIER ?
-      'Адрес доставки' : 'Адрес самовывоза'
+    // const deliveryTitle = delivery.is === DELIVERY_IS.COURIER ?
+    //   'Адрес доставки' : 'Адрес самовывоза'
 
     const deliveryTimeTitle = delivery.is === DELIVERY_IS.COURIER ?
       'Время доставки' : 'Время самовывоза'
@@ -318,8 +310,6 @@ class CartSteps extends Component {
     }
 
 
-    // todo: переписать это через контекст
-    //   https://ru.reactjs.org/docs/context.html
     return (
       <>
         <Step number={1} title="Ваши контакты" active={customer.isEdit}>
@@ -334,20 +324,18 @@ class CartSteps extends Component {
           )}
         </Step>
 
-        {/*deliveryTitle*/}
         <Step number={2} title={'Доставка / самовывоз'} active={delivery.isEdit}>
           {delivery.isEdit ? (
             <DeliveryForm {...delivery} onInputChange={this.handleInputChange}>
               <NextButton onClick={this.handleNextButton('delivery', 'recipient')}/>
             </DeliveryForm>
           ) : (
-            delivery.isValid && (
-              <DeliveryResult {...delivery}>
-                <ChangeButton onClick={this.handleChangeButton('delivery')}/>
-              </DeliveryResult>
-            )
+            <DeliveryResult {...delivery}>
+              <ChangeButton onClick={this.handleChangeButton('delivery')}/>
+            </DeliveryResult>
           )}
         </Step>
+
         <Step number={3} title="Получатель" active={recipient.isEdit}>
           {recipient.isEdit ? (
             <RecipientForm {...recipient} onInputChange={this.handleInputChange}>

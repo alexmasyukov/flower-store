@@ -68,7 +68,7 @@
     border-bottom-left-radius: 5px
     border-bottom-right-radius: 5px
 
-  input
+  input, textarea
     @include float-label-input
     //font-size: inherit
     //padding-top: 1em
@@ -93,6 +93,12 @@
 *
   box-sizing: border-box
 
-input
+input,
+textarea
   width: 100%
+
+input[type="checkbox"],
+input[type="radio"]
+  display: inline-flex
+  width: auto
 

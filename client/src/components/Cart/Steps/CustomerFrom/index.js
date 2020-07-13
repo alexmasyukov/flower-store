@@ -24,15 +24,7 @@ const CurrencyInput = ({
                          format = PHONE_FORMAT.FORMAT_FOR_INPUT
                        }) => {
   return (
-
     <NumberFormat
-      // thousandSeparator=" "
-      // decimalScale="2"
-      // fixedDecimalScale={true}
-      // allowNegative={false}
-      // placeholder=""
-      // autoComplete="on"
-      // allowEmptyFormatting={true}
       disabled={disabled}
       type="tel"
       id={name}
@@ -50,23 +42,16 @@ const CurrencyInput = ({
   )
 }
 
+
 const BtnContinue = ({ onClick }) => (
   <p className={styles.btnContinue} onClick={onClick}>Не приходит смс</p>
 )
 
-//
-// const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
-//
-// const onSubmit = async values => {
-//   await sleep(300)
-//   window.alert(JSON.stringify(values, 0, 2))
-// }
 
 const Customer = ({
                     name, phone, onSubmit, confimCustomer,
                     cartCustomerPointsSet, children
                   }) => {
-  console.log(cartCustomerPointsSet)
   const [confim, setConfim] = useState({
     values: undefined,
     status: CONFIM_STATUS.BEFORE_SEND
@@ -80,7 +65,7 @@ const Customer = ({
   const [isLoading, setIsLoading] = useState(false)
 
   const handleRetrySendSms = async (values) => {
-    console.warn('handleRetrySendSms', values)
+    // console.warn('handleRetrySendSms', values)
     setAttempt(attempt + 1)
     setIsLoading(true)
 
@@ -91,8 +76,6 @@ const Customer = ({
       })
 
       setIsLoading(false)
-      // console.log('sms', sms)
-      console.log('setConfim', values, sms.status)
 
       setConfim({
         values,
@@ -100,10 +83,9 @@ const Customer = ({
       })
     } catch (e) {
       setIsLoading(false)
-      console.log('sms', e)
-
       if (attempt === 2) onSubmit(values)
       setIsTimer(true)
+
       setConfim({
         values,
         status: CONFIM_STATUS.SEND_SMS_ERROR
