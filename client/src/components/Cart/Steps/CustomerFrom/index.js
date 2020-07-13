@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
 import { Form, Field } from 'react-final-form'
-import Input from "components/Cart/Common/Input"
+import { connect } from "react-redux"
 import NumberFormat from "react-number-format"
-import styles from 'components/Cart/cart.module.sass'
-import Timer from "components/Cart/Timer"
+import { compose, phoneToValue, when } from "utils"
+import { cartCustomerPointsSet } from "store/actions/cart/stepsActions"
 import { CONFIM_STATUS, PHONE_FORMAT } from "constants/common"
+import Input from "components/Cart/Common/Input"
+import Timer from "components/Cart/Timer"
 import NextButton from "components/Cart/Common/NextButton"
+import withApiService from "components/hoc/withApiService"
+import styles from 'components/Cart/cart.module.sass'
 
 
 const CurrencyInput = ({
@@ -45,6 +49,11 @@ const CurrencyInput = ({
     />
   )
 }
+
+const BtnContinue = ({ onClick }) => (
+  <p className={styles.btnContinue} onClick={onClick}>Не приходит смс</p>
+)
+
 //
 // const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 //
@@ -53,7 +62,11 @@ const CurrencyInput = ({
 //   window.alert(JSON.stringify(values, 0, 2))
 // }
 
-const CustomerForm = ({ name, phone, onSubmit, children }) => {
+const Customer = ({
+                    name, phone, onSubmit, confimCustomer,
+                    cartCustomerPointsSet, children
+                  }) => {
+  console.log(cartCustomerPointsSet)
   const [confim, setConfim] = useState({
     values: undefined,
     status: CONFIM_STATUS.BEFORE_SEND
@@ -66,37 +79,29 @@ const CustomerForm = ({ name, phone, onSubmit, children }) => {
   const [isTimer, setIsTimer] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  const sendSms = async () => {
-    setIsLoading(true)
-    return await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        setIsLoading(false)
-        Math.random() > 0.3 ?
-          resolve({
-            result: CONFIM_STATUS.SEND_SMS_DONE
-          }) :
-          reject({
-            result: CONFIM_STATUS.SEND_SMS_ERROR
-          })
-        // const a = Math.random()
-        // a > 0.6 && resolve(CONFIM_STATUS.SEND_SMS_DONE)
-        // a > 0.9 && resolve(CONFIM_STATUS.INCORRECT_CODE)
-        // a > 0.3 && resolve(CONFIM_STATUS.SEND_SMS_ERROR)
-        // a > 0.7 && resolve(CONFIM_STATUS.DONE)
-      }, 700)
-    })
-  }
-
   const handleRetrySendSms = async (values) => {
+    console.warn('handleRetrySendSms', values)
     setAttempt(attempt + 1)
+    setIsLoading(true)
 
     try {
-      const sms = await sendSms()
+      const sms = await confimCustomer({
+        phone: phoneToValue(values.phone),
+        name: values.name
+      })
+
+      setIsLoading(false)
+      // console.log('sms', sms)
+      console.log('setConfim', values, sms.status)
+
       setConfim({
         values,
-        status: sms.result
+        status: sms.status
       })
     } catch (e) {
+      setIsLoading(false)
+      console.log('sms', e)
+
       if (attempt === 2) onSubmit(values)
       setIsTimer(true)
       setConfim({
@@ -106,7 +111,12 @@ const CustomerForm = ({ name, phone, onSubmit, children }) => {
     }
   }
 
-  const handleCheckSms = () => {
+  const contninueWithoutConfim = () => {
+    setIsLoading(false)
+    onSubmit(confim.values)
+  }
+
+  const handleCheckSms = async () => {
     if (!code.value) {
       setCode({
         ...code,
@@ -122,9 +132,40 @@ const CustomerForm = ({ name, phone, onSubmit, children }) => {
       return
     }
 
-    if (code.value === '1234') {
-      onSubmit(confim.values)
-    } else {
+
+    const { phone, name } = confim.values
+    const data = compose(
+      when(code.value !== '', (data) => ({ ...data, sms_code: code.value }))
+    )({
+      phone: phoneToValue(phone),
+      name: name
+    })
+
+    try {
+      const sms = await confimCustomer(data)
+      console.warn('sms', sms)
+      if (sms.status === CONFIM_STATUS.DONE) {
+        console.log(sms.result.points)
+        cartCustomerPointsSet(sms.result.points)
+        onSubmit(confim.values)
+      }
+      if (sms.status === CONFIM_STATUS.SEND_SMS_ERROR) {
+        setCode({
+          value: '',
+          validStatus: ''
+        })
+        setConfim({
+          values: confim.values,
+          status: CONFIM_STATUS.SEND_SMS_ERROR
+        })
+      }
+
+      if (sms.status === CONFIM_STATUS.INCORRECT_CODE)
+        setCode({
+          value: '',
+          validStatus: 'Неверный код'
+        })
+    } catch (e) {
       setCode({
         ...code,
         validStatus: 'Неверный код'
@@ -135,7 +176,6 @@ const CustomerForm = ({ name, phone, onSubmit, children }) => {
 
   return (
     <div className={styles.form}>
-      {isLoading && 'Loading...'}
       <Form
         onSubmit={handleRetrySendSms}
         validate={values => {
@@ -172,45 +212,47 @@ const CustomerForm = ({ name, phone, onSubmit, children }) => {
                   </Input>}
               </Field>
 
-              {confim.status === CONFIM_STATUS.BEFORE_SEND && (
-                <>
-                  <p className={styles.blockText}> Ваши данные – это тайна.
-                    Получателю доступен только текст открытки
-                    (её можно написать далее)</p>
+              {confim.status === CONFIM_STATUS.BEFORE_SEND && <>
+                <p className={styles.blockText}> Ваши данные – это тайна.
+                  Получателю доступен только текст открытки
+                  (её можно написать далее)</p>
 
-                  <NextButton
-                    type="submit"
-                    disabled={submitting}
-                  />
-                </>
-              )}
+                <NextButton
+                  isLoading={isLoading}
+                  type="submit"
+                  disabled={submitting}
+                />
+              </>}
+
+              {confim.status === CONFIM_STATUS.SEND_SMS_ERROR && <>
+                <p className={styles.smsError}>Мы не смогли отправит смс с кодом, проверьте введенный телефон</p>
+
+                {isTimer && <>
+                  <center>
+                    Повторная отправка через
+                    {' '}
+                    <b><Timer maxSeconds={2} onEnd={() => setIsTimer(false)}/> сек.</b>
+                  </center>
+                </>}
+
+                <NextButton
+                  isLoading={isLoading}
+                  disabled={isTimer || submitting}
+                  title={"Отправить еще раз"}
+                  type="submit"
+                />
+
+                <BtnContinue onClick={() => contninueWithoutConfim()}/>
+              </>}
             </form>
           )
         }}
       />
 
-      {confim.status === CONFIM_STATUS.SEND_SMS_ERROR && (
-        <>
-          <p className={styles.smsError}>Мы не смогли отправит смс с кодом, проверьте введенный телефон</p>
 
-          {isTimer && <>
-            <center>
-              Повторная отправка через
-              {' '}
-              <b><Timer maxSeconds={2} onEnd={() => setIsTimer(false)}/> сек.</b>
-            </center>
-          </>}
-
-          <NextButton
-            disabled={isTimer}
-            title={"Отправить еще раз"}
-            onClick={() => handleRetrySendSms(confim.values)}
-          />
-        </>
-      )}
-
-      {confim.status === CONFIM_STATUS.SEND_SMS_DONE && (
-        <>
+      {
+        (confim.status === CONFIM_STATUS.SEND_SMS_DONE ||
+          confim.status === CONFIM_STATUS.INCORRECT_CODE) && <>
           <Input
             placeholder="Код из смс"
             value={code.value}
@@ -224,13 +266,35 @@ const CustomerForm = ({ name, phone, onSubmit, children }) => {
             }}/>
 
           <NextButton
+            isLoading={isLoading}
             title="Подтвердить"
             onClick={handleCheckSms}
           />
-        </>
-      )}
+
+          {
+            <BtnContinue onClick={() => contninueWithoutConfim()}/>
+          }
+        </>}
     </div>
   )
 }
+
+const mapMethodsToProps = (apiService) => {
+  return {
+    confimCustomer: apiService.confimCustomer
+  }
+}
+
+const mapDispatchToProps = {
+  cartCustomerPointsSet
+}
+
+const CustomerForm = compose(
+  withApiService(mapMethodsToProps),
+  connect(
+    null,
+    mapDispatchToProps
+  )
+)(Customer)
 
 export default CustomerForm

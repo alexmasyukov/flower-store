@@ -67,7 +67,7 @@ class Customer {
       properties: {
         phone: { type: 'integer' },
         name: { type: 'string' },
-        sms_code: { type: 'integer' }
+        sms_code: { type: 'string', minLength: 4, maxLength: 4 }
       }
     }
   }

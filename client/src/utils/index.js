@@ -10,6 +10,10 @@ import { format } from "date-fns"
 export const phoneToTextFormat = (phone) =>
   `${phone.slice(0, 2)} ${phone.slice(2, 7)} ${phone.slice(7)}`
 
+export const phoneToValue = (phone) =>
+  Number(phone.replace('+','').replace('(','').replace(')', '').replace('-', ''))
+
+
 export function getCityIdByEngName(engName, cities) {
     return Object.values(cities)
       .filter(item => item.eng === engName)

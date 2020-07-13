@@ -48,7 +48,6 @@ router.route('/:id')
 router.route('/confim')
   .post(
     validateBody(Customer.confimJsonSchema),
-    // smsController.getSmsConfig('sendSMS'),
     customersController.confim
   )
 

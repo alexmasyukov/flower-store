@@ -7,7 +7,7 @@ const STATUS = {
   SEND_SMS_DONE: 'SEND_SMS_DONE',
   SEND_SMS_ERROR: 'SEND_SMS_ERROR',
   INCORRECT_CODE: 'INCORRECT_CODE',
-  DONE: 'DONE',
+  DONE: 'DONE'
 }
 
 const table = 'customers'
@@ -51,22 +51,17 @@ module.exports = {
 
       if (!sms_code) {
         const code = Math.random().toString().substr(2, 4)
-
-        let sms = {}
-        try {
-          sms = await smsController.sendSms(phone, code) //'Клумба код: ' +
-          // console.log('sms', sms)
-        } catch (e) {
-          // console.log(e)
-          return next(utils.error(500, STATUS.SEND_SMS_ERROR, e))
-        }
-
         await updateLastSmsCodeInCustomer(customer.id, code)
 
-        return res.json({
-          status: STATUS.SEND_SMS_DONE,
-          result: sms
-        })
+        try {
+          const sms = await smsController.sendSms(phone, code)
+          return res.json({
+            status: STATUS.SEND_SMS_DONE,
+            result: sms
+          })
+        } catch (e) {
+          return next(utils.error(500, STATUS.SEND_SMS_ERROR, e))
+        }
       }
 
       if (Number(sms_code) === Number(customer.last_sms_code)) {

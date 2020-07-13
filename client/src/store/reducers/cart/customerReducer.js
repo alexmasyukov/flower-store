@@ -1,16 +1,18 @@
+import { CART_CUSTOMER_POINTS_SET } from "store/actionTypes"
+
 const initialState = {
-    name: '',
-    phone: '',
-    points: 200
+  points: 0
 }
 
-export default (state = initialState, { type, payload }) => {
-    switch (type) {
-
-    case 'a':
-        return { ...state, ...payload }
+export default (state = initialState, { type, points }) => {
+  switch (type) {
+    case CART_CUSTOMER_POINTS_SET:
+      return {
+        ...state,
+        points
+      }
 
     default:
-        return state
-    }
+      return state
+  }
 }

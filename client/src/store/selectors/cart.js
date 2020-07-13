@@ -38,6 +38,13 @@ export const totalPriceSelector = createSelector(
     (products + options + delivery) - points
 )
 
+export const totalProductsCostSelector = createSelector(
+  [
+    productsCostSelector,
+    productsOptionsCostSelector
+  ],
+  (products, options) => products + options
+)
 
 const getConfim = (state) => state.ui.cart.confim
 
