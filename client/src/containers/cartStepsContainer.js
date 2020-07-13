@@ -24,50 +24,84 @@ import PayResult from "components/Cart/Steps/PayResult"
 import { DELIVERY_IS, PAY_TYPES } from "constants/common"
 import { confimSelector, orderSelector, cartProductsSelector } from "store/selectors/cart"
 import { fetchConfim, sendOrder } from "store/actions/cart/ordersActions"
+import { phoneToTextFormat } from "utils"
 import styles from "components/Cart/cart.module.sass"
 
+const deliveryEmpty = {
+  is: DELIVERY_IS.COURIER,
+  courier_askRecipient: false,
+  courier_street: '',
+  courier_house: '',
+  courier_flat: '',
+  courier_entrance: '',
+  courier_floor: '',
+  courier_comment: '',
+  courier_price: 200
+}
+
+const recipientEmpty = {
+  iamResipient: false,
+  iDontKnowRecipientNumber: false,
+  recipient_name: '',
+  recipient_phone: '',
+  postcard: false,
+  postcardText: ''
+  // isPublic: true,
+  // photoWithRecipient: false,
+  // isSurprice: false,
+  // anonymousCustomer: false
+}
+
+const deliveryDateTimeEmpty = {
+  askRecipient: false,
+  deliveryDate: '',
+  deliveryTime: ''
+}
 
 const initialState = {
   customer: {
     isEdit: false,
-    name: 'Алексей',
-    phone: '+7(996)022-5657'
+    isValid: false,
+    name: '',
+    phone: '',
+    toString() {
+      return `${this.name}, ${phoneToTextFormat(this.phone)}`
+    }
   },
 
   delivery: {
     isEdit: true,
     isValid: false,
-    is: DELIVERY_IS.COURIER,
-    courierDirection: {
-      askRecipient: false,
-      street: 'dffs',
-      house: '',
-      flat: '',
-      comment: '',
-      price: 0
+    ...deliveryEmpty,
+    toString() {
+      if (this.is === DELIVERY_IS.COURIER &&
+        this.courier_askRecipient === false) {
+        return `
+            ${this.courier_street} ${this.courier_house}
+            ${this.courier_flat && `, кв. ${this.courier_flat}`}
+            ${this.courier_entrance && `| ${this.courier_entrance} подъезд`}
+            ${this.courier_floor && `| ${this.courier_floor} этаж`}
+            ${this.courier_comment && `| Комментарий: ${this.courier_comment}`}
+        `
+      }
     }
   },
+
   recipient: {
     isEdit: true,
     isValid: false,
-    iamResipient: false,
-    iDontKnowRecipientNumber: false,
-    name: '',
-    phone: '',
-    postcard: true,
-    postcardText: ''
-    // photoWithRecipient: false,
-    // isSurprice: false,
-    // anonymousCustomer: false
+    ...recipientEmpty
   },
+
   deliveryDateTime: {
     isEdit: true,
     isValid: false,
-    askRecipient: false
+    ...deliveryDateTimeEmpty
   },
+
   pay: {
-    isEdit: true,
-    isValid: true,
+    isEdit: false,
+    isValid: false,
     payType: PAY_TYPES.CARD,
     legalEntity: {
       name: '',
@@ -84,36 +118,19 @@ const initialState = {
 }
 
 
-const validateOptions = {
-  abortEarly: false
+const setInSteps = (data, steps) => {
+  const stepNames = Object.keys(steps)
+
+  return stepNames.reduce((steps, currentStep) => {
+    return {
+      ...steps,
+      [currentStep]: {
+        ...steps[currentStep],
+        ...data
+      }
+    }
+  }, steps)
 }
-
-// const customerSchema = YupObject().shape({
-//   // name: YupString().min(3, VM.MIN_SYMBOLS(3, 'символа')).required(VM.REQUIRE),
-//   name: YupObject().shape({
-//     one: YupString().min(3, VM.MIN_SYMBOLS(3, 'символа')).required(VM.REQUIRE)
-//   }),
-//   phone: YupString().min(3, VM.MIN_SYMBOLS(3, 'символа')).required(VM.REQUIRE)
-// })
-
-
-// customerSchema
-//   .validate({
-//     name: {
-//       one: ''
-//     },
-//     phone: ''
-//   }, validateOptions)
-//   .then((valid) => {
-//     console.log(valid)
-//   })
-//   .catch((err) => {
-//     const errors = err.inner.map(item => ({
-//       path: item.path,
-//       message: item.message
-//     }))
-//     // console.log(errors)
-//   })
 
 
 class CartSteps extends Component {
@@ -142,56 +159,49 @@ class CartSteps extends Component {
     })
   }
 
+  handleSetStateKeyValue = (stepName, keyValue) => {
+    this.setState(prev => ({
+      [stepName]: {
+        ...prev[stepName],
+        ...keyValue
+      }
+    }))
+  }
 
   validate = (obj) => {
     return true
   }
 
-  getStepsWith_isEdit_false = () => {
-    const state = this.state
-    const stepsNames = Object.keys(this.state)
+  handleChangeButton = (stepName) => () => {
+    this.setState(prevState => {
+      const steps = setInSteps({ isEdit: false }, prevState)
 
-    return stepsNames.reduce((steps, currentStep) => {
       return {
         ...steps,
-        [currentStep]: {
-          ...state[currentStep],
-          isEdit: false
+        [stepName]: {
+          ...prevState[stepName],
+          isEdit: true
         }
       }
-    }, state)
+    })
   }
 
-  handleChangeButton = (stepName) => () => {
+  handleStepSubmit = (stepName, nextStepName) => (values) => {
+    console.log(values)
     this.setState(prev => ({
+      ...prev,
+
       [stepName]: {
         ...prev[stepName],
+        ...values,
+        isEdit: false
+      },
+
+      [nextStepName]: {
+        ...prev[nextStepName],
         isEdit: true
       }
     }))
-    // this.setState(prev => {
-    //
-    //   // todo переписать через compose эти две функции
-    //   const steps = this.getStepsWith_isEdit_false()
-    //
-    //   return {
-    //     ...steps,
-    //     [step]: {
-    //       ...prev[step],
-    //       isEdit: true
-    //     }
-    //   }
-    // })
-  }
-
-  handleStepSubmit = (stepName) => (step) => {
-    this.setState({
-      [stepName]: {
-        ...step,
-        isEdit: false,
-        isValid: true
-      }
-    })
   }
 
   handleNextButton = (step, nextStep) => () => {
@@ -285,7 +295,6 @@ class CartSteps extends Component {
   // }
 
   render() {
-    const { confim } = this.props
     const {
       customer, recipient, delivery, order,
       deliveryDateTime, pay
@@ -295,8 +304,8 @@ class CartSteps extends Component {
     // console.log('confim', confim)
     // console.log('order', order)
 
-    // const deliveryTitle = delivery.is === DELIVERY_IS.COURIER ?
-    //   'Адрес доставки' : 'Адрес самовывоза'
+    const deliveryTitle = delivery.is === DELIVERY_IS.COURIER ?
+      'Доставка' : 'Самовывоз'
 
     const deliveryTimeTitle = delivery.is === DELIVERY_IS.COURIER ?
       'Время доставки' : 'Время самовывоза'
@@ -314,50 +323,62 @@ class CartSteps extends Component {
       <>
         <Step number={1} title="Ваши контакты" active={customer.isEdit}>
           {customer.isEdit ? (
-            <CustomerForm {...customer} onSubmit={this.handleStepSubmit('customer')}>
-              <NextButton onClick={this.handleNextButton('customer', 'delivery')}/>
-            </CustomerForm>
+            <CustomerForm
+              initialValues={customer}
+              onSubmit={this.handleStepSubmit('customer', 'delivery')}
+            />
           ) : (
-            <CustomerResult  {...customer}>
+            <CustomerResult {...customer}>
               <ChangeButton onClick={this.handleChangeButton('customer')}/>
             </CustomerResult>
           )}
         </Step>
 
-        <Step number={2} title={'Доставка / самовывоз'} active={delivery.isEdit}>
+        <Step number={2} title={deliveryTitle} active={delivery.isEdit}>
           {delivery.isEdit ? (
-            <DeliveryForm {...delivery} onInputChange={this.handleInputChange}>
-              <NextButton onClick={this.handleNextButton('delivery', 'recipient')}/>
-            </DeliveryForm>
+            <DeliveryForm
+              initialValues={delivery}
+              emptyValues={deliveryEmpty}
+              onSetKeyValue={this.handleSetStateKeyValue}
+              onSubmit={this.handleStepSubmit('delivery', 'recipient')}
+            />
           ) : (
-            <DeliveryResult {...delivery}>
-              <ChangeButton onClick={this.handleChangeButton('delivery')}/>
-            </DeliveryResult>
-          )}
-        </Step>
-
-        <Step number={3} title="Получатель" active={recipient.isEdit}>
-          {recipient.isEdit ? (
-            <RecipientForm {...recipient} onInputChange={this.handleInputChange}>
-              <NextButton onClick={this.handleNextButton('recipient', 'deliveryDateTime')}/>
-            </RecipientForm>
-          ) : (
-            recipient.isValid && (
-              <RecipientResult {...recipient}>
-                <ChangeButton onClick={this.handleChangeButton('recipient')}/>
-              </RecipientResult>
+            delivery.isValid && (
+              <DeliveryResult {...delivery}>
+                <ChangeButton onClick={this.handleChangeButton('delivery')}/>
+              </DeliveryResult>
             )
           )}
         </Step>
+
+        {delivery.is !== DELIVERY_IS.YOURSELF && (
+          <Step number={3} title="Получатель" active={recipient.isEdit}>
+            {recipient.isEdit ? (
+              <RecipientForm
+                initialValues={recipient}
+                emptyValues={recipientEmpty}
+                isVisible_iamResipient={delivery.courier_askRecipient === false}
+                isVisible_iDontKnowRecipientNumber={delivery.courier_askRecipient === false}
+                onSubmit={this.handleStepSubmit('delivery', 'deliveryDateTime')}
+              />
+            ) : (
+              recipient.isValid && (
+                <RecipientResult {...recipient}>
+                  <ChangeButton onClick={this.handleChangeButton('recipient')}/>
+                </RecipientResult>
+              )
+            )}
+          </Step>
+        )}
+
+
         <Step number={4} title={deliveryTimeTitle} active={deliveryDateTime.isEdit}>
           {deliveryDateTime.isEdit ? (
             <DeliveryTimeForm
-              {...deliveryDateTime}
-              deliveryIs={delivery.is}
-              onInputChange={this.handleInputChange}
-            >
-              <NextButton onClick={this.handleNextButton('deliveryDateTime', 'pay')}/>
-            </DeliveryTimeForm>
+              initialValues={deliveryDateTime}
+              emptyValues={deliveryDateTimeEmpty}
+              isCourier={delivery.is === DELIVERY_IS.COURIER}
+              onSubmit={this.handleStepSubmit('deliveryDateTime', 'pay')}/>
           ) : (
             deliveryDateTime.isValid && (
               <DeliveryTimeResult {...deliveryDateTime}>
@@ -366,30 +387,31 @@ class CartSteps extends Component {
             )
           )}
         </Step>
-        <Step number={5} title="Оплата" active={pay.isEdit}>
-          {pay.isEdit ? (
-            <PayForm
-              {...pay}
-              cardTypeEnabled={delivery.is === DELIVERY_IS.YOURSELF}
-              cardTypeTitle={delivery.is === DELIVERY_IS.YOURSELF ?
-                'Наличные' : 'Наличными курьеру'}
-              payType={payType}
-              onInputChange={this.handleInputChange}
-            >
-              <button className={styles.nextButton} onClick={this.handleSendOrder}>
-                Оформить заказ
-              </button>
+
+        {/*<Step number={5} title="Оплата" active={pay.isEdit}>*/}
+          {/*{pay.isEdit ? (*/}
+            {/*<PayForm*/}
+              {/*{...pay}*/}
+              {/*cardTypeEnabled={delivery.is === DELIVERY_IS.YOURSELF}*/}
+              {/*cardTypeTitle={delivery.is === DELIVERY_IS.YOURSELF ?*/}
+                {/*'Наличные' : 'Наличными курьеру'}*/}
+              {/*payType={payType}*/}
+              {/*onInputChange={this.handleInputChange}*/}
+            {/*>*/}
+              {/*<button className={styles.nextButton} onClick={this.handleSendOrder}>*/}
+                {/*Оформить заказ*/}
+              {/*</button>*/}
 
 
-            </PayForm>
-          ) : (
-            pay.isValid && (
-              <PayResult {...pay}>
-                <ChangeButton onClick={this.handleChangeButton('pay')}/>
-              </PayResult>
-            )
-          )}
-        </Step>
+            {/*</PayForm>*/}
+          {/*) : (*/}
+            {/*pay.isValid && (*/}
+              {/*<PayResult {...pay}>*/}
+                {/*<ChangeButton onClick={this.handleChangeButton('pay')}/>*/}
+              {/*</PayResult>*/}
+            {/*)*/}
+          {/*)}*/}
+        {/*</Step>*/}
       </>
     )
   }

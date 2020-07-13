@@ -99,12 +99,16 @@ p.unavailable
     margin: 0
     font-size: 14px
     line-height: 20px
-    word-wrap: break-word
+    //word-wrap: break-word
     color: #3c3c3c
+    white-space: pre-line
 
 .result,
 .form
   margin-top: 22px
+
+.result
+  position: relative
 
 
 .blockText
@@ -143,7 +147,8 @@ p.unavailable
 .changeButton
   font-size: 13px
   position: absolute
-  right: 24px
+  right: 0
+  top: -42px
   &:hover
     text-decoration: underline
     cursor: pointer

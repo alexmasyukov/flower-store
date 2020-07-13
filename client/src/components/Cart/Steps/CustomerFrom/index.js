@@ -12,17 +12,17 @@ import withApiService from "components/hoc/withApiService"
 import styles from 'components/Cart/cart.module.sass'
 
 
-const CurrencyInput = ({
-                         placeholder,
-                         onChange,
-                         onBlur,
-                         onFocus,
-                         name,
-                         value,
-                         disabled,
-                         mask = '_',
-                         format = PHONE_FORMAT.FORMAT_FOR_INPUT
-                       }) => {
+const PhoneInput = ({
+                      placeholder,
+                      onChange,
+                      onBlur,
+                      onFocus,
+                      name,
+                      value,
+                      disabled,
+                      mask = '_',
+                      format = PHONE_FORMAT.FORMAT_FOR_INPUT
+                    }) => {
   return (
     <NumberFormat
       disabled={disabled}
@@ -49,8 +49,10 @@ const BtnContinue = ({ onClick }) => (
 
 
 const Customer = ({
-                    name, phone, onSubmit, confimCustomer,
-                    cartCustomerPointsSet, children
+                    onSubmit,
+                    confimCustomer,
+                    cartCustomerPointsSet,
+                    initialValues
                   }) => {
   const [confim, setConfim] = useState({
     values: undefined,
@@ -159,6 +161,7 @@ const Customer = ({
   return (
     <div className={styles.form}>
       <Form
+        initialValues={initialValues}
         onSubmit={handleRetrySendSms}
         validate={values => {
           const errors = {}
@@ -181,16 +184,14 @@ const Customer = ({
           console.log('render form')
           return (
             <form onSubmit={handleSubmit}>
-              <Field name="name" initialValue={name}>
+              <Field name="name">
                 {({ input, meta }) =>
                   <Input placeholder="Имя" {...input} disabled={submitting} meta={meta}/>}
               </Field>
-              <Field name="phone" initialValue={phone}>
+              <Field name="phone">
                 {({ input, meta }) =>
                   <Input placeholder="Мобильный телефон" {...input} disabled={submitting} meta={meta}>
-                    {(input) => {
-                      return <CurrencyInput {...input} />
-                    }}
+                    {(input) => <PhoneInput {...input} />}
                   </Input>}
               </Field>
 

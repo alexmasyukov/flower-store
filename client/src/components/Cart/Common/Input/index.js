@@ -6,11 +6,16 @@ const func = () => {
 }
 
 const InputStandart = ({
-                         name, value = '', disabled = false,
-                         placeholder = '', onChange = func
+                         name,
+                         value = '',
+                         disabled = false,
+                         placeholder = '',
+                         onChange = func,
+                         style = {}
                        }) => (
   <input
     type="text"
+    style={style}
     id={name}
     value={value}
     disabled={disabled}
@@ -18,15 +23,23 @@ const InputStandart = ({
     onChange={onChange}/>
 )
 
+
 const InputTextarea = ({
-                         name, value = '', disabled = false,
-                         placeholder = '', onChange = func
+                         name,
+                         value = '',
+                         disabled = false,
+                         placeholder = '',
+                         maxRows = 2,
+                         style = {},
+                         onChange = func
                        }) => (
   <textarea
     id={name}
+    style={style}
     value={value}
     disabled={disabled}
     placeholder={placeholder}
+    rows={maxRows}
     onChange={onChange}/>
 )
 
@@ -46,6 +59,7 @@ const Input = ({
                  },
                  onFocus = () => {
                  },
+                 style = {},
                  ...otherProps
                }) => {
   switch (type) {
@@ -57,7 +71,9 @@ const Input = ({
             name={name}
             value={value}
             checked={checked}
-            onChange={onChange}/>
+            onChange={onChange}
+            style={style}
+          />
           {label}
         </label>
       )
@@ -69,7 +85,10 @@ const Input = ({
             value={value}
             name={name}
             checked={checked}
-            onChange={onChange}/>
+            onChange={onChange}
+            style={style}
+            disabled={disabled}
+          />
           {label}
         </label>
       )
@@ -82,15 +101,22 @@ const Input = ({
       const hasError = (meta.error || meta.submitError) && meta.touched
 
       return (
-        <div className={cn(
-          styles.has_float_label, hasError && styles.has_error
-        )}>
+        <div
+          className={cn(
+            styles.has_float_label, hasError && styles.has_error
+          )}
+          style={style}
+        >
 
-          {children && children(props)}
-          {type === 'textarea' ?
-            <InputTextarea {...props} {...otherProps} /> :
-            <InputStandart {...props} />
-          }
+          {children ? (
+            children(props)
+          ) : (
+
+            type === 'textarea' ?
+              <InputTextarea {...props} {...otherProps} /> :
+              <InputStandart {...props} {...otherProps} />
+
+          )}
 
           <label htmlFor={name}>{placeholder}</label>
 
