@@ -6,29 +6,6 @@ import styles from 'components/Cart/cart.module.sass'
 import { addDays, getDay, getDaysInMonth } from 'date-fns'
 import { getDayName, getMonthName } from "utils"
 
-// function range(start = 0, end = 1) {
-//   return Array.from({ length: end - start + 1 }, (v, k) => k + start)
-// }
-
-// const TimesGroup = ({ start = 9, end = 15, reverse = false, children }) => {
-//   let from = start,
-//       to = end
-//
-//   if (reverse) {
-//     from = end
-//     to = start
-//   }
-//   // console.log(range(from, to))
-//
-//   return range(from, to)
-//     .reduce((acc, current, idx, arr) => {
-//       const next = arr[idx + 1]
-//       if (!next) return acc
-//       return [...acc, [current, next]]
-//     }, [])
-//     .reverse()
-//     .map(([first, second]) => children(first, second))
-// }
 
 const part_one = {
   title: 'c 09:00 до 15:00',
@@ -105,12 +82,23 @@ const DaysButtons = ({ onClick }) => {
       }
     }))
 
-  return days.map((day, i) => (
-    <span key={i} onClick={onClick} className={styles.dayBtn}>
-      {day.name()}
-      <br/>{day.month()} {day.dayM()}
-    </span>
-  ))
+  return (
+    <ul className={styles.daysBtns}>
+      {days.map((day, i) => (
+        <li key={i} onClick={onClick}>
+          <span>
+            {day.name()}
+            <br/>{day.month()} {day.dayM()}
+          </span>
+        </li>
+      ))}
+      <li onClick={onClick}>
+        <span>
+          Кале
+          </span>
+      </li>
+    </ul>
+  )
 }
 
 
@@ -160,12 +148,12 @@ const DeliveryTimeForm = ({
 
               {!values.askRecipient && (
                 <>
-                  <p className={styles.blockText}>
-                    Выберите удобный интервал времени
-                    {isCourier ? ' доставки для получателя' : ' для самовывоза'}
-                  </p>
+                  {/*<p className={styles.blockText}>*/}
+                  {/*Выберите удобный интервал времени*/}
+                  {/*{isCourier ? ' доставки для получателя' : ' для самовывоза'}*/}
+                  {/*</p>*/}
 
-                  <DaysButtons/>
+                  <DaysButtons onClick={() => {}}/>
 
                   <ExpandBlock title={part_one.title} isVisible={true}>
                     {part_one.chours.map(([from, to]) => (
