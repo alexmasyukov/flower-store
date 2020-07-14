@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Form, Field } from 'react-final-form'
 import Input from "components/Cart/Common/Input"
 import NextButton from "components/Cart/Common/NextButton"
 import styles from 'components/Cart/cart.module.sass'
-
+import { addDays, getDay, getDaysInMonth } from 'date-fns'
+import { getDayName, getMonthName } from "utils"
 
 // function range(start = 0, end = 1) {
 //   return Array.from({ length: end - start + 1 }, (v, k) => k + start)
@@ -71,15 +72,6 @@ const part_three = {
   ]
 }
 
-const TimesGroup = ({title = '', expand = false, children}) => {
-  return (
-    <div>
-      <h1>{title}</h1>
-      {children}
-    </div>
-  )
-}
-
 
 const Radio = ({ value, disabled = false }) => (
   <Field name="hours" type="radio" value={value}>
@@ -92,6 +84,46 @@ const Radio = ({ value, disabled = false }) => (
   </Field>
 )
 
+
+const DayBtn = ({ title }) => {
+  return <div>|{title}|</div>
+}
+
+
+const DaysButtons = ({ onClick }) => {
+  const days = Array.from({ length: 4 }).fill(new Date())
+    .map((day, i) => ({
+      date: addDays(day, i),
+      dayM() {
+        return this.date.getDate()
+      },
+      month() {
+        return getMonthName(this.date.getMonth()).substr(0, 3)
+      },
+      name() {
+        return getDayName(getDay(this.date)).short.toUpperCase()
+      }
+    }))
+
+  return days.map((day, i) => (
+    <span key={i} onClick={onClick} className={styles.dayBtn}>
+      {day.name()}
+      <br/>{day.month()} {day.dayM()}
+    </span>
+  ))
+}
+
+
+const ExpandBlock = ({ title = '', isVisible = false, children }) => {
+  const [visible, setVisible] = useState(isVisible)
+
+  return (
+    <>
+      <h4 onClick={() => setVisible(!visible)}>{title}</h4>
+      {visible && children}
+    </>
+  )
+}
 
 const DeliveryTimeForm = ({
                             isCourier,
@@ -133,7 +165,9 @@ const DeliveryTimeForm = ({
                     {isCourier ? ' доставки для получателя' : ' для самовывоза'}
                   </p>
 
-                  <TimesGroup title={part_one.title} expand={true}>
+                  <DaysButtons/>
+
+                  <ExpandBlock title={part_one.title} isVisible={true}>
                     {part_one.chours.map(([from, to]) => (
                       <Radio
                         key={from}
@@ -141,19 +175,23 @@ const DeliveryTimeForm = ({
                         disabled={true}
                       />
                     ))}
-                  </TimesGroup>
+                  </ExpandBlock>
 
-                  {part_two.chours.map(([from, to]) => (
-                    <Radio
-                      key={from}
-                      value={`${from}:00 - ${to}:00`}/>
-                  ))}
+                  <ExpandBlock title={part_two.title} isVisible={false}>
+                    {part_two.chours.map(([from, to]) => (
+                      <Radio
+                        key={from}
+                        value={`${from}:00 - ${to}:00`}/>
+                    ))}
+                  </ExpandBlock>
 
-                  {part_three.chours.map(([from, to]) => (
-                    <Radio
-                      key={from}
-                      value={`${from}:00 - ${to}:00`}/>
-                  ))}
+                  <ExpandBlock title={part_three.title} isVisible={false}>
+                    {part_three.chours.map(([from, to]) => (
+                      <Radio
+                        key={from}
+                        value={`${from}:00 - ${to}:00`}/>
+                    ))}
+                  </ExpandBlock>
 
 
                   {/*{isCourier ? (*/}
