@@ -1,6 +1,6 @@
 import React from "react"
-import styles from 'components/Cart/Common/common.module.sass'
 import cn from 'classnames'
+import styles from 'components/Cart/Common/common.module.sass'
 
 const func = () => {
 }
@@ -65,7 +65,7 @@ const Input = ({
   switch (type) {
     case 'checkbox':
       return (
-        <label>
+        <label className={cn(disabled && styles.disabled)}>
           <input
             type="checkbox"
             name={name}
@@ -73,13 +73,14 @@ const Input = ({
             checked={checked}
             onChange={onChange}
             style={style}
+            disabled={disabled}
           />
           {label}
         </label>
       )
     case 'radio':
       return (
-        <label>
+        <label className={cn(disabled && styles.disabled)}>
           <input
             type="radio"
             value={value}

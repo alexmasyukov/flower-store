@@ -279,6 +279,10 @@ p.unavailable
   display: flex
   font-size: 12px
   padding: 0
+  margin-bottom: 0
+  .active
+    border-bottom: 0
+    font-weight: bold
   li
     cursor: pointer
     display: inline-flex
@@ -294,12 +298,21 @@ p.unavailable
       border-right: 1px solid #ddd
     &:hover
       background: #eeeeee
-    &.active
-      border-bottom: 0
-      font-weight: bold
+
     span
       align-self: center
 
+.dayBtnActive
+  border-bottom: 0!important
+  font-weight: bold
+
+.timesButtons
+  border: 1px solid #ddd
+  border-top: 0
+  padding: 0 20px 20px 20px
+  h4
+    margin: 0
+    padding: 0
 
 //.dayBtn
 //  &.active
