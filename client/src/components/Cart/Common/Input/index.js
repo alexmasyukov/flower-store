@@ -62,7 +62,25 @@ const Input = ({
                  style = {},
                  ...otherProps
                }) => {
+  const hasError = (meta.error || meta.submitError) && meta.touched
+
   switch (type) {
+    case 'meta':
+      if (hasError) {
+        return (
+          <div
+            className={cn(
+              styles.has_float_label, hasError && styles.has_error
+            )}
+            style={style}
+          >
+            <span className={styles.error}>
+              {meta.error || meta.submitError}
+            </span>
+          </div>
+        )
+      }
+      return null
     case 'checkbox':
       return (
         <label className={cn(disabled && styles.disabled)}>
@@ -98,8 +116,6 @@ const Input = ({
         onChange, onBlur, onFocus,
         name, value, placeholder, disabled
       }
-
-      const hasError = (meta.error || meta.submitError) && meta.touched
 
       return (
         <div

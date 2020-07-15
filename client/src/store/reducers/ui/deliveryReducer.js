@@ -4,13 +4,12 @@ import {
    DELIVERY_MODAL_SHOW
 } from "store/actionTypes"
 import { formatDateDMY } from "utils"
-import addDays from "date-fns/addDays"
 
 const initialState = {
    modalVisible: false,
    modalCartQuestion: false,
-   date: formatDateDMY(new Date()),
-   // date: formatDateDMY(addDays(new Date(), 3)),
+   date: new Date() ,
+   today: new Date() ,
    time: null
 }
 

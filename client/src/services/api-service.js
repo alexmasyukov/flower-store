@@ -20,7 +20,10 @@ export default class ApiService {
       'Accept-Encoding': 'compress, gzip',
       withCredentials: true
     })
-      .then(res => res.data)
+      .then(res => {
+        console.log(res.headers)
+        return res.data
+      })
       .catch(this._apiErrHandler)
   }
 
