@@ -9,7 +9,7 @@ import { connect } from "react-redux"
 // import styles from './cartContainer.module.sass'
 // import { Row } from "components/Bootstrap"
 import Step from "components/Cart/Common/Step"
-import NextButton from "components/Cart/Common/NextButton"
+// import NextButton from "components/Cart/Common/NextButton"
 import ChangeButton from "components/Cart/Common/ChangeButton"
 import CustomerForm from "components/Cart/Steps/CustomerFrom"
 import CustomerResult from "components/Cart/Steps/CustomerResult"
@@ -54,8 +54,8 @@ const recipientEmpty = {
 
 const deliveryDateTimeEmpty = {
   askRecipient: false,
-  deliveryDate: '',
-  deliveryTime: ''
+  date: '',
+  time: ''
 }
 
 const initialState = {

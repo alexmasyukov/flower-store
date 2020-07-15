@@ -2,17 +2,19 @@ import React, { useState, useEffect } from 'react'
 import { Form, Field } from 'react-final-form'
 import { connect } from 'react-redux'
 import cn from 'classnames'
-import { addDays, getDay, getDaysInMonth } from 'date-fns'
+import { addDays, getDay } from 'date-fns'
 import Input from "components/Cart/Common/Input"
 import NextButton from "components/Cart/Common/NextButton"
-import { compose, getDayName, getMonthName, when } from "utils"
+import {
+  compose, getDayName,
+  getMonthName, when
+} from "utils"
 import { deliveryDateSelector, deliveryTodaySelector } from "store/selectors/ui"
 import { setDeliveryDate } from "store/actions/uiActions"
 import ModalCalendar from "components/Cart/Steps/DeliveryTimeForm/ModalCalendar"
 import { CITIES } from "constants/common"
 import withCity from "components/hoc/withCity"
 import styles from 'components/Cart/cart.module.sass'
-// import ExpandBlock from "components/ProductDetails/ExpandBlock"
 
 
 const ExpandBlock = ({ title = '', initVisible = false, children }) => {
@@ -36,7 +38,7 @@ const ExpandBlock = ({ title = '', initVisible = false, children }) => {
 
 
 const Radio = ({ value, disabled = false }) => (
-  <Field name="hours" type="radio" value={value}>
+  <Field name="time" type="radio" value={value}>
     {({ input }) =>
       <Input
         label={value}
@@ -53,12 +55,12 @@ const DaysButtons = ({ days, onClick, calendarBtnOnClick }) => {
       {days.map((day, idx) => (
         <li
           key={idx}
-          onClick={onClick(idx)}
+          onClick={onClick(idx, day.date)}
           className={cn(day.isActive && styles.dayBtnActive)}
         >
           <span>
             {day.name()}
-            <br />{day.month()} {day.dayM()}
+            <br />{day.month()} {day.day()}
           </span>
         </li>
       ))}
@@ -71,21 +73,23 @@ const DaysButtons = ({ days, onClick, calendarBtnOnClick }) => {
 
 
 const generateHours = (min, max) => {
-  return Array.from({ length: max - min }).fill([0, 0])
-    .map((item, idx) => {
+  return Array.from({ length: max - min }).fill({})
+    .map((_, idx) => {
       let from = min + idx
       let to = min + idx + 1
 
       if (to === 24) {
-        to = '0'
+        to = 0
       }
 
-      return [
-        from <= 9 ? `0${from}` : from,
-        to <= 9 ? `0${to}` : to,
-        false, // disabled
-        0 // price
-      ]
+      return {
+        text: `${from <= 9 ? `0` : ``}${from}:00 -
+         ${to <= 9 ? `0` : ``}${to}:00`,
+        from,
+        to,
+        enabled: true,
+        price: 0
+      }
     })
 }
 
@@ -97,7 +101,7 @@ function getDays(fromDate) {
 
       return {
         date,
-        dayM() {
+        day() {
           return this.date.getDate()
         },
         month() {
@@ -113,9 +117,12 @@ function getDays(fromDate) {
 
 
 const getDisabledHours = (hours, min) =>
-  hours.map(([from, to, disabled, price]) =>
-    +to <= min && to !== '00' ?
-      [from, to, true, price] : [from, to, disabled, price])
+  hours.map((item) =>
+    item.to <= min && item.to !== 0 ?
+      {
+        ...item,
+        enabled: false
+      } : item)
 
 const withDisabledTimes = (min) => (times) => {
   return times.map(({ hours, ...base }) => ({
@@ -123,20 +130,6 @@ const withDisabledTimes = (min) => (times) => {
     hours: getDisabledHours(hours, min)
   }))
 }
-//
-// const from_0_to_9 = generateHours(0, 9)
-// const from_9_to_15 = generateHours(9, 15)
-// const from_15_to_21 = generateHours(15, 21)
-// const from_21_to_24 = generateHours(21, 24)
-const nowHour = (new Date()).getHours()
-const hourWithPreparing = nowHour + 1
-//
-// console.log('nowHour', nowHour)
-// console.log('hourWithPreparing', hourWithPreparing)
-// console.log(from_0_to_9)
-// console.log(from_9_to_15)
-// console.log(from_15_to_21)
-// console.log('from_21_to_24', from_21_to_24)
 
 
 const times = [
@@ -156,7 +149,7 @@ const times = [
     isVisible: false
   },
   {
-    title: '21:00 - 24:00',
+    title: '21:00 - 00:00',
     hours: generateHours(21, 24),
     isVisible: false
   }
@@ -176,7 +169,7 @@ const timesPrices = {
     },
     {
       fromHour: 21,
-      toHour: 23,
+      toHour: 24,
       price: 400
     }
   ],
@@ -193,7 +186,7 @@ const timesPrices = {
     },
     {
       fromHour: 21,
-      toHour: 23,
+      toHour: 0,
       price: 800
     }
   ]
@@ -202,9 +195,23 @@ const timesPrices = {
 
 const withVisibilityNeedTimes = (max) => (times) => {
   return times.map(time => {
-    const [from, to] = time.hours[time.hours.length - 1]
+    const { from } = time.hours[0]
+    const { to } = time.hours[time.hours.length - 1]
 
-    return +to > max || to === '00' ? {
+    return (from <= max && max <= to) ||
+      (to === 0 && from <= max && max <= 24) ? {
+        ...time,
+        isVisible: true
+      } : {
+        ...time,
+        isVisible: false
+      }
+  })
+}
+
+const withVisibilityOnlyIntitialTime = (intitialTimeText) => (times) => {
+  return times.map(time => {
+    return time.hours.some(({ text }) => text === intitialTimeText) ? {
       ...time,
       isVisible: true
     } : {
@@ -216,16 +223,21 @@ const withVisibilityNeedTimes = (max) => (times) => {
 
 const withPrices = (prices) => (times) => {
   return times.map(time => {
-    const hours = time.hours.map(([from, to, disabled]) => {
+    const hours = time.hours.map(({ from, to, ...base }) => {
 
       let foundPrice
       prices.forEach(({ fromHour, toHour, price }) => {
-        if (+from >= fromHour && +to <= toHour) {
+        if (from >= fromHour && to <= toHour) {
           foundPrice = price
         }
       })
 
-      return [from, to, disabled, foundPrice]
+      return {
+        ...base,
+        from,
+        to,
+        price: foundPrice
+      }
     })
 
     return {
@@ -247,12 +259,24 @@ const DeliveryTimeForm = ({
 }) => {
   const [days, setDays] = useState(getDays(deliveryDate))
   const [calendarIsOpen, setCalendarIsOpen] = useState(false)
+  let hourWithPreparing = deliveryDate.getHours() + 1
+
 
   useEffect(() => {
     setDays(getDays(deliveryDate))
   }, [deliveryDate])
 
-  const handleDayClick = (dayIdx) => () => {
+  const handleSubmit = (values) => {
+    console.log(values.date);
+
+    setDeliveryDate(values.date)
+    onSubmit({
+      ...values,
+      isValid: true
+    })
+  }
+
+  const handleDayClick = (dayIdx, dayDate) => {
     const update = days.map((day, idx) =>
       idx === dayIdx ? {
         ...day,
@@ -265,40 +289,37 @@ const DeliveryTimeForm = ({
     setDays(update)
   }
 
-  const handleSubmit = (values) => {
-    alert(JSON.stringify(values))
-    // onSubmit(values)
-  }
-
-  const handleDateChange = (date) => {
-    console.log(date)
-    setDeliveryDate(date)
-  }
+  const handleDateChange = (date) => setDeliveryDate(date)
 
   const activeDay = days.filter(day => day.isActive === true)[0]
   const isToday = todayDate.getDate() === activeDay.date.getDate()
 
+  console.log(initialValues.time);
+
   const selectDayTimes = compose(
+    when(initialValues.time !== '', withVisibilityOnlyIntitialTime(initialValues.time)),
     withPrices(timesPrices[city.eng]),
     when(isToday === true, withVisibilityNeedTimes(hourWithPreparing)),
-    when(isToday === true, withDisabledTimes(hourWithPreparing))
+    when(isToday === true, withDisabledTimes(hourWithPreparing)),
   )(times)
 
+  // console.log(selectDayTimes);
 
-  // console.log('activeDay', activeDay.isToday === true, activeDay)
-  // console.log('todayDate', todayDate, activeDay.date, isToday)
-  // console.log('selectDayTimes', selectDayTimes)
+
 
   return (
     <div className={styles.form}>
       <Form
         onSubmit={handleSubmit}
-        initialValues={initialValues}
+        initialValues={{
+          ...initialValues,
+          date: deliveryDate
+        }}
         validate={(values) => {
           const errors = {}
 
-          if (values.askRecipient === false && !values.hours)
-            errors.hours = 'Выберете время доставки'
+          if (values.askRecipient === false && !values.time)
+            errors.time = 'Выберете время доставки'
 
           return errors
         }}
@@ -325,11 +346,22 @@ const DeliveryTimeForm = ({
 
               {!values.askRecipient && (
                 <>
-                  <DaysButtons
-                    days={days}
-                    onClick={handleDayClick}
-                    calendarBtnOnClick={() => setCalendarIsOpen(true)}
-                  />
+                  <Field name="date">
+                    {({ input }) =>
+                      <DaysButtons
+                        days={days}
+                        onClick={(idx, date) => () => {
+                          input.onChange({
+                            target: {
+                              value: date
+                            }
+                          })
+                          handleDayClick(idx, date)
+                        }}
+                        calendarBtnOnClick={() => setCalendarIsOpen(true)}
+                      />
+                    }
+                  </Field>
 
                   <ModalCalendar
                     selectedDate={deliveryDate}
@@ -347,11 +379,11 @@ const DeliveryTimeForm = ({
                         title={time.title}
                         initVisible={time.isVisible}
                       >
-                        {time.hours.map(([from, to, disabled, price]) => (
-                          <div key={from} className={cn(disabled && styles.disabled)}>
+                        {time.hours.map(({ text, enabled, price }) => (
+                          <div key={text} className={cn(!enabled && styles.disabled)}>
                             <Radio
-                              value={`${from}:00 - ${to}:00`}
-                              disabled={disabled}
+                              value={text}
+                              disabled={!enabled}
                             />
                             <span>{price} ₽</span>
                           </div>
@@ -360,37 +392,15 @@ const DeliveryTimeForm = ({
                     ))}
                   </div>
 
-                  <Field name="hours">
+                  <Field name="time">
                     {({ meta }) =>
                       <Input
                         type="meta"
                         meta={meta}
                       />}
                   </Field>
-
-
-                  {/*{isCourier ? (*/}
-                  {/*<p>*/}
-                  {/*Доставка, за пределами центрального района,*/}
-                  {/*рассчитывается индивидуально*/}
-                  {/*</p>*/}
-                  {/*) : (*/}
-                  {/*<p>sfssfss</p>*/}
-                  {/*С 09 до 21 - 200₽*/}
-                  {/*С 21 до 09 - 400₽*/}
-                  {/**/}
-                  {/*С 9-15 (раскрывается 9-10, 10-11 и т.д.),*/}
-                  {/*С 15-21,*/}
-
-                  {/**/}
-                  {/**/}
-                  {/*Разделеняем время на интервалы по часу*/}
-                  {/*с 9:00 до 21:00 бесплатно*/}
-
-                  {/*)}*/}
                 </>
               )}
-
 
               <NextButton
                 type="submit"
