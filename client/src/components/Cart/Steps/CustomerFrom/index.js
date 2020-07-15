@@ -13,16 +13,16 @@ import styles from 'components/Cart/cart.module.sass'
 
 
 const PhoneInput = ({
-                      placeholder,
-                      onChange,
-                      onBlur,
-                      onFocus,
-                      name,
-                      value,
-                      disabled,
-                      mask = '_',
-                      format = PHONE_FORMAT.FORMAT_FOR_INPUT
-                    }) => {
+  placeholder,
+  onChange,
+  onBlur,
+  onFocus,
+  name,
+  value,
+  disabled,
+  mask = '_',
+  format = PHONE_FORMAT.FORMAT_FOR_INPUT
+}) => {
   return (
     <NumberFormat
       disabled={disabled}
@@ -49,11 +49,11 @@ const BtnContinue = ({ onClick }) => (
 
 
 const Customer = ({
-                    onSubmit,
-                    confimCustomer,
-                    cartCustomerPointsSet,
-                    initialValues
-                  }) => {
+  onSubmit,
+  confimCustomer,
+  cartCustomerPointsSet,
+  initialValues
+}) => {
   const [confim, setConfim] = useState({
     values: undefined,
     status: CONFIM_STATUS.BEFORE_SEND
@@ -177,16 +177,16 @@ const Customer = ({
           return errors
         }}
         render={({
-                   handleSubmit,
-                   form,
-                   submitting
-                 }) => {
+          handleSubmit,
+          form,
+          submitting
+        }) => {
           console.log('render form')
           return (
             <form onSubmit={handleSubmit}>
               <Field name="name">
                 {({ input, meta }) =>
-                  <Input placeholder="Имя" {...input} disabled={submitting} meta={meta}/>}
+                  <Input placeholder="Имя" {...input} disabled={submitting} meta={meta} />}
               </Field>
               <Field name="phone">
                 {({ input, meta }) =>
@@ -197,7 +197,7 @@ const Customer = ({
 
               {confim.status === CONFIM_STATUS.BEFORE_SEND && <>
                 <p className={styles.blockText}> Ваши данные – это тайна.
-                  Получателю доступен только текст открытки
+                Получателю доступен только текст открытки
                   (её можно написать далее)</p>
 
                 <NextButton
@@ -214,7 +214,7 @@ const Customer = ({
                   <center>
                     Повторная отправка через
                     {' '}
-                    <b><Timer maxSeconds={2} onEnd={() => setIsTimer(false)}/> сек.</b>
+                    <b><Timer maxSeconds={2} onEnd={() => setIsTimer(false)} /> сек.</b>
                   </center>
                 </>}
 
@@ -225,7 +225,7 @@ const Customer = ({
                   type="submit"
                 />
 
-                <BtnContinue onClick={() => contninueWithoutConfim()}/>
+                <BtnContinue onClick={() => contninueWithoutConfim()} />
               </>}
             </form>
           )
@@ -246,7 +246,7 @@ const Customer = ({
             meta={code.validStatus && {
               error: code.validStatus,
               touched: true
-            }}/>
+            }} />
 
           <NextButton
             isLoading={isLoading}
@@ -255,7 +255,7 @@ const Customer = ({
           />
 
           {
-            <BtnContinue onClick={() => contninueWithoutConfim()}/>
+            <BtnContinue onClick={() => contninueWithoutConfim()} />
           }
         </>}
     </div>

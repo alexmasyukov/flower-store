@@ -294,8 +294,11 @@ p.unavailable
     flex: 1 1 0
     border: 1px solid #ddd
     border-right: 0
+    &:first-of-type
+      border-top-left-radius: 5px
     &:last-of-type
       border-right: 1px solid #ddd
+      border-top-right-radius: 5px
     &:hover
       background: #eeeeee
 
@@ -309,6 +312,9 @@ p.unavailable
 .times
   border: 1px solid #ddd
   border-top: 0
+  width: 100%
+  border-bottom-right-radius: 5px
+  border-bottom-left-radius: 5px
   background: #f6f6f6
   font-size: 14px
   //padding: 0 20px 20px 20px
@@ -321,6 +327,9 @@ p.unavailable
     border-bottom: 1px solid #f6f6f6
     font-weight: normal
     background: #ffffff
+    &:last-of-type
+      border-bottom-right-radius: 5px
+      border-bottom-left-radius: 5px
     &:hover
       background: #f6f6f6
     &:before

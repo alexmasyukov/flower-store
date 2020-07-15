@@ -1,20 +1,39 @@
 import React from 'react'
 import styles from "components/Cart/cart.module.sass"
+import { getAvailableDate } from 'utils'
+
+const Wrap = ({ children }) =>
+   <div className={styles.result}>
+      {children}
+   </div>
 
 const DeliveryTimeResult = ({
-                               name,
-                               askRecipient,
-                               children
-                            }) => {
-   return (
-      <div className={styles.result}>
-         {children}
+   date = new Date(),
+   time = '',
+   comment = '',
+   askRecipient = false,
+   children
+}) => {
+   const [timeText, price] = time.split('*')
 
-         <p>{name}</p>
-         {askRecipient && (
-            <p>Узнать время у получателя</p>
-         )}
-      </div>
+   if (askRecipient === true) {
+      return (
+         <Wrap>
+            {children}
+            Узнать время у получателя
+         </Wrap>
+      )
+   }
+
+   return (
+      <Wrap>
+         {children}
+         <p>{getAvailableDate(date, true)}</p>
+         <p>{timeText.replace('\n', '')}</p>
+         <br />
+         <p>Стоимость: {price ? `${price}₽` : 'рассчитывается индивидуально'}</p>
+         {comment && <p>Комментарий: {comment}</p>}
+      </Wrap>
    )
 }
 

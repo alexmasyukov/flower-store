@@ -37,8 +37,8 @@ const ExpandBlock = ({ title = '', initVisible = false, children }) => {
 }
 
 
-const Radio = ({ value, disabled = false }) => (
-  <Field name="time" type="radio" value={value}>
+const Radio = ({ price, value, disabled = false }) => (
+  <Field name="time" type="radio" value={`${value}*${price}`}>
     {({ input }) =>
       <Input
         label={value}
@@ -210,8 +210,10 @@ const withVisibilityNeedTimes = (max) => (times) => {
 }
 
 const withVisibilityOnlyIntitialTime = (intitialTimeText) => (times) => {
+  const [timeText] = intitialTimeText.split('*')
+
   return times.map(time => {
-    return time.hours.some(({ text }) => text === intitialTimeText) ? {
+    return time.hours.some(({ text }) => text === timeText) ? {
       ...time,
       isVisible: true
     } : {
@@ -267,11 +269,18 @@ const DeliveryTimeForm = ({
   }, [deliveryDate])
 
   const handleSubmit = (values) => {
-    console.log(values.date);
-
     setDeliveryDate(values.date)
+
+    const data = values.askRecipient ? {
+      ...emptyValues,
+      askRecipient: true
+    } : {
+        ...emptyValues,
+        ...values
+      }
+
     onSubmit({
-      ...values,
+      ...data,
       isValid: true
     })
   }
@@ -294,17 +303,12 @@ const DeliveryTimeForm = ({
   const activeDay = days.filter(day => day.isActive === true)[0]
   const isToday = todayDate.getDate() === activeDay.date.getDate()
 
-  console.log(initialValues.time);
-
   const selectDayTimes = compose(
     when(initialValues.time !== '', withVisibilityOnlyIntitialTime(initialValues.time)),
     withPrices(timesPrices[city.eng]),
     when(isToday === true, withVisibilityNeedTimes(hourWithPreparing)),
     when(isToday === true, withDisabledTimes(hourWithPreparing)),
   )(times)
-
-  // console.log(selectDayTimes);
-
 
 
   return (
@@ -382,6 +386,7 @@ const DeliveryTimeForm = ({
                         {time.hours.map(({ text, enabled, price }) => (
                           <div key={text} className={cn(!enabled && styles.disabled)}>
                             <Radio
+                              price={price}
                               value={text}
                               disabled={!enabled}
                             />
@@ -401,6 +406,18 @@ const DeliveryTimeForm = ({
                   </Field>
                 </>
               )}
+
+              <br />
+              <Field name="comment">
+                {({ input, meta }) =>
+                  <Input type="textarea"
+                    placeholder="Комментарий"
+                    disabled={submitting}
+                    meta={meta}
+                    maxRows={2}
+                    max={100}
+                    {...input} />}
+              </Field>
 
               <NextButton
                 type="submit"

@@ -55,7 +55,8 @@ const DeliveryForm = ({
 
     onSubmit({
       ...emptyValues,
-      ...data
+      ...data,
+      isValid: true
     })
   }
 

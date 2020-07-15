@@ -5,16 +5,49 @@ import NextButton from "components/Cart/Common/NextButton"
 import styles from 'components/Cart/cart.module.sass'
 
 const RecipientForm = ({
-                         initialValues,
-                         emptyValues,
-                         onSubmit,
-                         isVisible_iamResipient,
-                         isVisible_iDontKnowRecipientNumber
-                       }) => {
+  initialValues,
+  emptyValues,
+  onSubmit,
+  isVisible_iamResipient,
+  isVisible_iDontKnowRecipientNumber
+}) => {
 
   const handleSubmit = (values) => {
-    alert(JSON.stringify(values))
-    // onSubmit(values)
+    let data = {
+      ...emptyValues,
+      isValid: true
+    }
+
+    if (values.iamResipient === true) {
+      data = {
+        ...data,
+        iamResipient: true
+      }
+
+      if (values.postcard === true) {
+        data = {
+          ...data,
+          postcard: true,
+          postcardText: values.postcardText
+        }
+      }
+
+      onSubmit(data)
+    }
+
+    if (values.iDontKnowRecipientNumber === true) {
+      data = {
+        ...data,
+        recipient_phone: ''
+      }
+    }
+
+
+    onSubmit({
+      ...data,
+      ...values,
+      isValid: true
+    })
   }
 
   return (
@@ -24,14 +57,16 @@ const RecipientForm = ({
         initialValues={initialValues}
         validate={(values) => {
           const errors = {}
+          console.log(values);
 
           if (values.iamResipient === false) {
             if (!values.recipient_name) errors.recipient_name = 'Заполните'
           }
 
-          if (values.iDontKnowRecipientNumber === false) {
+          if (values.iDontKnowRecipientNumber === false && values.iamResipient === false) {
             if (!values.recipient_phone) errors.recipient_phone = 'Заполните'
           }
+          console.log(errors);
 
           return errors
         }}
@@ -98,15 +133,15 @@ const RecipientForm = ({
               </Field>
 
               {values.postcard && (
-                <Field name="courier_comment">
+                <Field name="postcardText">
                   {({ input, meta }) =>
                     <Input type="textarea"
-                           placeholder="Комментарий"
-                           disabled={submitting}
-                           meta={meta}
-                           maxRows={5}
-                           max={100}
-                           {...input}/>}
+                      placeholder="Комментарий"
+                      disabled={submitting}
+                      meta={meta}
+                      maxRows={5}
+                      max={100}
+                      {...input} />}
                 </Field>
               )}
 

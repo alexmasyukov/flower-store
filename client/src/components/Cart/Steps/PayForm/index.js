@@ -1,105 +1,114 @@
 import React from 'react'
+import { Form, Field } from 'react-final-form'
 import { PAY_TYPES } from "constants/common"
 import Input from "components/Cart/Common/Input"
-import Textarea from "components/Cart/Common/Textarea"
-import styles from "components/Cart/cart.module.sass"
+import NextButton from "components/Cart/Common/NextButton"
+import { ReactComponent as MasterCard } from './mastercard.svg';
+import { ReactComponent as ApplePay } from './apple-pay.svg';
+import { ReactComponent as GooglePay } from './google-pay-logo.svg';
+import { ReactComponent as Mir } from './mir.svg';
+import { ReactComponent as Visa } from './visa.svg';
+import cartStyles from "components/Cart/cart.module.sass"
+import styles from "./PayForm.module.sass"
 
+
+const Icons = () => (
+   <div className={styles.ml}>
+      <p>
+         Оплата производится через
+         платежный шлюз ПАО "СБЕРБАНК"
+      </p>
+      <div className={styles.icons}>
+         <MasterCard />
+         <Visa />
+         <Mir />
+         <ApplePay />
+         <GooglePay height="14" />
+      </div>
+   </div>
+)
 
 const PayForm = ({
+   initialValues,
+   emptyValues,
+   onSubmit,
    payType = PAY_TYPES.CARD,
-   cardTypeEnabled = true,
-   cardTypeTitle = 'Наличные',
-   legalEntity,
+   payToCourier = true,
    comment,
-   onInputChange,
    children
 }) => {
 
+   const handleSubmit = (values) => {
+      onSubmit(values)
+   }
+
    return (
-      <div className={styles.form}>
-         {cardTypeEnabled && (
-            <>
-               <Input
-                  label="Оплата картой"
-                  type="radio"
-                  name="pay"
-                  value={PAY_TYPES.CARD}
-                  checked={payType === PAY_TYPES.CARD}
-                  onChange={onInputChange('pay.payType')} />
-               <p>
-                  Оплата производится через
-                  платежный шлюз ПАО "СБЕРБАНК"
-               </p>
-            </>
-         )}
+      <div className={cartStyles.form}>
+         <Form
+            onSubmit={handleSubmit}
+            initialValues={initialValues}
+            validate={(values) => {
+               const errors = {}
 
-         <Input
-            label={cardTypeTitle}
-            type="radio"
-            name="pay"
-            value={PAY_TYPES.CASH}
-            checked={payType === PAY_TYPES.CASH}
-            onChange={onInputChange('pay.payType')} />
+               // if (values.courier_askRecipient === false) {
+               //    if (!values.courier_street) errors.courier_street = 'Заполните'
+               // }
 
-         <Input
-            label="Перевод на карту «Сбербанк»"
-            type="radio"
-            name="pay"
-            value={PAY_TYPES.TO_CORPORATE_CARD}
-            checked={payType === PAY_TYPES.TO_CORPORATE_CARD}
-            onChange={onInputChange('pay.payType')} />
+               return errors
+            }}
+            render={({ handleSubmit, form, submitting, values }) => {
+               return (
+                  <form onSubmit={handleSubmit}>
+                     <Field name="pay" type="radio" value={PAY_TYPES.CARD}>
+                        {({ input }) =>
+                           <Input
+                              label={payToCourier ? 'Картой курьеру' : 'Оплата картой'}
+                              {...input}
+                           />}
+                     </Field>
 
-         <Input
-            label="Оплата онлайн"
-            type="radio"
-            name="pay"
-            value={PAY_TYPES.CARD_ONLINE}
-            checked={payType === PAY_TYPES.CARD_ONLINE}
-            onChange={onInputChange('pay.payType')} />      
+                     <Field name="pay" type="radio" value={PAY_TYPES.CASH}>
+                        {({ input }) =>
+                           <Input
+                              label={payToCourier ? 'Наличными курьеру' : 'Наличные'}
+                              {...input}
+                           />}
+                     </Field>
 
-         {/*todo: cardTypeEnabled?*/}
-         {/*{!cardTypeEnabled && (*/}
-         {/*<>*/}
-         {/*<Input*/}
-         {/*label="Счет для юр. лица РФ"*/}
-         {/*type="radio"*/}
-         {/*name="pay"*/}
-         {/*value={PAY_TYPES.ACCOUNT_FOR_A_LEGAL_ENTITY}*/}
-         {/*checked={payType === PAY_TYPES.ACCOUNT_FOR_A_LEGAL_ENTITY}*/}
-         {/*onChange={onInputChange('pay.payType')}/>*/}
+                     <Field name="pay" type="radio" value={PAY_TYPES.TO_CORPORATE_CARD}>
+                        {({ input }) => <Input label='Перевод на карту «Сбербанк»' {...input} />}
+                     </Field>
 
-         {/*{payType === PAY_TYPES.ACCOUNT_FOR_A_LEGAL_ENTITY && (*/}
-         {/*<>*/}
-         {/*<Input*/}
-         {/*placeholder="Название организации"*/}
-         {/*value={legalEntity.name}*/}
-         {/*onChange={onInputChange('pay.legalEntity.name')}/>*/}
+                     <Field name="pay" type="radio" value={PAY_TYPES.CARD_ONLINE}>
+                        {({ input }) => <Input label='Оплата онлайн' {...input} />}
+                     </Field>
 
-         {/*<Input*/}
-         {/*placeholder="ИНН"*/}
-         {/*value={legalEntity.inn}*/}
-         {/*onChange={onInputChange('pay.legalEntity.inn')}/>*/}
+                     <Icons />
 
-         {/*<Input*/}
-         {/*placeholder="КПП"*/}
-         {/*value={legalEntity.kpp}*/}
-         {/*onChange={onInputChange('pay.legalEntity.kpp')}/>*/}
-         {/*</>*/}
-         {/*)}*/}
-         {/*</>*/}
-         {/*)}*/}
+                     <br />
 
-         <hr />
+                     <Field name="pay_comment">
+                        {({ input, meta }) =>
+                           <Input type="textarea"
+                              placeholder="Комментарий к заказу"
+                              disabled={submitting}
+                              meta={meta}
+                              maxRows={2}
+                              max={100}
+                              {...input} />}
+                     </Field>
 
-         <Textarea
-            maxRows={2}
-            max={400}
-            placeholder="Комментарий к заказу"
-            value={comment}
-            onChange={onInputChange('pay.comment')} />
+                     {children}
 
-         <br />
-         {children}
+                     <NextButton
+                        title='Оформить заказ'
+                        type="submit"
+                        disabled={submitting}
+                     />
+                  </form>
+               )
+            }}
+         />
       </div>
    )
 }
