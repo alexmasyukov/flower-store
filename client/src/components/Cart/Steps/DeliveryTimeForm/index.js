@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Field } from 'react-final-form'
+import { connect } from 'react-redux'
+import cn from 'classnames'
+import { addDays, getDay, getDaysInMonth } from 'date-fns'
 import Input from "components/Cart/Common/Input"
 import NextButton from "components/Cart/Common/NextButton"
-import styles from 'components/Cart/cart.module.sass'
-import { addDays, getDay, getDaysInMonth } from 'date-fns'
-import { connect } from 'react-redux'
 import { compose, getDayName, getMonthName, when } from "utils"
-import cn from 'classnames'
 import { deliveryDateSelector, deliveryTodaySelector } from "store/selectors/ui"
 import { setDeliveryDate } from "store/actions/uiActions"
 import ModalCalendar from "components/Cart/Steps/DeliveryTimeForm/ModalCalendar"
+import { CITIES } from "constants/common"
+import withCity from "components/hoc/withCity"
+import styles from 'components/Cart/cart.module.sass'
 // import ExpandBlock from "components/ProductDetails/ExpandBlock"
 
 
@@ -21,8 +23,13 @@ const ExpandBlock = ({ title = '', initVisible = false, children }) => {
 
   return (
     <>
-      <h4 onClick={() => setVisible(!visible)}>{title}</h4>
-      {visible && children}
+      <h4
+        className={cn(visible && styles.active)}
+        onClick={() => setVisible(!visible)}
+      >
+        {title}
+      </h4>
+      {visible && <div className={styles.timesBtns}>{children}</div>}
     </>
   )
 }
@@ -51,12 +58,12 @@ const DaysButtons = ({ days, onClick, calendarBtnOnClick }) => {
         >
           <span>
             {day.name()}
-            <br/>{day.month()} {day.dayM()}
+            <br />{day.month()} {day.dayM()}
           </span>
         </li>
       ))}
       <li onClick={calendarBtnOnClick}>
-        <div className={styles.cIcon}/>
+        <div className={styles.cIcon} />
       </li>
     </ul>
   )
@@ -75,7 +82,9 @@ const generateHours = (min, max) => {
 
       return [
         from <= 9 ? `0${from}` : from,
-        to <= 9 ? `0${to}` : to
+        to <= 9 ? `0${to}` : to,
+        false, // disabled
+        0 // price
       ]
     })
 }
@@ -104,10 +113,11 @@ function getDays(fromDate) {
 
 
 const getDisabledHours = (hours, min) =>
-  hours.map(([from, to]) =>
-    Number(to) <= min && to !== '00' ? [from, to, true] : [from, to])
+  hours.map(([from, to, disabled, price]) =>
+    +to <= min && to !== '00' ?
+      [from, to, true, price] : [from, to, disabled, price])
 
-const getDisabledTimes = (min) => (times) => {
+const withDisabledTimes = (min) => (times) => {
   return times.map(({ hours, ...base }) => ({
     ...base,
     hours: getDisabledHours(hours, min)
@@ -131,29 +141,66 @@ const hourWithPreparing = nowHour + 1
 
 const times = [
   {
-    title: 'c 00:00 до 9:00',
+    title: '00:00 - 9:00',
     hours: generateHours(0, 9),
     isVisible: true
   },
   {
-    title: 'c 09:00 до 15:00',
+    title: '09:00 - 15:00',
     hours: generateHours(9, 15),
     isVisible: false
   },
   {
-    title: 'c 15:00 до 21:00',
+    title: '15:00 - 21:00',
     hours: generateHours(15, 21),
     isVisible: false
   },
   {
-    title: 'c 21:00 до 24:00',
+    title: '21:00 - 24:00',
     hours: generateHours(21, 24),
     isVisible: false
   }
 ]
 
+const timesPrices = {
+  [CITIES.CHITA.eng]: [
+    {
+      fromHour: 0,
+      toHour: 9,
+      price: 400
+    },
+    {
+      fromHour: 9,
+      toHour: 21,
+      price: 200
+    },
+    {
+      fromHour: 21,
+      toHour: 23,
+      price: 400
+    }
+  ],
+  [CITIES.MOSCOW.eng]: [
+    {
+      fromHour: 0,
+      toHour: 9,
+      price: 800
+    },
+    {
+      fromHour: 9,
+      toHour: 21,
+      price: 600
+    },
+    {
+      fromHour: 21,
+      toHour: 23,
+      price: 800
+    }
+  ]
+}
 
-const setVisibilityNeedTimes = (max) => (times) => {
+
+const withVisibilityNeedTimes = (max) => (times) => {
   return times.map(time => {
     const [from, to] = time.hours[time.hours.length - 1]
 
@@ -161,21 +208,43 @@ const setVisibilityNeedTimes = (max) => (times) => {
       ...time,
       isVisible: true
     } : {
+        ...time,
+        isVisible: false
+      }
+  })
+}
+
+const withPrices = (prices) => (times) => {
+  return times.map(time => {
+    const hours = time.hours.map(([from, to, disabled]) => {
+
+      let foundPrice
+      prices.forEach(({ fromHour, toHour, price }) => {
+        if (+from >= fromHour && +to <= toHour) {
+          foundPrice = price
+        }
+      })
+
+      return [from, to, disabled, foundPrice]
+    })
+
+    return {
       ...time,
-      isVisible: false
+      hours
     }
   })
 }
 
 const DeliveryTimeForm = ({
-                            isCourier,
-                            initialValues,
-                            emptyValues,
-                            onSubmit,
-                            deliveryDate,
-                            todayDate,
-                            setDeliveryDate
-                          }) => {
+  isCourier,
+  initialValues,
+  emptyValues,
+  onSubmit,
+  city,
+  deliveryDate,
+  todayDate,
+  setDeliveryDate
+}) => {
   const [days, setDays] = useState(getDays(deliveryDate))
   const [calendarIsOpen, setCalendarIsOpen] = useState(false)
 
@@ -189,9 +258,9 @@ const DeliveryTimeForm = ({
         ...day,
         isActive: true
       } : {
-        ...day,
-        isActive: false
-      })
+          ...day,
+          isActive: false
+        })
 
     setDays(update)
   }
@@ -210,8 +279,9 @@ const DeliveryTimeForm = ({
   const isToday = todayDate.getDate() === activeDay.date.getDate()
 
   const selectDayTimes = compose(
-    when(isToday === true, setVisibilityNeedTimes(hourWithPreparing)),
-    when(isToday === true, getDisabledTimes(hourWithPreparing))
+    withPrices(timesPrices[city.eng]),
+    when(isToday === true, withVisibilityNeedTimes(hourWithPreparing)),
+    when(isToday === true, withDisabledTimes(hourWithPreparing))
   )(times)
 
 
@@ -245,6 +315,14 @@ const DeliveryTimeForm = ({
                 </Field>
               )}
 
+              {city.eng === CITIES.CHITA.eng &&
+                <p style={{ marginBottom: 20, marginTop: 15 }}>
+                  Доставка, за пределами Центрального района,
+                  рассчитывается индивидуально
+              </p>
+              }
+
+
               {!values.askRecipient && (
                 <>
                   <DaysButtons
@@ -262,19 +340,21 @@ const DeliveryTimeForm = ({
                     onCalendarClose={() => setCalendarIsOpen(false)}
                   />
 
-                  <div className={styles.timesButtons}>
+                  <div className={styles.times}>
                     {selectDayTimes.map((time, idx) => (
                       <ExpandBlock
                         key={idx}
                         title={time.title}
                         initVisible={time.isVisible}
                       >
-                        {time.hours.map(([from, to, disabled]) => (
-                          <Radio
-                            key={from}
-                            value={`${from}:00 - ${to}:00`}
-                            disabled={disabled}
-                          />
+                        {time.hours.map(([from, to, disabled, price]) => (
+                          <div key={from} className={cn(disabled && styles.disabled)}>
+                            <Radio
+                              value={`${from}:00 - ${to}:00`}
+                              disabled={disabled}
+                            />
+                            <span>{price} ₽</span>
+                          </div>
                         ))}
                       </ExpandBlock>
                     ))}
@@ -301,7 +381,7 @@ const DeliveryTimeForm = ({
                   {/**/}
                   {/*С 9-15 (раскрывается 9-10, 10-11 и т.д.),*/}
                   {/*С 15-21,*/}
-                  {/*С 21-09 (+200₽)*/}
+
                   {/**/}
                   {/**/}
                   {/*Разделеняем время на интервалы по часу*/}
@@ -333,7 +413,10 @@ const mapDispatchToProps = {
   setDeliveryDate
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+export default compose(
+  withCity,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(DeliveryTimeForm)
