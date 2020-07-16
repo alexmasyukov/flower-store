@@ -58,15 +58,15 @@ module.exports = {
 
   async orderToMessage(req, res, next) {
     const { lastId } = req
-    const { products } = req.body
+    const { products, steps_text = '' } = req.body
     const { options = [] } = products
 
     const messages = products.map(p => {
       const options = p.options.map(o =>
-        `+ ${o.cart_title}: ${o.button} (${o.price} руб.)`)
+        `### ${o.cart_title}: ${o.button} (${o.price} руб.)`)
         .join('\n')
 
-      const optionsPrice = p.optionsCost && ` + ${p.optionsCost} = ${p.size.price + p.optionsCost}`
+      const optionsPrice = p.optionsCost && ` + опции ${p.optionsCost} = итого ${p.size.price + p.optionsCost}`
 
       return `${p.title}, ${p.size.title}, ${p.size.price}${optionsPrice ? optionsPrice : ''} руб. (id: ${p.productId})`
         + `${options && `\n${options}`}`
@@ -76,8 +76,9 @@ module.exports = {
 
     const order = `🔔 Новый заказ №${lastId} \n\n`
       + `${messages}\n`
-      + `${options && options}\n\n`
-      + `Итого: ${cost} руб.`.trim()
+      + `${options && options}\n`
+      + `Итого: ${cost} руб.\n\n`
+      + `${steps_text}`.trim()
 
     req.body.messages = [order]
     req.body.buttons = [{
@@ -91,27 +92,27 @@ module.exports = {
     next()
   },
 
-  async updateComplete(req, res, next) {
-    try {
-      const { id, complete } = req.body
-      const update = await knex
-        .from('orders')
-        .where('id', id)
-        .update({
-          complete
-        })
+  // async updateComplete(req, res, next) {
+    // try {
+    // todo: здесь начисляются баллы за товар
+    //   const { id, complete } = req.body
+    //   const update = await knex
+    //     .from('orders')
+    //     .where('id', id)
+    //     .update({
+    //       complete
+    //     })
 
-      if (update === 0) {
-        return next(utils.error(404, 'NOT FOUND', 'not found'))
-      }
+    //   if (update === 0) {
+    //     return next(utils.error(404, 'NOT FOUND', 'not found'))
+    //   }
 
-
-      res.json({
-        status: 'done',
-        result: update
-      })
-    } catch (e) {
-      next(utils.error(500, 'ERROR', e.message))
-    }
-  }
+    //   res.json({
+    //     status: 'done',
+    //     result: update
+    //   })
+    // } catch (e) {
+    //   next(utils.error(500, 'ERROR', e.message))
+    // }
+  // }
 }

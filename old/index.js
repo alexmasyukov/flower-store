@@ -19,6 +19,14 @@
 //   })
 // }
 
+ // todo: NETWORK RELEASE - сделать это через CMS
+    // Для установки radio по умолчанию, так как у курьера нет оплаты по карте
+    // let payType = pay.payType
+    // if (delivery.is === DELIVERY_IS.COURIER && payType === PAY_TYPES.CARD) {
+    //   // Курьер может принимать только наличные
+    //   payType = PAY_TYPES.CASH
+    // }
+
 
 
 // handleSetStateKeyValue = (stepName, keyValue) => {

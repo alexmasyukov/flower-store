@@ -14,8 +14,8 @@ class Order {
     customer_id: { type: 'integer' },
     complete: { type: 'boolean' },
     steps: { type: "object" },
-    stepsText: { type: "string" },
-    products: { type: "object" }
+    steps_text: { type: "string" },
+    products: { type: "array" }
   }
 
   static get bodySchema() {
@@ -28,7 +28,7 @@ class Order {
         'customer_id',
         'complete',
         'steps',
-        'stepsText',
+        'steps_text',
         'products'
       ],
       properties
@@ -50,11 +50,13 @@ class Order {
   }
 
   static get updateSchema() {
-    const { properties } = this
+    const { properties: { complete } } = this
     return {
       type,
       minProperties,
-      properties
+      properties: {
+        complete
+      }
     }
   }
 }

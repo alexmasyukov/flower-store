@@ -1,14 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux"
-// import cn from 'classnames'
-// import {
-//   string as YupString,
-//   object as YupObject,
-//   setLocale
-// } from 'yup'
-// import styles from './cartContainer.module.sass'
-// import { Row } from "components/Bootstrap"
-// import NextButton from "components/Cart/Common/NextButton"
 import Step from "components/Cart/Common/Step"
 import ChangeButton from "components/Cart/Common/ChangeButton"
 import CustomerForm from "components/Cart/Steps/CustomerFrom"
@@ -27,6 +18,8 @@ import { confimSelector, orderSelector, cartProductsSelector } from "store/selec
 import { fetchConfim, sendOrder } from "store/actions/cart/ordersActions"
 import { phoneToTextFormat, formatDateDMY } from "utils"
 // import styles from "components/Cart/cart.module.sass"
+// import cn from 'classnames'
+
 
 const deliveryEmpty = {
   is: DELIVERY_IS.COURIER,
@@ -51,7 +44,7 @@ const recipientEmpty = {
 
 const deliveryDateTimeEmpty = {
   askRecipient: false,
-  date: '',
+  date: new Date(),
   time: '',
   comment: 'Везите бережно'
 }
@@ -67,6 +60,7 @@ const initialState = {
     isPublic: true,
     isEdit: true,
     isValid: false,
+    id: 0,
     name: 'Тест',
     phone: '+7(996)022-5657',
     toString() {
@@ -85,7 +79,7 @@ const initialState = {
         this.courier_askRecipient === false) {
         return `
             ${this.courier_street} ${this.courier_house}
-            ${this.courier_flat && `, кв. ${this.courier_flat}`}
+            ${this.courier_flat && `| кв. ${this.courier_flat}`}
             ${this.courier_entrance && `| ${this.courier_entrance} подъезд`}
             ${this.courier_floor && `| ${this.courier_floor} этаж`}
             ${this.courier_comment && `| Комментарий: ${this.courier_comment}`}
@@ -203,7 +197,7 @@ class CartSteps extends Component {
         }
       }
     }, () => {
-      if (nextStepName === 'pay') this.handleSendOrder() 
+      if (nextStepName === 'pay') this.handleSendOrder()
 
       let nextStep = nextStepName
 
@@ -229,56 +223,46 @@ class CartSteps extends Component {
   }
 
   handleSendOrder = () => {
-    const state = this.state
+    const {
+      customer, recipient, delivery,
+      deliveryDateTime, pay
+    } = this.state
     const { products, city } = this.props
 
-    console.log(city);
-    
+    let steps_text =
+      `Клиент: ${customer.toString()}\n\n` +
+      `Доставка: ${delivery.toString()}\n\n` + //.replaceAll('            ', ''
+      `Получатель: ${recipient.toString()}\n\n` +
+      `Время доставка/самовывоза: ${deliveryDateTime.toString()}\n\n` +
+      `Оплата: ${pay.toString(delivery.is)}`
+
+    try {
+      steps_text = steps_text.replace(/         |        /g, '')
+    } catch (e) { }
+
+    console.log(steps_text);
+
 
     this.props.sendOrder({
       city_id: city.id,
-      customer_id: 2, // todo: get this from sms response
+      customer_id: customer.id, // todo: get this from sms response
       complete: false,
-      steps: state,
+      steps: {
+        customer,
+        delivery,
+        recipient,
+        deliveryDateTime,
+        delivery
+      },
+      steps_text,
       products
     })
-    // .then(({ data }) => {
-    //   console.log(data.result)
-    //   this.setState(prev => ({
-    //     order: {
-    //       ...prev.order,
-    //       done: true,
-    //       id: data.result
-    //     }
-    //   }))
-    // })
-    // .catch(error => {
-    //   alert('Ошибка отправки заказа')
-    //   console.log(error)
-    // })
-    // const { confirmation: { smsCode, error, done } } = this.state
-    // const { orderConfirmation } = this.props
-
-    // if (!orderConfirmation.code && !done) {
-    //    this.props.fetchConfim()
-    //    return
-    // }
-
-    // if (orderConfirmation.code.toString() === smsCode.toString()) {
-    //    this.setState(prev => ({
-    //       confirmation: {
-    //          ...prev.confirmation,
-    //          done: true
-    //       }
-    //    }))
-    // } else {
-    //    this.setState(prev => ({
-    //       confirmation: {
-    //          ...prev.confirmation,
-    //          error: true
-    //       }
-    //    }))
-    // }
+      .then(({ data }) => {
+        console.log(data)
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 
 
@@ -290,18 +274,8 @@ class CartSteps extends Component {
 
     const deliveryTitle = delivery.is === DELIVERY_IS.COURIER ?
       'Доставка' : 'Самовывоз'
-
     const deliveryTimeTitle = delivery.is === DELIVERY_IS.COURIER ?
       'Время доставки' : 'Время самовывоза'
-
-    // todo: NETWORK RELEASE - сделать это через CMS
-    // Для установки radio по умолчанию, так как у курьера нет оплаты по карте
-    let payType = pay.payType
-    if (delivery.is === DELIVERY_IS.COURIER && payType === PAY_TYPES.CARD) {
-      // Курьер может принимать только наличные
-      payType = PAY_TYPES.CASH
-    }
-
     let stepNumber = 1
 
     return (

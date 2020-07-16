@@ -99,9 +99,12 @@ const Customer = ({
       const sms = await confimCustomer(data)
       console.warn('sms', sms)
       if (sms.status === CONFIM_STATUS.DONE) {
-        console.log(sms.result.points)
+        console.log(sms.result)
         cartCustomerPointsSet(sms.result.points)
-        onSubmit(confim.values)
+        onSubmit({
+          ...confim.values,
+          id: sms.result.customer_id
+        })
       }
       if (sms.status === CONFIM_STATUS.SEND_SMS_ERROR) {
         setCode({

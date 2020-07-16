@@ -74,7 +74,10 @@ module.exports = {
       if (sms_code === customer.last_sms_code || sms_code === '1204') {
         return res.json({
           status: STATUS.DONE,
-          result: { points: customer.points }
+          result: { 
+            customer_id: customer.id,
+            points: customer.points,
+           }
         })
       }
 

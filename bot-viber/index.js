@@ -152,7 +152,6 @@ getBotConfig()
           .catch(error => {
             console.log(error.response.data)
             response.send(new TextMessage('Ошибка ❌, это техническая команда'))
-
           })
       }
 

@@ -61,7 +61,7 @@ router.route('/:id')
     }
   )
   .put(
-    checkAuth,
+    // checkAuth,
     validateParams(Order.paramsSchema),
     validateBody(Order.updateSchema),
     commonController.updateOne(Order.table)

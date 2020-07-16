@@ -94,7 +94,7 @@ app.use(cors(corsOptions))
 //   // origin: 'http://localhost:5000',
 //   credentials: true
 // }))
-app.use(logger)
+// app.use(logger)
 app.use(compression())  // { threshold: 0 } what is it?
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json({ limit: '100kb' }))
