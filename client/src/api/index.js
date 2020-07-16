@@ -72,10 +72,7 @@ export const fetchConfim = async (data) => {
 
 export const saveOrder = async (data) => {
   console.log('api saveOrder (data)', data)
-
   return apiServiceInstance.saveOrder(data)
-    .then(product => product)
-    .catch((error) => console.log(error))
 }
 
 // export const fetchAdditionalProducts = async () => {

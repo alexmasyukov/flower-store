@@ -7,8 +7,9 @@ import {
   cartProductsSelector,
   getCustomerPoints,
   getDeliveryCost,
+  getDeliveryDate, getDeliveryPostcard,
   totalPriceSelector,
-  getDeliveryDate, totalProductsCostSelector
+  totalProductsCostSelector
 } from "store/selectors/cart"
 import {
   cartProductDecrease,
@@ -26,6 +27,7 @@ import FlowersList from 'components/Common/FlowersList'
 //    cartAdditionalProductRemove
 // } from "store/actions/cart/additionalProductsActions"
 import styles from 'components/Cart/cart.module.sass'
+import { deliveryDateSelector } from "store/selectors/ui"
 
 class CartProductList extends Component {
   handleProductDelete = (id) => () => this.props.onProductDelete(id)
@@ -127,8 +129,10 @@ class CartProductList extends Component {
   }
 
   render() {
-    const { products, totalPrice, deliveryCost,
-      deliveryDate, points, totalProductsCost } = this.props
+    const {
+      products, totalPrice, deliveryCost,
+      deliveryDate, deliveryPostcard, points, totalProductsCost
+    } = this.props
 
     if (!products.length) return <h1>Загрузка</h1>
 
@@ -153,8 +157,17 @@ class CartProductList extends Component {
           Товары: <b>{totalProductsCost.toLocaleString('ru-RU')} <RoubleSymbol/></b>
         </p>
 
-        <p className={styles.allCost}>Доставка: <b>{deliveryCost.toLocaleString('ru-RU')} <RoubleSymbol/></b></p>
-        <p className={styles.allCost}>Бонусы: <b>{points.toLocaleString('ru-RU')} <RoubleSymbol/></b></p>
+        <p className={styles.allCost}>Доставка:
+          <b>{deliveryCost > 0 ?
+            deliveryCost.toLocaleString('ru-RU') : 'от 200'} <RoubleSymbol/>
+          </b></p>
+
+        {deliveryPostcard > 0 && (
+          <p className={styles.allCost}>Открытка: <b>{deliveryPostcard} <RoubleSymbol/></b></p>
+        )}
+        {points > 0 && (
+          <p className={styles.allCost}>Бонусы к списанию: <b>-{points.toLocaleString('ru-RU')} <RoubleSymbol/></b></p>
+        )}
         <p className={styles.itog}>Итого: <b>{totalPrice.toLocaleString('ru-RU')} <RoubleSymbol/></b></p>
 
 
@@ -174,7 +187,8 @@ const mapStateToProps = state => ({
   products: cartProductsSelector(state),
   points: getCustomerPoints(state),
   deliveryCost: getDeliveryCost(state),
-  deliveryDate: getDeliveryDate(state),
+  deliveryPostcard: getDeliveryPostcard(state),
+  deliveryDate: deliveryDateSelector(state),
   totalProductsCost: totalProductsCostSelector(state),
   totalPrice: totalPriceSelector(state)
   // additionalProducts: getAdditionalItemsSelector(state),

@@ -31,14 +31,14 @@ export const requestOrderSend = () => ({
   type: FETCH_ORDER_ADD_REQUEST
 })
 
-export const successOrderSend = ({data}) => ({
+export const successOrderSend = ({result}) => ({
   type: FETCH_ORDER_ADD_SUCCESS,
-  id: data.result
+  id: result
 })
 
 export const failureOrderSend = error => ({
   type: FETCH_ORDER_ADD_FAILURE,
-  error: error.response.data
+  error: error
 })
 
 

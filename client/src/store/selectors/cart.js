@@ -1,9 +1,12 @@
 import { createSelector } from "reselect"
 
+
 const getCostProductOptions = (options) =>
   options.reduce((total, { price }) => total + price, 0)
 
+
 const getCartProducts = state => state.ui.cart.products
+
 
 export const cartProductsSelector = createSelector(
   getCartProducts,
@@ -12,10 +15,12 @@ export const cartProductsSelector = createSelector(
     optionsCost: getCostProductOptions(product.options)
   })))
 
+
 const productsOptionsCostSelector = createSelector(
   cartProductsSelector,
   (products) => products.reduce((total, { count, options }) =>
     total + getCostProductOptions(options) * count, 0))
+
 
 const productsCostSelector = createSelector(
   cartProductsSelector,
@@ -23,20 +28,23 @@ const productsCostSelector = createSelector(
     total + size.price * count, 0)
 )
 
+
 export const getDeliveryCost = (state) => state.ui.cart.delevery.cost
-export const getDeliveryDate = (state) => state.ui.cart.delevery.date
-export const getCustomerPoints = (state) => state.ui.cart.customer.points
+export const getDeliveryPostcard = (state) => state.ui.cart.delevery.postcard
+export const getCustomerPoints = (state) => state.ui.cart.delevery.points
 
 export const totalPriceSelector = createSelector(
   [
     productsCostSelector,
     productsOptionsCostSelector,
     getDeliveryCost,
-    getCustomerPoints
+    getCustomerPoints,
+    getDeliveryPostcard
   ],
-  (products, options, delivery, points) =>
-    (products + options + delivery) - points
+  (products, options, delivery, points, postcard) =>
+    (products + options + delivery + postcard) - points
 )
+
 
 export const totalProductsCostSelector = createSelector(
   [
@@ -46,20 +54,21 @@ export const totalProductsCostSelector = createSelector(
   (products, options) => products + options
 )
 
+
 const getConfim = (state) => state.ui.cart.confim
+
 
 export const confimSelector = createSelector(
   getConfim,
   (confim) => confim
 )
 
+
 const getOrder = (state) => state.ui.cart.order
 export const orderSelector = createSelector(
   getOrder,
   (order) => order
 )
-
-
 
 
 // todo: так делать нормально? (2 вниз)

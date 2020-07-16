@@ -171,7 +171,7 @@ class CartSteps extends Component {
   }
 
   //nextStepName
-  handleStepSubmit = (stepName, nextStepName) => (values, changesToState = {}) => {
+  handleStepSubmit = (stepName, nextStepName = false) => (values, changesToState = {}) => {
     this.setState(prev => {
       let state = { ...prev }
 
@@ -197,7 +197,7 @@ class CartSteps extends Component {
         }
       }
     }, () => {
-      if (nextStepName === 'pay') this.handleSendOrder()
+      if (nextStepName === false) this.handleSendOrder()
 
       let nextStep = nextStepName
 
@@ -224,8 +224,11 @@ class CartSteps extends Component {
 
   handleSendOrder = () => {
     const {
-      customer, recipient, delivery,
-      deliveryDateTime, pay
+      customer,
+      recipient,
+      delivery,
+      deliveryDateTime,
+      pay
     } = this.state
     const { products, city } = this.props
 
@@ -238,10 +241,8 @@ class CartSteps extends Component {
 
     try {
       steps_text = steps_text.replace(/         |        /g, '')
-    } catch (e) { }
-
-    console.log(steps_text);
-
+    } catch (e) {
+    }
 
     this.props.sendOrder({
       city_id: city.id,
@@ -252,17 +253,11 @@ class CartSteps extends Component {
         delivery,
         recipient,
         deliveryDateTime,
-        delivery
+        pay
       },
       steps_text,
       products
     })
-      .then(({ data }) => {
-        console.log(data)
-      })
-      .catch(error => {
-        console.log(error)
-      })
   }
 
 
@@ -287,10 +282,10 @@ class CartSteps extends Component {
               onSubmit={this.handleStepSubmit('customer', 'delivery')}
             />
           ) : (
-              <CustomerResult {...customer}>
-                <ChangeButton onClick={this.handleChangeButton('customer')} />
-              </CustomerResult>
-            )}
+            <CustomerResult {...customer}>
+              <ChangeButton onClick={this.handleChangeButton('customer')}/>
+            </CustomerResult>
+          )}
         </Step>
 
         <Step number={stepNumber++} title={deliveryTitle} active={delivery.isEdit}>
@@ -301,12 +296,12 @@ class CartSteps extends Component {
               onSubmit={this.handleStepSubmit('delivery', ['recipient', 'deliveryDateTime'])}
             />
           ) : (
-              delivery.isValid && (
-                <DeliveryResult {...delivery}>
-                  <ChangeButton onClick={this.handleChangeButton('delivery')} />
-                </DeliveryResult>
-              )
-            )}
+            delivery.isValid && (
+              <DeliveryResult {...delivery}>
+                <ChangeButton onClick={this.handleChangeButton('delivery')}/>
+              </DeliveryResult>
+            )
+          )}
         </Step>
 
         {/* {delivery.is !== DELIVERY_IS.YOURSELF && ( */}
@@ -321,13 +316,12 @@ class CartSteps extends Component {
                 onSubmit={this.handleStepSubmit('recipient', 'deliveryDateTime')}
               />
             ) : (
-                recipient.isValid && (
-                  <RecipientResult {...recipient}>
-                    {recipient.toString()}
-                    <ChangeButton onClick={this.handleChangeButton('recipient')} />
-                  </RecipientResult>
-                )
-              )}
+              recipient.isValid && (
+                <RecipientResult {...recipient}>
+                  <ChangeButton onClick={this.handleChangeButton('recipient')}/>
+                </RecipientResult>
+              )
+            )}
           </Step>
         )}
 
@@ -338,15 +332,15 @@ class CartSteps extends Component {
               initialValues={deliveryDateTime}
               emptyValues={deliveryDateTimeEmpty}
               isCourier={delivery.is === DELIVERY_IS.COURIER}
-              onSubmit={this.handleStepSubmit('deliveryDateTime', 'pay')} />
+              onSubmit={this.handleStepSubmit('deliveryDateTime', 'pay')}/>
           ) : (
-              deliveryDateTime.isValid && (
-                <DeliveryTimeResult {...deliveryDateTime}>
-                  {deliveryDateTime.toString()}
-                  <ChangeButton onClick={this.handleChangeButton('deliveryDateTime')} />
-                </DeliveryTimeResult>
-              )
-            )}
+            deliveryDateTime.isValid && (
+              <DeliveryTimeResult {...deliveryDateTime}>
+                {deliveryDateTime.toString()}
+                <ChangeButton onClick={this.handleChangeButton('deliveryDateTime')}/>
+              </DeliveryTimeResult>
+            )
+          )}
         </Step>
 
         <Step number={stepNumber++} title="Оплата" active={pay.isEdit}>
@@ -354,17 +348,16 @@ class CartSteps extends Component {
             <PayForm
               initialValues={pay}
               emptyValues={payEmpty}
-              onSubmit={this.handleStepSubmit('pay', 'pay')}
+              onSubmit={this.handleStepSubmit('pay')}
               delivery_is={delivery.is}
             />
           ) : (
-              pay.isValid && (
-                <PayResult {...pay} delivery_is={delivery.is}>
-                  {pay.toString(delivery.is)}
-                  <ChangeButton onClick={this.handleChangeButton('pay')} />
-                </PayResult>
-              )
-            )}
+            pay.isValid && (
+              <PayResult {...pay} delivery_is={delivery.is}>
+                <ChangeButton onClick={this.handleChangeButton('pay')}/>
+              </PayResult>
+            )
+          )}
         </Step>
       </>
     )

@@ -3,7 +3,6 @@ import {
    DELIVERY_MODAL_HIDE,
    DELIVERY_MODAL_SHOW
 } from "store/actionTypes"
-import { formatDateDMY } from "utils"
 
 const initialState = {
    modalVisible: false,

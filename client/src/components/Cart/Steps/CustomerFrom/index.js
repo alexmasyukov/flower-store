@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Form, Field } from 'react-final-form'
 import { connect } from "react-redux"
 import { compose, phoneToValue, when } from "utils"
-import { cartCustomerPointsSet } from "store/actions/cart/stepsActions"
+import { setCartDeliveryPoints } from "store/actions/cart/stepsActions"
 import { CONFIM_STATUS } from "constants/common"
 import Input from "components/Cart/Common/Input"
 import PhoneInput from "components/Cart/Common/PhoneInput"
@@ -21,7 +21,7 @@ const BtnContinue = ({ onClick }) => (
 const Customer = ({
   onSubmit,
   confimCustomer,
-  cartCustomerPointsSet,
+  setCartDeliveryPoints,
   initialValues
 }) => {
   const [confim, setConfim] = useState({
@@ -100,7 +100,7 @@ const Customer = ({
       console.warn('sms', sms)
       if (sms.status === CONFIM_STATUS.DONE) {
         console.log(sms.result)
-        cartCustomerPointsSet(sms.result.points)
+        setCartDeliveryPoints(sms.result.points)
         onSubmit({
           ...confim.values,
           id: sms.result.customer_id
@@ -242,7 +242,7 @@ const mapMethodsToProps = (apiService) => {
 }
 
 const mapDispatchToProps = {
-  cartCustomerPointsSet
+  setCartDeliveryPoints
 }
 
 const CustomerForm = compose(

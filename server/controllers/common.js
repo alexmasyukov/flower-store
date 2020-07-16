@@ -107,13 +107,13 @@ module.exports = {
           .insert(data)
           .returning('id')
 
+        req.lastId = id[0]
+        if (nextMiddleware) return next()
+
         res.json({
           status: 'done',
           result: id[0]
         })
-
-        req.lastId = id[0]
-        if (nextMiddleware) next()
       } catch (e) {
         next(utils.error(500, 'error', e.message))
       }

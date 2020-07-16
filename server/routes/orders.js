@@ -25,7 +25,14 @@ router.route('/')
     validateBody(Order.bodySchema),
     commonController.createOne(Order.table, ['products', 'steps'], true),
     ordersController.orderToMessage,
-    viberBotController.sendMessage
+    viberBotController.sendMessage,
+    (req, res, next) => {
+      console.log(req.lastId)
+      return res.json({
+        status: 'done',
+        result: req.lastId
+      })
+    }
   )
 
 

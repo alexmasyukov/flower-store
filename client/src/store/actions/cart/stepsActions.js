@@ -1,6 +1,20 @@
-import { CART_CUSTOMER_POINTS_SET } from "store/actionTypes"
+import {
+  CART_DELIVERY_COST_SET,
+  CART_DELIVERY_POINTS_SET,
+  CART_DELIVERY_POSTCARD_SET
+} from "store/actionTypes"
 
-export const cartCustomerPointsSet = (points) => ({
-  type: CART_CUSTOMER_POINTS_SET,
+export const setCartDeliveryPoints = (points) => ({
+  type: CART_DELIVERY_POINTS_SET,
   points
+})
+
+export const setCartDeliveryCost = (cost) => ({
+  type: CART_DELIVERY_COST_SET,
+  cost
+})
+
+export const setCartDeliveryPostcard = (postcard) => ({
+  type: CART_DELIVERY_POSTCARD_SET,
+  postcard
 })

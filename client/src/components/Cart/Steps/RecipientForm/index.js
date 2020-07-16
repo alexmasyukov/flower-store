@@ -3,15 +3,18 @@ import { Form, Field } from 'react-final-form'
 import Input from "components/Cart/Common/Input"
 import PhoneInput from "components/Cart/Common/PhoneInput"
 import NextButton from "components/Cart/Common/NextButton"
+import { connect } from 'react-redux'
+import { setCartDeliveryPostcard } from "store/actions/cart/stepsActions"
 import styles from 'components/Cart/cart.module.sass'
 
 const RecipientForm = ({
-  initialValues,
-  emptyValues,
-  onSubmit,
-  isVisible_iamResipient,
-  isVisible_iDontKnowRecipientNumber
-}) => {
+                         initialValues,
+                         emptyValues,
+                         onSubmit,
+                         isVisible_iamResipient,
+                         isVisible_iDontKnowRecipientNumber,
+                         setCartDeliveryPostcard
+                       }) => {
 
   const handleSubmit = (values) => {
     let data = {
@@ -19,18 +22,21 @@ const RecipientForm = ({
       isValid: true
     }
 
+    if (values.postcard === true) {
+      setCartDeliveryPostcard(50)
+      data = {
+        ...data,
+        postcard: true,
+        postcardText: values.postcardText
+      }
+    } else {
+      setCartDeliveryPostcard(0)
+    }
+
     if (values.iamResipient === true) {
       data = {
         ...data,
         iamResipient: true
-      }
-
-      if (values.postcard === true) {
-        data = {
-          ...data,
-          postcard: true,
-          postcardText: values.postcardText
-        }
       }
 
       onSubmit(data)
@@ -141,12 +147,12 @@ const RecipientForm = ({
                 <Field name="postcardText">
                   {({ input, meta }) =>
                     <Input type="textarea"
-                      placeholder="Комментарий"
-                      disabled={submitting}
-                      meta={meta}
-                      maxRows={5}
-                      max={100}
-                      {...input} />}
+                           placeholder="Комментарий"
+                           disabled={submitting}
+                           meta={meta}
+                           maxRows={5}
+                           max={100}
+                           {...input} />}
                 </Field>
               )}
 
@@ -163,5 +169,12 @@ const RecipientForm = ({
   )
 }
 
+const mapDispatchToProps = {
+  setCartDeliveryPostcard
+}
 
-export default RecipientForm
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(RecipientForm)

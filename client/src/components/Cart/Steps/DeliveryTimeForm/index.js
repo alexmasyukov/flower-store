@@ -15,6 +15,7 @@ import ModalCalendar from "components/Cart/Steps/DeliveryTimeForm/ModalCalendar"
 import { CITIES } from "constants/common"
 import withCity from "components/hoc/withCity"
 import styles from 'components/Cart/cart.module.sass'
+import { setCartDeliveryCost } from "store/actions/cart/stepsActions"
 
 
 const ExpandBlock = ({ title = '', initVisible = false, children }) => {
@@ -60,12 +61,12 @@ const DaysButtons = ({ days, onClick, calendarBtnOnClick }) => {
         >
           <span>
             {day.name()}
-            <br />{day.month()} {day.day()}
+            <br/>{day.month()} {day.day()}
           </span>
         </li>
       ))}
       <li onClick={calendarBtnOnClick}>
-        <div className={styles.cIcon} />
+        <div className={styles.cIcon}/>
       </li>
     </ul>
   )
@@ -199,13 +200,13 @@ const withVisibilityNeedTimes = (max) => (times) => {
     const { to } = time.hours[time.hours.length - 1]
 
     return (from <= max && max < to) ||
-      (to === 0 && from <= max && max < 24) ? {
-        ...time,
-        isVisible: true
-      } : {
-        ...time,
-        isVisible: false
-      }
+    (to === 0 && from <= max && max < 24) ? {
+      ...time,
+      isVisible: true
+    } : {
+      ...time,
+      isVisible: false
+    }
   })
 }
 
@@ -217,9 +218,9 @@ const withVisibilityOnlyIntitialTime = (intitialTimeText) => (times) => {
       ...time,
       isVisible: true
     } : {
-        ...time,
-        isVisible: false
-      }
+      ...time,
+      isVisible: false
+    }
   })
 }
 
@@ -250,15 +251,16 @@ const withPrices = (prices) => (times) => {
 }
 
 const DeliveryTimeForm = ({
-  isCourier,
-  initialValues,
-  emptyValues,
-  onSubmit,
-  city,
-  deliveryDate,
-  todayDate,
-  setDeliveryDate
-}) => {
+                            isCourier,
+                            initialValues,
+                            emptyValues,
+                            onSubmit,
+                            city,
+                            deliveryDate,
+                            todayDate,
+                            setDeliveryDate,
+                            setCartDeliveryCost
+                          }) => {
   const [days, setDays] = useState(getDays(deliveryDate))
   const [calendarIsOpen, setCalendarIsOpen] = useState(false)
   let hourWithPreparing = deliveryDate.getHours() + 1
@@ -269,16 +271,18 @@ const DeliveryTimeForm = ({
   }, [deliveryDate])
 
   const handleSubmit = (values) => {
+    const [timeText, price = 0] = values.time.split('*')
     setDeliveryDate(values.date)
+    setCartDeliveryCost(+price)
 
     const data = values.askRecipient ? {
       ...emptyValues,
       comment: values.comment ? values.comment : '',
       askRecipient: true
     } : {
-        ...emptyValues,
-        ...values
-      }
+      ...emptyValues,
+      ...values
+    }
 
     onSubmit({
       ...data,
@@ -292,9 +296,9 @@ const DeliveryTimeForm = ({
         ...day,
         isActive: true
       } : {
-          ...day,
-          isActive: false
-        })
+        ...day,
+        isActive: false
+      })
 
     setDays(update)
   }
@@ -308,7 +312,7 @@ const DeliveryTimeForm = ({
     when(initialValues.time !== '', withVisibilityOnlyIntitialTime(initialValues.time)),
     withPrices(timesPrices[city.eng]),
     when(isToday === true, withVisibilityNeedTimes(hourWithPreparing)),
-    when(isToday === true, withDisabledTimes(hourWithPreparing)),
+    when(isToday === true, withDisabledTimes(hourWithPreparing))
   )(times)
 
 
@@ -342,9 +346,9 @@ const DeliveryTimeForm = ({
               )}
 
               {city.eng === CITIES.CHITA.eng &&
-                <p style={{ marginBottom: 20, marginTop: 15 }}>
-                  Доставка, за пределами Центрального района,
-                  рассчитывается индивидуально
+              <p style={{ marginBottom: 20, marginTop: 15 }}>
+                Доставка, за пределами Центрального района,
+                рассчитывается индивидуально
               </p>
               }
 
@@ -408,16 +412,16 @@ const DeliveryTimeForm = ({
                 </>
               )}
 
-              <br />
+              <br/>
               <Field name="comment">
                 {({ input, meta }) =>
                   <Input type="textarea"
-                    placeholder="Комментарий"
-                    disabled={submitting}
-                    meta={meta}
-                    maxRows={2}
-                    max={100}
-                    {...input} />}
+                         placeholder="Комментарий"
+                         disabled={submitting}
+                         meta={meta}
+                         maxRows={2}
+                         max={100}
+                         {...input} />}
               </Field>
 
               <NextButton
@@ -438,7 +442,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = {
-  setDeliveryDate
+  setDeliveryDate,
+  setCartDeliveryCost
 }
 
 export default compose(

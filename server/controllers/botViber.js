@@ -60,15 +60,18 @@ module.exports = {
         }
       })
 
-      res.json({
-        status: 'done',
-        result: {}
-      })
+
+      // res.json({
+      //   status: 'done',
+      //   result: {}
+      // })
     } catch (e) {
-      res.json({
-        status: 'error send',
-        result: e
-      })
+      // res.json({
+      //   status: 'error send',
+      //   result: e
+      // })
     }
+
+    next()
   }
 }
