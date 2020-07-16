@@ -1,6 +1,7 @@
 import React from 'react'
 import { Form, Field } from 'react-final-form'
 import Input from "components/Cart/Common/Input"
+import PhoneInput from "components/Cart/Common/PhoneInput"
 import NextButton from "components/Cart/Common/NextButton"
 import styles from 'components/Cart/cart.module.sass'
 
@@ -57,7 +58,6 @@ const RecipientForm = ({
         initialValues={initialValues}
         validate={(values) => {
           const errors = {}
-          console.log(values);
 
           if (values.iamResipient === false) {
             if (!values.recipient_name) errors.recipient_name = 'Заполните'
@@ -66,7 +66,10 @@ const RecipientForm = ({
           if (values.iDontKnowRecipientNumber === false && values.iamResipient === false) {
             if (!values.recipient_phone) errors.recipient_phone = 'Заполните'
           }
-          console.log(errors);
+
+          if (values.recipient_phone && values.recipient_phone.includes('_')) {
+            errors.recipient_phone = 'Укажите полный номер'
+          }
 
           return errors
         }}
@@ -117,7 +120,9 @@ const RecipientForm = ({
                           disabled={submitting}
                           meta={meta}
                           style={{ marginBottom: '20px' }}
-                        />}
+                        >
+                          {(input) => <PhoneInput {...input} />}
+                        </Input>}
                     </Field>
                   )}
                 </>

@@ -273,6 +273,7 @@ const DeliveryTimeForm = ({
 
     const data = values.askRecipient ? {
       ...emptyValues,
+      comment: values.comment ? values.comment : '',
       askRecipient: true
     } : {
         ...emptyValues,
@@ -327,7 +328,7 @@ const DeliveryTimeForm = ({
 
           return errors
         }}
-        render={({ handleSubmit, form, submitting, values }) => {
+        render={({ handleSubmit, submitting, values }) => {
           return (
             <form onSubmit={handleSubmit}>
               {isCourier && (

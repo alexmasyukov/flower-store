@@ -8,8 +8,23 @@ export const PAY_TYPES = {
   CASH: 'CASH',
   CARD_ONLINE: 'CARD_ONLINE',
   TO_CORPORATE_CARD: 'TO_CORPORATE_CARD',
-  ACCOUNT_FOR_A_LEGAL_ENTITY: 'ACCOUNT_FOR_A_LEGAL_ENTITY'
 }
+
+export const PAY_TEXTS_BY_DELIVERY_IS = {
+  [DELIVERY_IS.COURIER]: {
+    [PAY_TYPES.CARD]: 'Картой курьеру',
+    [PAY_TYPES.CASH]: 'Наличными курьеру',
+    [PAY_TYPES.CARD_ONLINE]: 'Оплата онлайн',
+    [PAY_TYPES.TO_CORPORATE_CARD]: 'Перевод на карту «Сбербанк»',
+  },
+  [DELIVERY_IS.YOURSELF]: {
+    [PAY_TYPES.CARD]: 'Картой в салоне',
+    [PAY_TYPES.CASH]: 'Наличные',
+    [PAY_TYPES.CARD_ONLINE]: 'Оплата онлайн',
+    [PAY_TYPES.TO_CORPORATE_CARD]: 'Перевод на карту «Сбербанк»',
+  }
+}
+
 
 export const AVAILABLE_TYPES = {
   BASE: 'BASE',

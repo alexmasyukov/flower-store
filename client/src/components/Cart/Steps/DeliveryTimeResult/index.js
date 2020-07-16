@@ -21,6 +21,8 @@ const DeliveryTimeResult = ({
          <Wrap>
             {children}
             Узнать время у получателя
+
+            {comment && <p style={{marginTop: 20}}>Комментарий: {comment}</p>}
          </Wrap>
       )
    }

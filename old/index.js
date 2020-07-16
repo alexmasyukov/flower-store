@@ -1,3 +1,25 @@
+handleInputChange = (statePath) => (e) => {
+  const target = e.target
+  const value = target.type === 'checkbox' ? target.checked : target.value
+
+  this.setState(prevState => {
+    const path = statePath.split('.')
+
+    const newState = path.reduce((state, item, i, arr) => {
+      if (typeof item !== 'object' && i === arr.length - 1) {
+        state[item] = value
+        return state
+      }
+      return state[item]
+    }, prevState)
+
+    return {
+      ...newState
+    }
+  })
+}
+
+
 
 // function range(start = 0, end = 1) {
 //   return Array.from({ length: end - start + 1 }, (v, k) => k + start)

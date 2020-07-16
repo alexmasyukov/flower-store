@@ -21,11 +21,11 @@ import DeliveryTimeForm from "components/Cart/Steps/DeliveryTimeForm"
 import DeliveryTimeResult from "components/Cart/Steps/DeliveryTimeResult"
 import PayForm from "components/Cart/Steps/PayForm"
 import PayResult from "components/Cart/Steps/PayResult"
-import { DELIVERY_IS, PAY_TYPES } from "constants/common"
+import { DELIVERY_IS, PAY_TYPES, PAY_TEXTS_BY_DELIVERY_IS } from "constants/common"
 import { confimSelector, orderSelector, cartProductsSelector } from "store/selectors/cart"
 import { fetchConfim, sendOrder } from "store/actions/cart/ordersActions"
-import { phoneToTextFormat } from "utils"
-import styles from "components/Cart/cart.module.sass"
+import { phoneToTextFormat, formatDateDMY } from "utils"
+// import styles from "components/Cart/cart.module.sass"
 
 const deliveryEmpty = {
   is: DELIVERY_IS.COURIER,
@@ -46,10 +46,6 @@ const recipientEmpty = {
   recipient_phone: '',
   postcard: false,
   postcardText: ''
-  // isPublic: true,
-  // photoWithRecipient: false,
-  // isSurprice: false,
-  // anonymousCustomer: false
 }
 
 const deliveryDateTimeEmpty = {
@@ -61,7 +57,7 @@ const deliveryDateTimeEmpty = {
 
 const payEmpty = {
   pay: PAY_TYPES.CARD,
-  pay_comment: 'sdfsf'
+  pay_comment: ''
 }
 
 const initialState = {
@@ -96,25 +92,47 @@ const initialState = {
   recipient: {
     isEdit: true,
     isValid: false,
-    ...recipientEmpty
+    ...recipientEmpty,
+    toString() {
+      return `
+        ${this.iamResipient ? `Получаю сам` : `Имя: ${this.recipient_name}`}
+        ${this.iDontKnowRecipientNumber ? ` | Не знаю номер получателя` : ` | Тел: ${this.recipient_phone}`}
+        ${this.postcard ? ` | Текст открытки: ${this.postcardText} ` : ` | Без открытки`}
+      `
+    }
   },
 
   deliveryDateTime: {
     isEdit: true,
     isValid: false,
-    ...deliveryDateTimeEmpty
+    ...deliveryDateTimeEmpty,
+    toString() {
+      const comment = this.comment ? `Коммент: ${this.comment}` : ``
+
+      if (this.askRecipient) {
+        return `Узнать время у получателя. ${comment}`
+      }
+
+      const [text, price] = this.time.split('*')
+      return `${formatDateDMY(this.date)}, ${text}, Цена: ${price}, ${comment}`
+    }
   },
 
   pay: {
     isEdit: true,
     isValid: false,
-    ...payEmpty
+    ...payEmpty,
+    toString(delivery_is) {
+      const text = PAY_TEXTS_BY_DELIVERY_IS[delivery_is][this.pay]
+      return `Оплата: ${text}; 
+        ${this.pay_comment ? `Коммент: ${this.pay_comment}` : ``}`
+    }
   },
 
-  order: {
-    done: false,
-    id: 0
-  }
+  // order: {
+  //   done: false,
+  //   id: 0
+  // }
 }
 
 
@@ -138,27 +156,6 @@ class CartSteps extends Component {
     ...initialState
   }
 
-  handleInputChange = (statePath) => (e) => {
-    const target = e.target
-    const value = target.type === 'checkbox' ? target.checked : target.value
-
-    this.setState(prevState => {
-      const path = statePath.split('.')
-
-      const newState = path.reduce((state, item, i, arr) => {
-        if (typeof item !== 'object' && i === arr.length - 1) {
-          state[item] = value
-          return state
-        }
-        return state[item]
-      }, prevState)
-
-      return {
-        ...newState
-      }
-    })
-  }
-
   handleSetStateKeyValue = (stepName, keyValue) => {
     this.setState(prev => ({
       [stepName]: {
@@ -168,9 +165,6 @@ class CartSteps extends Component {
     }))
   }
 
-  validate = (obj) => {
-    return true
-  }
 
   handleChangeButton = (stepName) => () => {
     this.setState(prevState => {
@@ -194,6 +188,7 @@ class CartSteps extends Component {
       [stepName]: {
         ...prev[stepName],
         ...values,
+        isValid: true,
         isEdit: false
       },
 
@@ -203,27 +198,6 @@ class CartSteps extends Component {
       // }
     }))
   }
-
-  // handleNextButton = (step, nextStep) => () => {
-  //   const currentStep = this.state[step]
-  //   if (!this.validate(currentStep)) alert('no valid')
-
-  //   this.setState(prev => {
-  //     const steps = this.getStepsWith_isEdit_false()
-
-  //     return {
-  //       ...steps,
-  //       [step]: {
-  //         ...steps[step],
-  //         isValid: true
-  //       },
-  //       [nextStep]: {
-  //         ...prev[nextStep],
-  //         isEdit: true
-  //       }
-  //     }
-  //   })
-  // }
 
   handleTimeEnd = () => {
     this.setState(prev => ({
@@ -284,7 +258,7 @@ class CartSteps extends Component {
 
   render() {
     const {
-      customer, recipient, delivery, order,
+      customer, recipient, delivery,
       deliveryDateTime, pay
     } = this.state
 
@@ -301,8 +275,6 @@ class CartSteps extends Component {
       // Курьер может принимать только наличные
       payType = PAY_TYPES.CASH
     }
-
-    console.log(deliveryDateTime);
 
 
 
@@ -351,6 +323,7 @@ class CartSteps extends Component {
             ) : (
                 recipient.isValid && (
                   <RecipientResult {...recipient}>
+                    {recipient.toString()}
                     <ChangeButton onClick={this.handleChangeButton('recipient')} />
                   </RecipientResult>
                 )
@@ -364,10 +337,12 @@ class CartSteps extends Component {
             <DeliveryTimeForm
               initialValues={deliveryDateTime}
               emptyValues={deliveryDateTimeEmpty}
+              isCourier={delivery.is === DELIVERY_IS.COURIER}
               onSubmit={this.handleStepSubmit('deliveryDateTime', 'pay')} />
           ) : (
               deliveryDateTime.isValid && (
                 <DeliveryTimeResult {...deliveryDateTime}>
+                  {deliveryDateTime.toString()}
                   <ChangeButton onClick={this.handleChangeButton('deliveryDateTime')} />
                 </DeliveryTimeResult>
               )
@@ -379,12 +354,13 @@ class CartSteps extends Component {
             <PayForm
               initialValues={pay}
               emptyValues={payEmpty}
-              onSubmit={() => { }}
-              payToCourier={delivery.is === DELIVERY_IS.COURIER}
+              onSubmit={this.handleStepSubmit('pay', 'pay')}
+              delivery_is={delivery.is}
             />
           ) : (
               pay.isValid && (
-                <PayResult {...pay}>
+                <PayResult {...pay} delivery_is={delivery.is}>
+                  {pay.toString(delivery.is)}
                   <ChangeButton onClick={this.handleChangeButton('pay')} />
                 </PayResult>
               )

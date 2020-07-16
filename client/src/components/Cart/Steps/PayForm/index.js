@@ -1,6 +1,6 @@
 import React from 'react'
 import { Form, Field } from 'react-final-form'
-import { PAY_TYPES } from "constants/common"
+import { PAY_TYPES, PAY_TEXTS_BY_DELIVERY_IS, DELIVERY_IS } from "constants/common"
 import Input from "components/Cart/Common/Input"
 import NextButton from "components/Cart/Common/NextButton"
 import { ReactComponent as MasterCard } from './mastercard.svg';
@@ -32,37 +32,26 @@ const PayForm = ({
    initialValues,
    emptyValues,
    onSubmit,
-   payType = PAY_TYPES.CARD,
-   payToCourier = true,
-   comment,
+   delivery_is = DELIVERY_IS.COURIER,
    children
 }) => {
-
-   const handleSubmit = (values) => {
-      onSubmit(values)
-   }
 
    return (
       <div className={cartStyles.form}>
          <Form
-            onSubmit={handleSubmit}
+            onSubmit={onSubmit}
             initialValues={initialValues}
             validate={(values) => {
                const errors = {}
-
-               // if (values.courier_askRecipient === false) {
-               //    if (!values.courier_street) errors.courier_street = 'Заполните'
-               // }
-
                return errors
             }}
-            render={({ handleSubmit, form, submitting, values }) => {
+            render={({ handleSubmit, submitting }) => {
                return (
                   <form onSubmit={handleSubmit}>
                      <Field name="pay" type="radio" value={PAY_TYPES.CARD}>
                         {({ input }) =>
                            <Input
-                              label={payToCourier ? 'Картой курьеру' : 'Оплата картой'}
+                              label={PAY_TEXTS_BY_DELIVERY_IS[delivery_is].CARD}
                               {...input}
                            />}
                      </Field>
@@ -70,22 +59,30 @@ const PayForm = ({
                      <Field name="pay" type="radio" value={PAY_TYPES.CASH}>
                         {({ input }) =>
                            <Input
-                              label={payToCourier ? 'Наличными курьеру' : 'Наличные'}
+                              label={PAY_TEXTS_BY_DELIVERY_IS[delivery_is].CASH}
                               {...input}
                            />}
                      </Field>
 
                      <Field name="pay" type="radio" value={PAY_TYPES.TO_CORPORATE_CARD}>
-                        {({ input }) => <Input label='Перевод на карту «Сбербанк»' {...input} />}
+                        {({ input }) =>
+                           <Input
+                              label={PAY_TEXTS_BY_DELIVERY_IS[delivery_is].TO_CORPORATE_CARD}
+                              {...input}
+                           />}
                      </Field>
 
                      <Field name="pay" type="radio" value={PAY_TYPES.CARD_ONLINE}>
-                        {({ input }) => <Input label='Оплата онлайн' {...input} />}
+                        {({ input }) =>
+                           <Input
+                              label={PAY_TEXTS_BY_DELIVERY_IS[delivery_is].CARD_ONLINE}
+                              {...input}
+                           />}
                      </Field>
 
                      <Icons />
 
-                     <br />
+                     <br /><br />
 
                      <Field name="pay_comment">
                         {({ input, meta }) =>

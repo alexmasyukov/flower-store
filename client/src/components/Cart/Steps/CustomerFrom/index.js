@@ -1,46 +1,16 @@
 import React, { useState } from 'react'
 import { Form, Field } from 'react-final-form'
 import { connect } from "react-redux"
-import NumberFormat from "react-number-format"
 import { compose, phoneToValue, when } from "utils"
 import { cartCustomerPointsSet } from "store/actions/cart/stepsActions"
-import { CONFIM_STATUS, PHONE_FORMAT } from "constants/common"
+import { CONFIM_STATUS } from "constants/common"
 import Input from "components/Cart/Common/Input"
+import PhoneInput from "components/Cart/Common/PhoneInput"
 import Timer from "components/Cart/Timer"
 import NextButton from "components/Cart/Common/NextButton"
 import withApiService from "components/hoc/withApiService"
 import styles from 'components/Cart/cart.module.sass'
 
-
-const PhoneInput = ({
-  placeholder,
-  onChange,
-  onBlur,
-  onFocus,
-  name,
-  value,
-  disabled,
-  mask = '_',
-  format = PHONE_FORMAT.FORMAT_FOR_INPUT
-}) => {
-  return (
-    <NumberFormat
-      disabled={disabled}
-      type="tel"
-      id={name}
-      mask={mask}
-      format={format}
-      placeholder={placeholder}
-      onBlur={onBlur}
-      onFocus={onFocus}
-      value={value}
-      onChange={value => onChange(value)}
-      onValueChange={({ formattedValue }) =>
-        onChange(formattedValue)
-      }
-    />
-  )
-}
 
 
 const BtnContinue = ({ onClick }) => (
@@ -181,7 +151,7 @@ const Customer = ({
           form,
           submitting
         }) => {
-          console.log('render form')
+
           return (
             <form onSubmit={handleSubmit}>
               <Field name="name">
