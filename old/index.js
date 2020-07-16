@@ -1,34 +1,76 @@
-handleInputChange = (statePath) => (e) => {
-  const target = e.target
-  const value = target.type === 'checkbox' ? target.checked : target.value
+// handleInputChange = (statePath) => (e) => {
+//   const target = e.target
+//   const value = target.type === 'checkbox' ? target.checked : target.value
 
-  this.setState(prevState => {
-    const path = statePath.split('.')
+//   this.setState(prevState => {
+//     const path = statePath.split('.')
 
-    const newState = path.reduce((state, item, i, arr) => {
-      if (typeof item !== 'object' && i === arr.length - 1) {
-        state[item] = value
-        return state
-      }
-      return state[item]
-    }, prevState)
+//     const newState = path.reduce((state, item, i, arr) => {
+//       if (typeof item !== 'object' && i === arr.length - 1) {
+//         state[item] = value
+//         return state
+//       }
+//       return state[item]
+//     }, prevState)
 
-    return {
-      ...newState
-    }
-  })
-}
+//     return {
+//       ...newState
+//     }
+//   })
+// }
 
 
 
-handleSetStateKeyValue = (stepName, keyValue) => {
-  this.setState(prev => ({
-    [stepName]: {
-      ...prev[stepName],
-      ...keyValue
-    }
-  }))
-}
+// handleSetStateKeyValue = (stepName, keyValue) => {
+//   this.setState(prev => ({
+//     [stepName]: {
+//       ...prev[stepName],
+//       ...keyValue
+//     }
+//   }))
+// }
+
+
+// const { resolve } = require("path");
+
+// const run = (cb) => new Promise(resolve => cb(resolve))
+
+
+// const a = (x, y) => cb => {
+//     const res = x + y
+//     cb(res)
+// }
+
+// run(a(5, 5))
+//     .then((res) => run(a(res, 5)))
+//     .then((res) => run(a(res, 5)))
+//     .then((res) => run(a(res, 5)))
+//     .then((res) => run(a(res, 5)))
+//     .then((res) => run(a(res, 5)))
+//     .then((res) => console.log(res))
+
+
+// cb((res) => console.log(res))
+
+
+
+
+// run(a(5, 5))
+//     .then(() => {
+//         console.log('Resolved after 2 seconds')
+//         return run(1500);
+//     })
+    // .then(() => {
+    //     console.log('Resolved after 1.5 seconds');
+    //     return run(1500);
+    // }).then(() => {
+    //     console.log('Resolved after 3 seconds');
+    //     return run(1000);
+    // }).catch(() => {
+    //     console.log('Caught an error.');
+    // }).then(() => {
+    //     console.log('Done.');
+    // });
 
 
 // function range(start = 0, end = 1) {

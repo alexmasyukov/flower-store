@@ -43,7 +43,7 @@ async function getSubscribers() {
     .from('bots_viber')
     .where('id', 1)
     .first()
-
+    
   return data.notify_subscribers
 }
 
@@ -106,10 +106,13 @@ getBotConfig()
 
     bot.setWebhook(`${expose_url}/viber/webhook`)
       .then(() => {
-        console.log('ОК')
-        // sendMessages(bot, notify_subscribers, [
-        //   new TextMessage('✋ Привет, я бот! Меня перезагрузили 🚀')
-        // ])
+        getSubscribers()
+          .then((subscribers) => {
+            sendMessages(bot, subscribers, [
+              new TextMessage('✋ Привет, я бот! Меня перезагрузили 🚀')
+            ])
+          })
+          .catch(e => e)
       })
       .catch(error => {
         console.log(`Can not set webhook //${expose_url}// on following server. Is it running?`)
@@ -137,9 +140,8 @@ getBotConfig()
 
         await axios({
           method: 'put',
-          url: `http://api-dev:3500/v1/orders/complete`,
+          url: `http://api-dev:3500/v1/orders/${orderId}`,
           data: {
-            id: Number(orderId),
             complete
           }
         })
@@ -164,7 +166,7 @@ getBotConfig()
 
         case COMMANDS.SMS_BALANCE:
           const balance = await getSmsBalance()
-          response.send(new TextMessage(`Баланс - ${balance} руб. (https://atomic.center/sms)`))
+          response.send(new TextMessage(`Баланс - ${balance} руб. (https://sms.ru)`))
           break
 
         case COMMANDS.SHOW_ALL_COMMANDS:

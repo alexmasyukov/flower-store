@@ -21,6 +21,7 @@ import DeliveryTimeForm from "components/Cart/Steps/DeliveryTimeForm"
 import DeliveryTimeResult from "components/Cart/Steps/DeliveryTimeResult"
 import PayForm from "components/Cart/Steps/PayForm"
 import PayResult from "components/Cart/Steps/PayResult"
+import withCity from "components/hoc/withCity"
 import { DELIVERY_IS, PAY_TYPES, PAY_TEXTS_BY_DELIVERY_IS } from "constants/common"
 import { confimSelector, orderSelector, cartProductsSelector } from "store/selectors/cart"
 import { fetchConfim, sendOrder } from "store/actions/cart/ordersActions"
@@ -52,12 +53,12 @@ const deliveryDateTimeEmpty = {
   askRecipient: false,
   date: '',
   time: '',
-  comment: ''
+  comment: 'Везите бережно'
 }
 
 const payEmpty = {
   pay: PAY_TYPES.CARD,
-  pay_comment: ''
+  pay_comment: 'К заказу добавить нечего'
 }
 
 const initialState = {
@@ -111,7 +112,7 @@ const initialState = {
   deliveryDateTime: {
     order: 4,
     isPublic: true,
-    isEdit: false,
+    isEdit: true,
     isValid: false,
     ...deliveryDateTimeEmpty,
     toString() {
@@ -129,7 +130,7 @@ const initialState = {
   pay: {
     order: 5,
     isPublic: true,
-    isEdit: false,
+    isEdit: true,
     isValid: false,
     ...payEmpty,
     toString(delivery_is) {
@@ -176,37 +177,7 @@ class CartSteps extends Component {
   }
 
   //nextStepName
-  handleStepSubmit = (stepName, nextStepName) => (values, changesToState = {}, cb = false) => {
-
-    // const showNextStep = () => {
-    //   const items = Object.values(initialState)
-    //     .filter(step =>  step.isPublic !== false )
-    //     //   {
-    //     //   console.log(step);
-
-    //     //   return true
-    //     // }
-    //     .sort((a, b) => a.order > b.order ? 1 : -1)
-
-    //   console.log(items);
-    // }
-
-
-
-    // if (cb) {
-    //   cb()
-    //   showNextStep()
-    // } else {
-    //   showNextStep()
-    // }
-
-
-
-    // [nextStepName]: {
-    //   ...prev[nextStepName],
-    //   isEdit: true
-    // }
-
+  handleStepSubmit = (stepName, nextStepName) => (values, changesToState = {}) => {
     this.setState(prev => {
       let state = { ...prev }
 
@@ -232,6 +203,8 @@ class CartSteps extends Component {
         }
       }
     }, () => {
+      if (nextStepName === 'pay') this.handleSendOrder() 
+
       let nextStep = nextStepName
 
       if (Array.isArray(nextStepName)) {
@@ -257,11 +230,14 @@ class CartSteps extends Component {
 
   handleSendOrder = () => {
     const state = this.state
-    const { products } = this.props
+    const { products, city } = this.props
+
+    console.log(city);
+    
 
     this.props.sendOrder({
-      city_id: 1,
-      customer_id: 2,
+      city_id: city.id,
+      customer_id: 2, // todo: get this from sms response
       complete: false,
       steps: state,
       products
@@ -437,4 +413,4 @@ const CartStepsContainer = connect(
   mapDispatchToProps
 )(CartSteps)
 
-export default CartStepsContainer
+export default withCity(CartStepsContainer)

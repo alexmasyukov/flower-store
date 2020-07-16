@@ -11,8 +11,8 @@ const {
 const checkAuth = require('../middlewares/checkAuth')
 
 router.route('/test')
-  .get(
-    checkAuth,
+  .post(
+    // checkAuth,
     botViberController.test
   )
 

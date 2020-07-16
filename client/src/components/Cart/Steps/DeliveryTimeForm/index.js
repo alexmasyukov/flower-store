@@ -198,8 +198,8 @@ const withVisibilityNeedTimes = (max) => (times) => {
     const { from } = time.hours[0]
     const { to } = time.hours[time.hours.length - 1]
 
-    return (from <= max && max <= to) ||
-      (to === 0 && from <= max && max <= 24) ? {
+    return (from <= max && max < to) ||
+      (to === 0 && from <= max && max < 24) ? {
         ...time,
         isVisible: true
       } : {

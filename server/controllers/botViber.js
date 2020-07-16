@@ -5,29 +5,25 @@ const axios = require('axios')
 module.exports = {
   async test(req, res, next) {
     try {
-      const config = await knex
-        .select('expose_url')
-        .from('bots_viber')
-        .where('id', 1)
-        .first()
+      // const config = await knex
+      //   .select('expose_url')
+      //   .from('bots_viber')
+      //   .where('id', 1)
+      //   .first()
 
       // const { expose_url } = config
-      const baseUrl = process.env.VIBER_BOT_CONTAINER_URL
-        || 'http://bot-viber-dev:9999'
+      // const baseUrl = process.env.VIBER_BOT_CONTAINER_URL
+      const baseUrl = 'http://bot-viber-dev:9999'
+      // || 'http://bot-viber-dev:9999'
 
-      await axios.post(`${baseUrl}/test`)
-        .then(function (response) {
-          res.json({
-            status: 'done',
-            result: response
-          })
-        })
-        .catch(function (error) {
-          res.json({
-            status: 'error c',
-            result: error
-          })
-        })
+      const test = await axios({
+        method: 'post',
+        url: `${baseUrl}/test`
+      })
+      res.json({
+        status: 'done',
+        result: test.data
+      })
 
     } catch (e) {
       res.json({
@@ -55,7 +51,7 @@ module.exports = {
       const baseUrl = //process.env.VIBER_BOT_CONTAINER_URL
         'http://bot-viber-dev:9999' //urlBotContainer
 
-      axios({
+      const result = await axios({
         method: 'post',
         url: `${baseUrl}/send`,
         data: {
@@ -63,22 +59,14 @@ module.exports = {
           buttons
         }
       })
-        .then(function (response) {
-          res.json({
-            status: 'done',
-            result: response
-          })
-        })
-        .catch(function (error) {
-          res.json({
-            status: 'error send',
-            result: error
-          })
-        })
 
+      res.json({
+        status: 'done',
+        result: {}
+      })
     } catch (e) {
       res.json({
-        status: 'error test',
+        status: 'error send',
         result: e
       })
     }

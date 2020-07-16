@@ -14,6 +14,7 @@ class Order {
     customer_id: { type: 'integer' },
     complete: { type: 'boolean' },
     steps: { type: "object" },
+    stepsText: { type: "string" },
     products: { type: "object" }
   }
 
@@ -27,6 +28,7 @@ class Order {
         'customer_id',
         'complete',
         'steps',
+        'stepsText',
         'products'
       ],
       properties
