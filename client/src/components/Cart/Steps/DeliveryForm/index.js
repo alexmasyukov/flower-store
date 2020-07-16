@@ -12,26 +12,36 @@ import loadable from '@loadable/component'
 
 const YourselfMap = loadable(() => import('components/Cart/Common/YourselfMap'), () => <div>Загрузка...</div>)
 
+const run = (cb) => new Promise(resolve => cb(resolve))
 
 const DeliveryForm = ({
-                        initialValues,
-                        emptyValues,
-                        onSubmit,
-                        onSetKeyValue
-                      }) => {
+  initialValues,
+  emptyValues,
+  onSubmit,
+  // onSetKeyValue
+}) => {
   const handleSubmit = (values) => {
+    let changes = {}
+
+    // onSetKeyValue('recipient', { iamResipient: false })
     if (values.is === DELIVERY_IS.YOURSELF) {
-      onSetKeyValue('recipient', { isPublic: false })
+      changes = {
+        ...changes,
+        isPublic: false
+      }
     } else {
-      onSetKeyValue('recipient', { isPublic: true })
+      changes = {
+        ...changes,
+        isPublic: true
+      }
     }
 
     if (values.is === DELIVERY_IS.COURIER && values.courier_askRecipient) {
-      onSetKeyValue('recipient', { iamResipient: false })
-    } else {
-
+      changes = {
+        ...changes,
+        iamResipient: false
+      }
     }
-
 
     const data = compose(
       when(values.is === DELIVERY_IS.YOURSELF, (values) => {
@@ -57,7 +67,27 @@ const DeliveryForm = ({
       ...emptyValues,
       ...data,
       isValid: true
+    }, {
+      stepName: 'recipient',
+      changes
     })
+    // () => {
+    //   const changes = {}
+
+    //   // onSetKeyValue('recipient', { isPublic: true })
+
+    //   if (values.is === DELIVERY_IS.YOURSELF) {
+    //     changes.recipient.isPublic = false
+    //   } else {
+    //     changes.recipient.isPublic = true
+    //   }
+
+    //   if (values.is === DELIVERY_IS.COURIER && values.courier_askRecipient) {
+    //     changes.recipient.iamResipient = false
+    //     // onSetKeyValue('recipient', { iamResipient: false })
+    //   }
+
+    // })
   }
 
   return (
@@ -84,24 +114,24 @@ const DeliveryForm = ({
               <Row>
                 <div className="col-md-5">
                   <Field name="is" type="radio" value={DELIVERY_IS.COURIER}>
-                    {({ input }) => <Input label="Курьером" {...input}/>}
+                    {({ input }) => <Input label="Курьером" {...input} />}
                   </Field>
                 </div>
 
                 <div className="col-md-7">
                   <Field name="is" type="radio" value={DELIVERY_IS.YOURSELF}>
-                    {({ input }) => <Input label="Самовывоз" {...input}/>}
+                    {({ input }) => <Input label="Самовывоз" {...input} />}
                   </Field>
                 </div>
               </Row>
 
-              <hr/>
+              <hr />
 
               {values.is === DELIVERY_IS.COURIER ? (
                 <>
                   <Field name="courier_askRecipient" type="checkbox">
                     {({ input }) =>
-                      <Input label="Узнать адрес у получателя" {...input}/>}
+                      <Input label="Узнать адрес у получателя" {...input} />}
                   </Field>
 
 
@@ -109,33 +139,33 @@ const DeliveryForm = ({
                     <>
                       <Field name="courier_street">
                         {({ input, meta }) =>
-                          <Input placeholder="Улица" {...input} disabled={submitting} meta={meta}/>}
+                          <Input placeholder="Улица" {...input} disabled={submitting} meta={meta} />}
                       </Field>
 
                       <Row>
                         <div className="col-md-6 pr-1">
                           <Field name="courier_house">
                             {({ input, meta }) =>
-                              <Input placeholder="Дом" {...input} disabled={submitting} meta={meta}/>}
+                              <Input placeholder="Дом" {...input} disabled={submitting} meta={meta} />}
                           </Field>
                         </div>
                         <div className="col-md-6 pl-1">
                           <Field name="courier_flat">
                             {({ input, meta }) =>
-                              <Input placeholder="Квартира / офис" {...input} disabled={submitting} meta={meta}/>}
+                              <Input placeholder="Квартира / офис" {...input} disabled={submitting} meta={meta} />}
                           </Field>
                         </div>
 
                         <div className="col-md-6 pr-1">
                           <Field name="courier_entrance">
                             {({ input, meta }) =>
-                              <Input placeholder="Подъезд" {...input} disabled={submitting} meta={meta}/>}
+                              <Input placeholder="Подъезд" {...input} disabled={submitting} meta={meta} />}
                           </Field>
                         </div>
                         <div className="col-md-6 pl-1">
                           <Field name="courier_floor">
                             {({ input, meta }) =>
-                              <Input placeholder="Этаж" {...input} disabled={submitting} meta={meta}/>}
+                              <Input placeholder="Этаж" {...input} disabled={submitting} meta={meta} />}
                           </Field>
                         </div>
                       </Row>
@@ -143,20 +173,20 @@ const DeliveryForm = ({
                       <Field name="courier_comment">
                         {({ input, meta }) =>
                           <Input type="textarea"
-                                 placeholder="Комментарий"
-                                 disabled={submitting}
-                                 meta={meta}
-                                 maxRows={2}
-                                 max={100}
-                                 {...input}/>}
+                            placeholder="Комментарий"
+                            disabled={submitting}
+                            meta={meta}
+                            maxRows={2}
+                            max={100}
+                            {...input} />}
                       </Field>
                     </>
                   )}
 
                 </>
               ) : (
-                <YourselfMap/>
-              )}
+                  <YourselfMap />
+                )}
 
 
               <NextButton

@@ -30,22 +30,22 @@ import { phoneToTextFormat, formatDateDMY } from "utils"
 const deliveryEmpty = {
   is: DELIVERY_IS.COURIER,
   courier_askRecipient: false,
-  courier_street: '',
-  courier_house: '',
-  courier_flat: '',
-  courier_entrance: '',
-  courier_floor: '',
-  courier_comment: '',
-  courier_price: 200
+  courier_street: 'Бабушкина',
+  courier_house: '108',
+  courier_flat: '117',
+  courier_entrance: '5',
+  courier_floor: '7',
+  courier_comment: 'Домофон не работает',
+  courier_price: 0
 }
 
 const recipientEmpty = {
   iamResipient: false,
   iDontKnowRecipientNumber: false,
-  recipient_name: '',
-  recipient_phone: '',
-  postcard: false,
-  postcardText: ''
+  recipient_name: 'Юлия',
+  recipient_phone: '+7(996)888-4455',
+  postcard: true,
+  postcardText: 'С днейм рождения'
 }
 
 const deliveryDateTimeEmpty = {
@@ -62,16 +62,20 @@ const payEmpty = {
 
 const initialState = {
   customer: {
+    order: 1,
+    isPublic: true,
     isEdit: true,
     isValid: false,
-    name: '',
-    phone: '',
+    name: 'Тест',
+    phone: '+7(996)022-5657',
     toString() {
       return `${this.name}, ${phoneToTextFormat(this.phone)}`
     }
   },
 
   delivery: {
+    order: 2,
+    isPublic: true,
     isEdit: true,
     isValid: false,
     ...deliveryEmpty,
@@ -90,6 +94,8 @@ const initialState = {
   },
 
   recipient: {
+    order: 3,
+    isPublic: true,
     isEdit: true,
     isValid: false,
     ...recipientEmpty,
@@ -103,7 +109,9 @@ const initialState = {
   },
 
   deliveryDateTime: {
-    isEdit: true,
+    order: 4,
+    isPublic: true,
+    isEdit: false,
     isValid: false,
     ...deliveryDateTimeEmpty,
     toString() {
@@ -119,7 +127,9 @@ const initialState = {
   },
 
   pay: {
-    isEdit: true,
+    order: 5,
+    isPublic: true,
+    isEdit: false,
     isValid: false,
     ...payEmpty,
     toString(delivery_is) {
@@ -127,23 +137,18 @@ const initialState = {
       return `Оплата: ${text}; 
         ${this.pay_comment ? `Коммент: ${this.pay_comment}` : ``}`
     }
-  },
-
-  // order: {
-  //   done: false,
-  //   id: 0
-  // }
+  }
 }
 
 
 const setInSteps = (data, steps) => {
   const stepNames = Object.keys(steps)
 
-  return stepNames.reduce((steps, currentStep) => {
+  return stepNames.reduce((acc, currentStep) => {
     return {
-      ...steps,
+      ...acc,
       [currentStep]: {
-        ...steps[currentStep],
+        ...acc[currentStep],
         ...data
       }
     }
@@ -155,16 +160,6 @@ class CartSteps extends Component {
   state = {
     ...initialState
   }
-
-  handleSetStateKeyValue = (stepName, keyValue) => {
-    this.setState(prev => ({
-      [stepName]: {
-        ...prev[stepName],
-        ...keyValue
-      }
-    }))
-  }
-
 
   handleChangeButton = (stepName) => () => {
     this.setState(prevState => {
@@ -180,23 +175,78 @@ class CartSteps extends Component {
     })
   }
 
-  handleStepSubmit = (stepName, nextStepName) => (values) => {
-    // console.log(values)
-    this.setState(prev => ({
-      ...prev,
+  //nextStepName
+  handleStepSubmit = (stepName, nextStepName) => (values, changesToState = {}, cb = false) => {
 
-      [stepName]: {
-        ...prev[stepName],
-        ...values,
-        isValid: true,
-        isEdit: false
-      },
+    // const showNextStep = () => {
+    //   const items = Object.values(initialState)
+    //     .filter(step =>  step.isPublic !== false )
+    //     //   {
+    //     //   console.log(step);
 
-      // [nextStepName]: {
-      //   ...prev[nextStepName],
-      //   isEdit: true
-      // }
-    }))
+    //     //   return true
+    //     // }
+    //     .sort((a, b) => a.order > b.order ? 1 : -1)
+
+    //   console.log(items);
+    // }
+
+
+
+    // if (cb) {
+    //   cb()
+    //   showNextStep()
+    // } else {
+    //   showNextStep()
+    // }
+
+
+
+    // [nextStepName]: {
+    //   ...prev[nextStepName],
+    //   isEdit: true
+    // }
+
+    this.setState(prev => {
+      let state = { ...prev }
+
+      if (changesToState.stepName) {
+        const { stepName, changes } = changesToState
+
+        state = {
+          ...state,
+          [stepName]: {
+            ...state[stepName],
+            ...changes
+          }
+        }
+      }
+
+      return {
+        ...state,
+        [stepName]: {
+          ...state[stepName],
+          ...values,
+          isValid: true,
+          isEdit: false
+        }
+      }
+    }, () => {
+      let nextStep = nextStepName
+
+      if (Array.isArray(nextStepName)) {
+        nextStep = nextStepName.find(name =>
+          this.state[name].isPublic === true)
+      }
+
+      this.setState(prev => ({
+        ...prev,
+        [nextStep]: {
+          ...prev[nextStep],
+          isEdit: true
+        }
+      }))
+    })
   }
 
   handleTimeEnd = () => {
@@ -276,11 +326,11 @@ class CartSteps extends Component {
       payType = PAY_TYPES.CASH
     }
 
-
+    let stepNumber = 1
 
     return (
       <>
-        <Step number={1} title="Ваши контакты" active={customer.isEdit}>
+        <Step number={stepNumber++} title="Ваши контакты" active={customer.isEdit}>
           {customer.isEdit ? (
             <CustomerForm
               initialValues={customer}
@@ -293,13 +343,12 @@ class CartSteps extends Component {
             )}
         </Step>
 
-        <Step number={2} title={deliveryTitle} active={delivery.isEdit}>
+        <Step number={stepNumber++} title={deliveryTitle} active={delivery.isEdit}>
           {delivery.isEdit ? (
             <DeliveryForm
               initialValues={delivery}
               emptyValues={deliveryEmpty}
-              onSetKeyValue={this.handleSetStateKeyValue}
-              onSubmit={this.handleStepSubmit('delivery', 'recipient')}
+              onSubmit={this.handleStepSubmit('delivery', ['recipient', 'deliveryDateTime'])}
             />
           ) : (
               delivery.isValid && (
@@ -310,8 +359,9 @@ class CartSteps extends Component {
             )}
         </Step>
 
-        {delivery.is !== DELIVERY_IS.YOURSELF && (
-          <Step number={3} title="Получатель" active={recipient.isEdit}>
+        {/* {delivery.is !== DELIVERY_IS.YOURSELF && ( */}
+        {recipient.isPublic !== false && (
+          <Step number={stepNumber++} title="Получатель" active={recipient.isEdit}>
             {recipient.isEdit ? (
               <RecipientForm
                 initialValues={recipient}
@@ -332,7 +382,7 @@ class CartSteps extends Component {
         )}
 
 
-        <Step number={4} title={deliveryTimeTitle} active={deliveryDateTime.isEdit}>
+        <Step number={stepNumber++} title={deliveryTimeTitle} active={deliveryDateTime.isEdit}>
           {deliveryDateTime.isEdit ? (
             <DeliveryTimeForm
               initialValues={deliveryDateTime}
@@ -349,7 +399,7 @@ class CartSteps extends Component {
             )}
         </Step>
 
-        <Step number={5} title="Оплата" active={pay.isEdit}>
+        <Step number={stepNumber++} title="Оплата" active={pay.isEdit}>
           {pay.isEdit ? (
             <PayForm
               initialValues={pay}

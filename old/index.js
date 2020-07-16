@@ -21,6 +21,16 @@ handleInputChange = (statePath) => (e) => {
 
 
 
+handleSetStateKeyValue = (stepName, keyValue) => {
+  this.setState(prev => ({
+    [stepName]: {
+      ...prev[stepName],
+      ...keyValue
+    }
+  }))
+}
+
+
 // function range(start = 0, end = 1) {
 //   return Array.from({ length: end - start + 1 }, (v, k) => k + start)
 // }
