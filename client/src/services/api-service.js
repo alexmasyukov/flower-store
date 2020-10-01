@@ -7,7 +7,7 @@ export default class ApiService {
 
   _apiBase = process.env.NODE_ENV === 'production' ?
     'https://flower-cms.ru/api' :
-    'http://localhost/api'
+    'http://localhost/api' //http://localhost/api
 
   _imageBase = this._apiBase + '/static/'
 
@@ -21,7 +21,7 @@ export default class ApiService {
       withCredentials: true
     })
       .then(res => {
-        console.log(res.headers)
+        // console.log(res.headers)
         return res.data
       })
       .catch(this._apiErrHandler)

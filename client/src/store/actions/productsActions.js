@@ -51,18 +51,16 @@ export const failureProduct = error => ({
 
 
 export const fetchProducts = (city_id, date) => async dispatch => {
-  console.log('action fetchProducts')
+  // console.log('action fetchProducts')
   dispatch(requestProducts())
   try {
     const response = await fetchProductsApi(city_id, date)
-    console.log(response)
-
+    // console.log(response)
     dispatch(
       successProducts(normalize(response, schema.items))
     )
   } catch (e) {
-    console.log(e)
-
+    // console.log(e)
     dispatch(failureProducts(e))
   }
 }

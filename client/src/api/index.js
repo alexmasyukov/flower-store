@@ -50,7 +50,6 @@ export const fetchContent = (city_id, id) => {
 }
 
 export const fetchProducts = async (city_id, date) => {
-  console.log('fetchProducts')
   return apiServiceInstance.getAllProducts(city_id, date)
     .then(products => products)
     .catch((error) => console.log(error))

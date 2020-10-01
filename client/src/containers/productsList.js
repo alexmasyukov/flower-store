@@ -88,40 +88,42 @@ class ProductsList extends Component {
       selectedFilters
     } = this.props
 
-    return compose(
-      (products) => {
-        console.warn('4 result', products)
-        return products
-      },
-      (products) => {
-        console.warn('3 isActiveSizesFilter || setActiveFirstSizeInProduct', products)
-        if (isActiveSizesFilter) {
-          return this.setActiveSizesInProducts(
-            products,
-            selectedFilters.bySizes,
-            (size, selected) => selected.includes(size.title)
-          )
-        }
-        // return this.setActiveFirstSizeInProduct(products)
-        return products
-      },
-      (products) => {
-        console.warn('2 isActivePriceFilter', products)
-        if (isActivePriceFilter) {
-          return this.setActiveSizesInProducts(
-            products,
-            selectedFilters.bySizesPrice,
-            (size, selected) => {
-              const [min, max] = selected
-              console.log(size.price, min, max, size.price >= min, size.price <= max)
-              return size.price >= min && size.price <= max
-            })
-        }
-        return products
-      },
-      when(isActiveAvailabilityFilter, this.filterProductsSizesByAvailableType(typeOfAvailabilityFilter)),
-      this.setActiveFirstSizeInProduct
-    )(products)
+    return products
+
+    // return compose(
+    //   (products) => {
+    //     console.warn('4 result', products)
+    //     return products
+    //   },
+    //   (products) => {
+    //     console.warn('3 isActiveSizesFilter || setActiveFirstSizeInProduct', products)
+    //     if (isActiveSizesFilter) {
+    //       return this.setActiveSizesInProducts(
+    //         products,
+    //         selectedFilters.bySizes,
+    //         (size, selected) => selected.includes(size.title)
+    //       )
+    //     }
+    //     // return this.setActiveFirstSizeInProduct(products)
+    //     return products
+    //   },
+    //   (products) => {
+    //     console.warn('2 isActivePriceFilter', products)
+    //     if (isActivePriceFilter) {
+    //       return this.setActiveSizesInProducts(
+    //         products,
+    //         selectedFilters.bySizesPrice,
+    //         (size, selected) => {
+    //           const [min, max] = selected
+    //           console.log(size.price, min, max, size.price >= min, size.price <= max)
+    //           return size.price >= min && size.price <= max
+    //         })
+    //     }
+    //     return products
+    //   },
+    //   when(isActiveAvailabilityFilter, this.filterProductsSizesByAvailableType(typeOfAvailabilityFilter)),
+    //   this.setActiveFirstSizeInProduct
+    // )(products)
   }
 
   componentDidMount() {
@@ -138,7 +140,7 @@ class ProductsList extends Component {
       typeOfAvailabilityFilter,
       selectedFilters,
       getThumbImage,
-      city,
+      city
     } = this.props
 
     if (!products.length) return <h1>Ничего не найдено</h1>
@@ -147,10 +149,10 @@ class ProductsList extends Component {
     //  этот компонент должен отвечать только за отображение
     const preparedProducts = this.prepareProducts(products)
 
-    console.log(isActiveSizesFilter)
-    console.log(isActivePriceFilter)
-    console.log(typeOfAvailabilityFilter)
-    console.log(selectedFilters)
+    console.log('isActiveSizesFilter', isActiveSizesFilter)
+    console.log('isActivePriceFilter', isActivePriceFilter)
+    console.log('typeOfAvailabilityFilter', typeOfAvailabilityFilter)
+    console.log('selectedFilters', selectedFilters)
     console.log('products', products)
     console.log('preparedProducts', preparedProducts)
 

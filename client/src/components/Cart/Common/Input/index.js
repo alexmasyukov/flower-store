@@ -128,11 +128,9 @@ const Input = ({
           {children ? (
             children(props)
           ) : (
-
             type === 'textarea' ?
               <InputTextarea {...props} {...otherProps} /> :
               <InputStandart {...props} {...otherProps} />
-
           )}
 
           <label htmlFor={name}>{placeholder}</label>

@@ -11,11 +11,11 @@ export const getStatusSizesFilter = state => FILTER_KEY_NAMES.bySizes in state.u
 export const getStatusPriceFilter = state => FILTER_KEY_NAMES.bySizesPrice in state.ui.selectedFilters
 export const getStatusAvailabilityFilter = state => FILTER_KEY_NAMES.byAvailability in state.ui.selectedFilters
 export const getTypeAvailabilityFilter = state => {
-    if (FILTER_KEY_NAMES.byAvailability in state.ui.selectedFilters) {
-        const [selectButton] = state.ui.selectedFilters[FILTER_KEY_NAMES.byAvailability]
-        return selectButton.extra.type
-    }
-    return false
+  if (FILTER_KEY_NAMES.byAvailability in state.ui.selectedFilters) {
+    const [selectButton] = state.ui.selectedFilters[FILTER_KEY_NAMES.byAvailability]
+    return selectButton.extra.type
+  }
+  return false
 }
 // export const getFilterSelectedByKey = (state, filterKey = '') => state.ui.selectedFilters[filterKey]
 
@@ -27,11 +27,11 @@ export const getSelectedFilters = createSelector(
 
 
 export const getSizesAndPriceSelectedFilters = state => {
-    const { bySizes, bySizesPrice } = getSelectedFilters(state)
-    return {
-        bySizes,
-        bySizesPrice,
-    }
+  const { bySizes, bySizesPrice } = getSelectedFilters(state)
+  return {
+    bySizes,
+    bySizesPrice
+  }
 }
 
 export const getCountSelectedFilters = (state) =>
@@ -40,9 +40,12 @@ export const getCountSelectedFilters = (state) =>
 export const getFilteredProducts = createSelector(
   [getSelectedFilters, getProducts],
   (selectedFilters, products) => {
-      return Object.entries(selectedFilters).reduce((resultProducts, [filterKey, selected]) => {
-          const filterFunction = filtersFunctions[filterKey]
-          return filterFunction(resultProducts, selected)
+    console.log('client/src/store/selectors/products.js getSelectedFilters', selectedFilters)
+    return Object
+      .entries(selectedFilters)
+      .reduce((resultProducts, [filterKey, selected]) => {
+        const filterFunction = filtersFunctions[filterKey]
+        return filterFunction(resultProducts, selected)
       }, products)
   }
 )

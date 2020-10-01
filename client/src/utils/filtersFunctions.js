@@ -37,34 +37,34 @@ export const byFlowers = (products, selected = []) =>
 
 export const byStability = (products, selected = []) =>
   products.filter(product => {
-        if (!product.stability) return false
-        return selected.includes(product.stability)
+      if (!product.stability) return false
+      return selected.includes(product.stability)
     }
   )
 
 // Всегда в массиве только одна кнопка
 // Работает методом исключения в redux
 export const byAvailability = (products, [button]) => {
-    const availableType = button.extra.type
+  const availableType = button.extra.type
 
-    const filterFastProducts = (products) => products
-      .filter(product => product.sizes.some(({ fast }) => fast === true))
-      // .map(({ sizes, ...base }) => ({
-      //     ...base,
-      //     sizes: sizes.filter(({ fast }) => fast === true)
-      // }))
+  const filterFastProducts = (products) => products
+    .filter(product => product.sizes.some(({ fast }) => fast === true))
+  // .map(({ sizes, ...base }) => ({
+  //     ...base,
+  //     sizes: sizes.filter(({ fast }) => fast === true)
+  // }))
 
-    // все товары кроме тех, у кого КАЖДЫЙ размер "Готовый букет"
-    const filterBaseProducts = (products) => products
-      .filter(product => !product.sizes.every(({ fast }) => fast === true))
-      // .map(({ sizes, ...base }) => ({
-      //     ...base,
-      //     sizes: sizes.filter(({ fast }) => fast === false)
-      // }))
+  // все товары кроме тех, у кого КАЖДЫЙ размер "Готовый букет"
+  const filterBaseProducts = (products) => products
+    .filter(product => !product.sizes.every(({ fast }) => fast === true))
+  // .map(({ sizes, ...base }) => ({
+  //     ...base,
+  //     sizes: sizes.filter(({ fast }) => fast === false)
+  // }))
 
-    return compose(
-      when(availableType === AVAILABLE_TYPES.FAST, filterFastProducts),
-      when(availableType === AVAILABLE_TYPES.BASE, filterBaseProducts)
-    )(products)
+  return compose(
+    when(availableType === AVAILABLE_TYPES.FAST, filterFastProducts),
+    when(availableType === AVAILABLE_TYPES.BASE, filterBaseProducts)
+  )(products)
 }
 

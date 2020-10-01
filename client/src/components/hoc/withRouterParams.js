@@ -12,7 +12,6 @@ const withRouterParams = WrappedComponent => {
     let { id, city } = useParams()
     let history = useHistory()
     const foundCity = getCityIdByEngName(city, CITIES)
-    console.info('foundCity', foundCity ? foundCity : CITIES.MOSCOW)
 
     return <WrappedComponent {...props} id={id} city={foundCity ? foundCity : CITIES.MOSCOW} history={history}/>
   }

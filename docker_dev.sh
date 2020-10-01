@@ -74,6 +74,7 @@ read -p "Build DEV images? " yn
                     case $rsrv in
                         [Yy]* )
                             docker-compose --file=docker-compose.dev.yml stop ${srv};
+                            docker system prune ;
                             docker rmi -f klumba_${srv};
                             docker-compose --file=docker-compose.dev.yml build --no-cache ${srv};
                             docker-compose --file=docker-compose.dev.yml up -d ${srv};

@@ -41,7 +41,7 @@ const Product = ({
                      flowers: [],
                      flowers_counts: [],
                      price: 0,
-                     images: []
+                     images: ['']
                    }],
                    firstActiveSizeIndex = 0,
                    getThumbImage = () => {
